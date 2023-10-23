@@ -8,18 +8,22 @@ const TourOffer = ({ imgSrc, title, location, price,  qualification, status}) =>
 
   const [offerStatus, setStatus ] = useState(true)
 
+  const isAvailable = offerStatus === status;
+  const chipColor = isAvailable ? 'green' : 'red';
+  const chipValue = isAvailable ? 'Disponible' : 'Agotado';
+
   return (
     <div className="w-full">
       <div className="rounded overflow-hidden shadow-md">
-        <img className="w-full h-88 object-cover object-center" src={imgSrc} alt={title} />
+        <img className="w-full h-88 object-cover object-center" src={imgSrc} alt={`Imgen del ${ title }`} />
         <div className="p-4">
           <div className='flex justify-between' >
           <h5 className="font-bold text-xl">{title}</h5>
           <Chip
             variant="ghost"
-            color={`${ offerStatus === status ? 'green' : 'red'}`}
+            color={chipColor}
             size="sm"
-            value={offerStatus === status ? 'Disponible' : 'Agotado'}
+            value={chipValue}
             icon={
               <span className={`mx-auto mt-1 block h-2 w-2 rounded-full ${ offerStatus === status ? 'bg-green-900' : 'bg-red-900'}`} />
             }
