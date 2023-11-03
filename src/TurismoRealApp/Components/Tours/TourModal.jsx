@@ -52,8 +52,8 @@ const handleTotalCostChange = (cost) => {
   const handlePurchase = () => {
     const tour_id = toursId?.TOUR_ID;
     const tour_date = changeDateFormat(selectedTourDate);
-    const start_time = "10";
-    const end_time = "12";
+    const start_time = "1000";
+    const end_time = "1200";
     const place = toursId?.NOMBRE_TOUR;
     const value = parentTotalCost;
 

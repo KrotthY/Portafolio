@@ -1,9 +1,9 @@
 
 import { useParams } from "react-router-dom"
-import { DepartmentAccordion } from "../Components";
+import { useEffect, useState } from "react";
 import CardReserva from "../Components/Department/DepartamentCardReserva";
 import ListServices from "../Components/Department/DepartmentCardServices";
-import { useEffect, useState } from "react";
+import { DepartmentAccordion } from "../Components";
 
 
 const DepartmentDetails = () => {

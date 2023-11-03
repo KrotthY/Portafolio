@@ -1,6 +1,6 @@
-import { DepartmentCard } from "../Components"
 import { Filter, HeroDepartment } from "../../Ui"
 import { useEffect, useState } from "react"
+import { DepartmentCard } from "../Components";
 const URL_API_GET_DEPARTMENTS = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos';
 
 export const Departament = () => {
