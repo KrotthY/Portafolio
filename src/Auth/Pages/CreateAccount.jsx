@@ -1,54 +1,89 @@
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { logoTurismoReal } from "../../Assets"
-import { useState } from "react";
+import {  useNavigate } from 'react-router-dom';
 
-const BASE_CREATE_USER = 'http://localhost:8000/crear_cliente';
+const BASE_CREATE_USER = 'https://fastapi-gv342xsbja-tl.a.run.app/crear_cliente';
 
+const schema = yup.object({
+  firstName: yup.string().required('El nombre es obligatorio').min(3, 'El nombre debe tener al menos 3 caracteres').max(20, 'El nombre debe tener como máximo 20 caracteres'),
+  lastName: yup.string().required('El apellido es obligatorio').min(3, 'El apellido debe tener al menos 3 caracteres').max(20, 'El apellido debe tener como máximo 20 caracteres'),
+  username: yup.string().required('El usuario es obligatorio').min(3, 'El usuario debe tener al menos 3 caracteres').max(20, 'El usuario debe tener como máximo 20 caracteres'),
+  email: yup.string().email('El correo no es válido').required('El correo es obligatorio').min(8, 'El correo debe tener al menos 8 caracteres').max(50, 'El correo debe tener como máximo 50 caracteres'),
+  password: yup.string().required('La contraseña es obligatoria').min(8, 'La contraseña debe tener al menos 8 caracteres').max(20, 'La contraseña debe tener como máximo 20 caracteres')
+});
 
 const CreateAccount = () => {
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: '',
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }; 
+  const MySwal = withReactContent(Swal)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit  = async (formData) => {
     try {
-      const response = await fetch(BASE_CREATE_USER, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
+      MySwal.fire({
+        title: <p>Creando Usuario</p>,
+        didOpen: () => {
+          MySwal.showLoading()
         },
-        
-        body: JSON.stringify({
-          "name": formData.firstName,
-          "last_name":formData.lastName ,
-          "username": formData.username,
-          "rut":"123",
-          "email": formData.email,
-          "password": formData.password,
-        })
-      });
+      })
 
+      const bodyJSOB = {
+        "name": formData.firstName,
+        "last_name":formData.lastName ,
+        "username": formData.username,
+        "rut":"",
+        "email": formData.email,
+        "password": formData.password,
+      }
 
-      const data = await response.json();
+      const queryString = new URLSearchParams(bodyJSOB).toString();
+      const urlWithParams = `${BASE_CREATE_USER}?${queryString}`;
+      const myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+      myHeaders.append("Content-Type", "application/json");
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        redirect: 'follow'
+      };
 
-      console.log(data);
-      console.log(data.detail)
+      const response = await fetch(urlWithParams,requestOptions);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Error desconocido');
+      }
+
+      MySwal.close()
+      MySwal.fire({
+        icon: 'success',
+        title: 'Usuario Creado',
+        text: 'Usuario creado con exito',
+      })
+
+      navigate('/inicio-sesion');
 
     }catch(error) { 
-      console.error(error)
+      let errorMessage = 'Algo salió mal!';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      setTimeout(() => {
+        MySwal.close()
+        MySwal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: errorMessage,
+        })
+      }, 10);
     }
   }
 
@@ -64,7 +99,7 @@ const CreateAccount = () => {
           <p className="font-medium text-2xl text-gray-500 mt-4">Crear Cuenta</p>
         </div>
 
-        <form onSubmit={ handleSubmit }>
+        <form onSubmit={ handleSubmit(handleFormSubmit ) }>
         <div className="mt-8">
           <div className="flex justify-around  items-center">
             <div className="py-2 w-full mr-1">
@@ -72,21 +107,22 @@ const CreateAccount = () => {
               <input className="w-full border rounded-xl p-4 mt-1"
                 type="text" 
                 name="firstName" 
-                value={formData.firstName} 
+                { ...register("firstName")} 
                 placeholder="Ingresa tu nombre"
-                onChange={handleChange}
+                autoComplete='firstName'
               />
+              {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
             </div>
 
             <div className="py-2 w-full ml-1">
                 <label className="text-lg font-medium">Apellido</label>
                 <input className="w-full border rounded-xl p-4 mt-1" 
                   type="text" name="lastName" 
-                  value={formData.lastName}   
+                  { ...register("lastName") }   
                   placeholder="Ingresa tu apellido" 
-                onChange={handleChange}
-
+                  autoComplete='lastName'
                 />
+                {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
             </div>
             
 
@@ -95,29 +131,31 @@ const CreateAccount = () => {
             <label className="text-lg font-medium">Usuario</label>
             <input className="w-full border rounded-xl p-4 mt-1" 
               type="text" name="username" 
-              value={formData.username}  
+              { ...register("username") }  
               placeholder="Ingresa tu usuario"
-              onChange={handleChange}
+              autoComplete='username'
             />
+            {errors.username && <p className="text-xs text-red-500">{errors.username.message}</p>}
           </div>
           <div className="py-2">
             <label className="text-lg font-medium">Correo electrónico</label>
             <input className="w-full border rounded-xl p-4 mt-1" 
               type="text" name="email" 
-              value={formData.email}  
+              {...register("email")}  
+              autoComplete='email'
               placeholder="Ingresa tu Correo electrónico"
-              onChange={handleChange}
             />
+            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
           </div>
           <div className="py-2">
             <label className="text-lg font-medium">Contraseña</label>
             <input type="password" className="w-full border rounded-xl p-4 mt-1" 
               name="password" 
-              value={formData.password} 
+              { ...register("password") } 
               placeholder="Ingresa tu Contraseña" 
-              onChange={handleChange}
+              autoComplete='current-password'
             />
-
+            {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
           </div>
 
         </div>

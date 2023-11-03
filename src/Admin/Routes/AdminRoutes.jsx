@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom"
+import {  Route, Routes } from "react-router-dom"
 import { PanelAdministracion, Reportes, ServicioTurismo, Servicios, ServiciosTransportes, Usuarios } from "../Pages"
 import { Sidebar } from "../Components/Sidebar/Sidebar"
 
@@ -18,7 +18,6 @@ const AdminRoutes = () => {
           <Route path="/admin/reportes" element={ <Reportes /> } />
           <Route path="/admin/perfil" element={ <Reportes /> } />
 
-          <Route path="/" element={ <Navigate to ="departamentos"/>  } />
         </Routes>
       </div>
       
