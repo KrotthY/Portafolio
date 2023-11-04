@@ -23,7 +23,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
     const reservation_total = parentTotalCost;
     const department_id = idDepartamento;
     const num_hosts = parentHuesped;
-
+    
     reservaDepartamento(user.access_token,start_date,end_date,reservation_value,reservation_debt,reservation_total,department_id,num_hosts)
     .then(() => {
       onClose();

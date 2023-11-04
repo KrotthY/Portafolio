@@ -61,8 +61,8 @@ export const Login = () => {
         throw new Error(errorText.detail || 'Error desconocido');
       }
 
-      const { access_token } = await response.json();
-      const role = 'cliente';
+      const { access_token,token_role } = await response.json();
+      const role = 'funcionario';
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);
       navigate(route, { replace: true });

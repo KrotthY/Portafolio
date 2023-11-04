@@ -10,7 +10,7 @@ const AdminRoutes = () => {
     <Sidebar />
       <div className="flex-1 overflow-y-auto p-6">
         <Routes>
-          <Route path="/admin/panel-administracion" element={ <PanelAdministracion /> } />
+          <Route path="admin/panel-administracion" element={ <PanelAdministracion /> } />
           <Route path="/admin/servicios-transporte" element={ <ServiciosTransportes /> } />
           <Route path="/admin/servicio-turismo" element={ <ServicioTurismo /> } />
           <Route path="/admin/servicios" element={ <Servicios /> } />
