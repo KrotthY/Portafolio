@@ -37,7 +37,7 @@ const TourModal = ({ idTour, onClose,showModal}) => {
     setSelectedTourDate(date);
   };
 
-  const [parentTotalCost, setParentTotalCost] = useState(0);
+const [parentTotalCost, setParentTotalCost] = useState(0);
 
 const handleTotalCostChange = (cost) => {
     setParentTotalCost(cost);

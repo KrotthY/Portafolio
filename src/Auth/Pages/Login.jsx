@@ -62,7 +62,7 @@ export const Login = () => {
       }
 
       const { access_token } = await response.json();
-      const role = 'admin';
+      const role = 'cliente';
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);
       navigate(route, { replace: true });

@@ -59,6 +59,7 @@ const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS
           label="Personas"
           onChange={(e) => handlePersonsChange(e)}
           >
+            
           {
             Array.from({ length: CAPACIDAD_PARTICIPANTES }).map((_, index) => (
               <Option key={index} value={String(index + 1)} >{index + 1} personas</Option>

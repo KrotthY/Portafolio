@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import CardReserva from "../Components/Department/DepartamentCardReserva";
 import ListServices from "../Components/Department/DepartmentCardServices";
 import { DepartmentAccordion } from "../Components";
+import DepartamentoModal from "../Components/Department/DepartmentReservaModal";
 
 
 const DepartmentDetails = () => {
@@ -27,6 +28,38 @@ const DepartmentDetails = () => {
       .catch(error => console.log(error));
   }, [id, URL_API_GET_DEPARTMENTS_ID]);
   
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpen = (e) => {
+    e.preventDefault();
+    setShowModal(true);
+  }
+  
+  const closeModal = () => {
+    setShowModal(false);
+  }
+
+const [parentTotalCost, setParentTotalCost] = useState(0);
+const handleTotalCostChange = (cost) => {
+    setParentTotalCost(cost);
+};
+
+const [parentHuesped, setParentHuesped] = useState(0);
+
+const handlePersonChange = (person) => {
+  setParentHuesped(person);
+};
+
+const [parentDateSelected, setParentDateSelected] = useState(0);
+
+const handleDateSelected = (dateSelected) => {
+  setParentDateSelected(dateSelected);
+};
+
+
+
+
   return (
     <>
     <section className="py-10 mx-auto max-w-7xl">
@@ -93,8 +126,19 @@ const DepartmentDetails = () => {
             </div>
           </div>
           <div className="col-span-1 flex flex-col items-center ">
-            <CardReserva MAX_HUESPEDES={deparmentsId?.MAX_HUESPEDES}   TARIFA_DIARIA={deparmentsId?.TARIFA_DIARIA}  DIAS_RESERVADOS={deparmentsId?.DIAS_RESERVADOS} />
+            <CardReserva onDateSelected={ handleDateSelected } onTotalPersonChange={handlePersonChange} onTotalCostChange={handleTotalCostChange} handleOpenModal={handleOpen} MAX_HUESPEDES={deparmentsId?.MAX_HUESPEDES}   TARIFA_DIARIA={deparmentsId?.TARIFA_DIARIA}  DIAS_RESERVADOS={deparmentsId?.DIAS_RESERVADOS} />
           </div>
+          < DepartamentoModal 
+            showModal={showModal}
+            onClose={closeModal}
+            idDepartamento={deparmentsId?.DEPARTAMENTO_ID}
+            NOMBRE_TOUR={deparmentsId?.NOMBRE}
+            NOMBRE_COMUNA={deparmentsId?.NOMBRE_COMUNA}
+            NOMBRE_REGION={deparmentsId?.NOMBRE_REGION}
+            parentTotalCost={parentTotalCost}
+            parentHuesped={parentHuesped}
+            parentDateSelected={parentDateSelected}
+            />
         </div>
         <div className="mt-36">
           
@@ -104,5 +148,6 @@ const DepartmentDetails = () => {
     </>
   )
 }
+
 
 export default DepartmentDetails
