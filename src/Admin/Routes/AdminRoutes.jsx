@@ -7,8 +7,8 @@ const AdminRoutes = () => {
   return (
     <>
     <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 overflow-y-auto p-4">
+    <Sidebar />
+      <div className="flex-1 overflow-y-auto p-6">
         <Routes>
           <Route path="/admin/panel-administracion" element={ <PanelAdministracion /> } />
           <Route path="/admin/servicios-transporte" element={ <ServiciosTransportes /> } />
@@ -17,7 +17,6 @@ const AdminRoutes = () => {
           <Route path="/admin/usuarios" element={ <Usuarios /> } />
           <Route path="/admin/reportes" element={ <Reportes /> } />
           <Route path="/admin/perfil" element={ <Reportes /> } />
-
         </Routes>
       </div>
       

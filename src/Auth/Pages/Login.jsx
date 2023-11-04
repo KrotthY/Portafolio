@@ -5,6 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import withReactContent from "sweetalert2-react-content";
 import Swal from 'sweetalert2'
+import useSession from "../Context/UseSession";
+import getRoleSpecificRoute from "../Context/getRoleSpecificRoute";
 
 const BASE_LOGIN_USER = 'https://fastapi-gv342xsbja-tl.a.run.app/token';
 
@@ -14,8 +16,12 @@ const schema = yup.object({
 });
 
 
+
+
 export const Login = () => {
   const navigate = useNavigate();
+  
+  const  { login }  = useSession();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -55,6 +61,12 @@ export const Login = () => {
         throw new Error(errorText.detail || 'Error desconocido');
       }
 
+      const { access_token } = await response.json();
+      const role = 'admin';
+      login({ access_token, role });
+      const route = getRoleSpecificRoute(role);
+      navigate(route, { replace: true });
+      
       MySwal.close()
       MySwal.fire({
         icon: 'success',
@@ -62,7 +74,7 @@ export const Login = () => {
         text: '¡Iniciaste sesion correctamente!',
       })
 
-      navigate('/departamentos');
+
     }catch(error) { 
       let errorMessage = 'Algo salió mal!';
       if (error.message) {
@@ -99,6 +111,7 @@ return (
               className="w-full border rounded-xl p-4 mt-1" 
               placeholder="Ingresa tu usuario"
               name="username" 
+              autoComplete="off"
               { ...register("username") }
             />
             {errors.username && <p className="text-red-500">{errors.username.message}</p>}
@@ -108,6 +121,7 @@ return (
             <label className="text-lg font-medium">Contraseña</label>
             <input 
               type="password" 
+              autoComplete="current-password"
               className="w-full border rounded-xl p-4 mt-1" 
               placeholder="Ingresa tu Contraseña" 
               name="password"

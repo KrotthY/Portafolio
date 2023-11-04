@@ -3,18 +3,19 @@ import useSession from "../../Auth/Context/UseSession";
 import PropTypes from "prop-types";
 
 
-
 const PrivateRoute = ({ children, roles }) => {
 
   const { user } = useSession();
+
   if (!user) {
     return <Navigate to="/inicio-sesion" />;
   }
 
+  
   if (roles && roles.indexOf(user.role) === -1) {
     return <Navigate to="/" />;
   }
-
+  
   return (children)
 }
 

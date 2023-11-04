@@ -1,7 +1,13 @@
+import { BlogCard } from "../Components/Card/Card"
 
 const ServiciosTransportes = () => {
   return (
-    <div>ServiciosTransportes</div>
+    <div>
+      <BlogCard />
+      <BlogCard />
+      <BlogCard />
+      <BlogCard />
+    </div>
   )
 }
 
