@@ -18,7 +18,7 @@ const schema = yup.object({
 
 
 
-export const Login = () => {
+const Login = () => {
   const navigate = useNavigate();
   
   const  { login }  = useSession();
@@ -167,3 +167,6 @@ return (
     </>
   )
 }
+
+
+export default Login

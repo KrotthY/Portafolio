@@ -4,8 +4,7 @@ import { Departament } from "../Pages/Departament"
 import  Tours  from "../Pages/Tours"
 import DepartmentDetails from "../Pages/DepartmentDetails"
 
-
-export const TurismoRealRoutes = () => {
+const TurismoRealRoutes = () => {
   return (
     <>
     <Navbar/>
@@ -19,3 +18,5 @@ export const TurismoRealRoutes = () => {
     </>
   )
 }
+
+export default TurismoRealRoutes

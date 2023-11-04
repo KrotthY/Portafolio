@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom"
-import { Login } from "../Auth/Pages/Login" 
+import  Login  from "../Auth/Pages/Login" 
 import CreateAccount from "../Auth/Pages/CreateAccount"
 import ForgotPassword from "../Auth/Pages/ForgotPassword"
 import AdminRoutes from "../Admin/Routes/AdminRoutes"
-import { TurismoRealRoutes } from "../TurismoRealApp/Routes/TurismoRealRoutes"
+import TurismoRealRoutes  from "../TurismoRealApp/Routes/TurismoRealRoutes"
 import PrivateRoute from "./Private/PrivateRoute"
 import FuncionarioRoutes from "../Funcionarios/Routes/FuncionarioRoutes"
 
