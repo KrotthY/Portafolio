@@ -7,6 +7,7 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from 'sweetalert2'
 import useSession from "../Context/UseSession";
 import getRoleSpecificRoute from "../Context/getRoleSpecificRoute";
+import { PublicRoutes } from "../../Router";
 
 const BASE_LOGIN_USER = 'https://fastapi-gv342xsbja-tl.a.run.app/token';
 
@@ -22,6 +23,7 @@ const Login = () => {
   const navigate = useNavigate();
   
   const  { login }  = useSession();
+  
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -62,7 +64,8 @@ const Login = () => {
       }
 
       const { access_token,token_role } = await response.json();
-      const role = 'funcionario';
+      const role = 'cliente'
+      console.log(token_role)
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);
       navigate(route, { replace: true });
@@ -132,14 +135,14 @@ return (
           </div>
           <div className="mt-1">
             <NavLink 
-                to="/crear-cuenta"
+                to={ PublicRoutes.REGISTER}
               className="font-medium text-base text-blue-900 hover:text-blue-400"
             >
               Crear Cuenta
             </NavLink>
             <span className="font-medium text-base text-gray-900"> O </span>
             <NavLink 
-              to="/recuperar-contrasena"
+              to={ PublicRoutes.RECOVER_PASSWORD}
               className="font-medium text-base text-gray-900 hover:text-blue-700"
             >
               Olvidaste tu contraseña?

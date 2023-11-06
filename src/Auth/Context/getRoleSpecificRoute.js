@@ -1,11 +1,12 @@
+import { PrivateRoutes, PublicRoutes, Role_user } from "../../Router";
 
 const getRoleSpecificRoute = ( role ) => {
-if (role === 'admin') {
-    return "/admin/panel-administracion";
-  } else if (role === 'funcionario') {
-    return "/colaborador/check-in";
+if (role === Role_user.ADMIN) {
+    return PrivateRoutes.ADMIN_ROLE;
+  } else if (role === Role_user.COLLABORATOR) {
+    return PrivateRoutes.COLLABORATOR_ROLE;
   } else {
-    return "/departamentos";
+    return PublicRoutes.CLIENTE_ROL;
   }
 }
 

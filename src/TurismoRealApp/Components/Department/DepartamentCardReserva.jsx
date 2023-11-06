@@ -20,11 +20,6 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     selectedValue = parseInt(selectedValue);
     
     setSelectedPersons(selectedValue); 
-    if (onTotalCostChange) {
-      const newTotalCost = TARIFA_DIARIA * selectedValue;
-      onTotalCostChange(newTotalCost);
-    }
-
     if (onTotalPersonChange) {
       onTotalPersonChange(selectedValue);
     }
@@ -43,22 +38,39 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
   }, [DIAS_RESERVADOS]); 
 
 
-
-  const totalCost = TARIFA_DIARIA * selectedPersons;
-
+  const calculeDays = (startDate, endDate) => {
+    const startDay = new Date(startDate);
+    const endDay = new Date(endDate);
+    startDay.setHours(0,0,0,0);
+    endDay.setHours(0,0,0,0);
+    const timeDiff = Math.abs(endDay.getTime() - startDay.getTime());
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+    return diffDays
+  }
+  
   const [dateToday, setDateToday] = useState({
     startDate: null,
     endDate: null
   });
 
-  const handleValueChange = newValue => {
-    setDateToday(newValue);
+  const handleValueChange = newDateSelected => {
+    setDateToday(newDateSelected);
+
+
+    const days = calculeDays(newDateSelected.startDate, newDateSelected.endDate)
+
     if (onDateSelected) {
-      onDateSelected(newValue);
+      onDateSelected(newDateSelected);
+    }
+
+    if (onTotalCostChange) {
+      const newTotalCost = TARIFA_DIARIA * days;
+      onTotalCostChange(newTotalCost);
     }
   };
 
-
+  const days = calculeDays(dateToday.startDate, dateToday.endDate)
+  const totalCost = TARIFA_DIARIA * days;
 
   const today = new Date();
   const oneYearLater = new Date();
@@ -76,11 +88,15 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     }
   };
   
+  const tarifaFormateada = TARIFA_DIARIA && typeof TARIFA_DIARIA === 'number'
+  ? TARIFA_DIARIA.toLocaleString('de-DE')
+  : '0,00';
+
   return (
     <Card className="mt-6 w-96">
       <CardBody className="rounded-t-lg bg-gray-50 border-gray-900" >
         <Typography variant="h5" color="blue-gray" className="mb-4 text-center">
-          $ { TARIFA_DIARIA }  x Noche con IVa
+          $ { tarifaFormateada }  x Noche con IVa
         </Typography>
         <div className="bg-gray-200 p-2 rounded-lg my-6">
         <Datepicker 
@@ -103,7 +119,7 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
           >
           { 
             Array.from({ length: MAX_HUESPEDES }).map((_, index) => (
-              <Option key={index} value={index + 1} >{index + 1} Huespedes</Option>
+              <Option key={index} value={(index + 1).toString()} >{index + 1} Huespedes</Option>
             ))
           }
           </Select>

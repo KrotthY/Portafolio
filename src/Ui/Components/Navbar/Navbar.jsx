@@ -4,6 +4,7 @@ import { IconoTurismoReal } from '../../../Assets'
 import { useState } from 'react'
 import AuthenticationControl from '../../../Auth/Components/AuthenticationControl'
 import useSession from '../../../Auth/Context/UseSession'
+import { PublicRoutes } from '../../../Router'
 
 
 const Navbar = () => {
@@ -19,7 +20,7 @@ const Navbar = () => {
         <div className="fixed inset-x-0 top-0 z-50 h-0.5 mt-0.5 bg-blue-500"></div>
           <nav className="flex justify-around py-4  bg-white/80 backdrop-blur-xl shadow-lg w-full fixed top-0 left-0 right-0 z-10">
             <div className="flex items-center">
-              <Link to="/" className="cursor-pointer"
+              <Link to={ PublicRoutes.HOME } className="cursor-pointer"
               
               onClick={() => setActiveLink('Inicio')}
               >
@@ -30,14 +31,14 @@ const Navbar = () => {
             </div>
             <div className="items-center hidden space-x-8 lg:flex">
             <NavLink 
-              to="/departamentos"
+              to={PublicRoutes.DEPARTAMENTOS}
               className={`flex hover:text-gray-600 cursor-pointer transition-colors duration-300 font-semibold text-blue-600 ${activeLink === 'Inicio' ? 'border-b-4 border-blue-600' : ''}`}
               onClick={() => setActiveLink('Inicio')}
             >
                 Inicio
               </NavLink>
               <NavLink 
-                to="/tours"
+                to={ PublicRoutes.TOURS }
                 className={`flex hover:text-gray-600 cursor-pointer transition-colors duration-300 font-semibold text-blue-600 ${activeLink === 'Tours' ? 'border-b-4 border-blue-600' : ''}`}
                 onClick={() => setActiveLink('Tours')}
               >

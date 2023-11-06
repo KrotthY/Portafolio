@@ -1,8 +1,8 @@
 
-const CheckOut = () => {
+const CheckOutFuncionario = () => {
   return (
     <div>CheckOut</div>
   )
 }
 
-export default CheckOut
+export default CheckOutFuncionario

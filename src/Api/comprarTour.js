@@ -1,20 +1,15 @@
-const URL_API_POST_PURCHASE = `https://fastapi-gv342xsbja-tl.a.run.app/agendar_tour`;
+const URL_API_POST_PURCHASE = `https://fastapi-gv342xsbja-tl.a.run.app/solicitar_tour`;
 
-export const purchaseTour = async (tour_id,tour_date,start_time,end_time,place,value) => {
-
+export const purchaseTour = async (access_token,tour_agendado_id) => {
   const queryParams = {
-    tour_id: tour_id,
-    tour_date: tour_date,
-    start_time: start_time,
-    end_time: end_time,
-    place: place,
-    value : value,
+    tour_agendado_id: tour_agendado_id,
   };
 
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_POST_PURCHASE}?${queryString}`;
   const myHeaders = new Headers();
     myHeaders.append("Accept", "application/json");
+    myHeaders.append("Authorization", `Bearer ${access_token}`);
 
   const requestOptions = {
     method: 'POST',
@@ -23,10 +18,10 @@ export const purchaseTour = async (tour_id,tour_date,start_time,end_time,place,v
 
 
   const response = await fetch(urlWithParams,requestOptions)
-
   if(!response.ok){
     const errorText = await response.text();
     throw new Error(errorText);
   }
+  console.log()
   return response.json();
 };

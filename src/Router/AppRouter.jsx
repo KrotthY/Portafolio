@@ -1,33 +1,30 @@
 import { Route, Routes } from "react-router-dom"
-import  Login  from "../Auth/Pages/Login" 
-import CreateAccount from "../Auth/Pages/CreateAccount"
-import ForgotPassword from "../Auth/Pages/ForgotPassword"
-import AdminRoutes from "../Admin/Routes/AdminRoutes"
-import TurismoRealRoutes  from "../TurismoRealApp/Routes/TurismoRealRoutes"
-import PrivateRoute from "./Private/PrivateRoute"
 import FuncionarioRoutes from "../Funcionarios/Routes/FuncionarioRoutes"
+import { PrivateRoutes, PublicRoutes } from "./Routes"
+import { AuthGuard } from "../Auth/Guard/AuthGuard"
+import { lazy } from "react"
+
+
+const Login = lazy(() => import('../Auth/Pages/Login'))
+const CreateAccount = lazy(() => import('../Auth/Pages/CreateAccount'))
+const ForgotPassword = lazy(() => import('../Auth/Pages/ForgotPassword'))
+const AdminRoutes = lazy(() => import('../Admin/Routes/AdminRoutes'))
+const TurismoRealRoutes = lazy(() => import('../TurismoRealApp/Routes/TurismoRealRoutes'))
 
 const AppRouter = () => {
   return (
     <>
   <Routes>
-      <Route path="inicio-sesion" element={ <Login /> } />
-      <Route path="crear-cuenta" element={ <CreateAccount /> } />
-      <Route path="recuperar-contrasena" element={ <ForgotPassword /> } />
+      <Route path={ PublicRoutes.LOGIN } element={ <Login /> } />
+      <Route path={ PublicRoutes.REGISTER } element={ <CreateAccount /> } />
+      <Route path={ PublicRoutes.RECOVER_PASSWORD } element={ <ForgotPassword /> } />
 
-      <Route path="colaborador/*" element={ 
-          <PrivateRoute roles={['funcionario']}>
-            <FuncionarioRoutes />
-          </PrivateRoute>
-        } 
-      />
-  
-      <Route path="admin/*" element={
-        <PrivateRoute roles={['admin']}>
-          <AdminRoutes />
-        </PrivateRoute>
-      } />
-      <Route path="/*" element={ <TurismoRealRoutes /> } />
+      <Route element={ <AuthGuard />} > 
+        <Route path={ PrivateRoutes.COLLABORATOR_ALL } element={ <FuncionarioRoutes />} />
+        <Route path={ PrivateRoutes.ADMIN_ALL } element={<AdminRoutes /> } />
+      
+      </Route>
+      <Route path={PublicRoutes.HOME_ALL} element={ <TurismoRealRoutes /> } />
   </Routes>
     </>
   )

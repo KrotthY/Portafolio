@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import logoTurismoReal from "../../../Assets/iconoTurismoReal_logo.png";
 import { purchaseTour } from "../../../Api/comprarTour";
 import Swal from "sweetalert2";
+import useSession from "../../../Auth/Context/UseSession";
 
 const TourModal = ({ idTour, onClose,showModal}) => {
   
@@ -26,7 +27,7 @@ const TourModal = ({ idTour, onClose,showModal}) => {
       .then(response => response.json())
       .then(data => {
         setToursId(data);
-        console.log(data);
+        
       })
       .catch(error => console.log(error));
   }, [idTour, URL_API_GET_TOUR_ID]);
@@ -44,20 +45,13 @@ const handleTotalCostChange = (cost) => {
 };
 
 
-  function changeDateFormat(dateString) {
-    const parts = dateString.split('-');
-    return `${parts[2]}-${parts[1]}-${parts[0]}`;
-  }
   
+  const  { user }  = useSession();
   const handlePurchase = () => {
-    const tour_id = toursId?.TOUR_ID;
-    const tour_date = changeDateFormat(selectedTourDate);
-    const start_time = "1000";
-    const end_time = "1200";
-    const place = toursId?.NOMBRE_TOUR;
-    const value = parentTotalCost;
+    
+    const tour_agendado_id = toursId?.TOUR_ID;
 
-    purchaseTour(tour_id,tour_date,start_time,end_time,place,value)
+    purchaseTour(user.access_token,tour_agendado_id)
     .then(() => {
       onClose();
 

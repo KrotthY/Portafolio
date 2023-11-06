@@ -1,6 +1,8 @@
 import {  Route, Routes } from "react-router-dom"
-import { PanelAdministracion, Reportes, ServicioTurismo, Servicios, ServiciosTransportes, Usuarios } from "../Pages"
+import { PanelAdministracion, Reportes, ServicioTurismo, Servicios, ServiciosTransportes, Usuarios,Perfil } from "../Pages"
 import { Sidebar } from "../Components/Sidebar/Sidebar"
+import { PrivateRoutes } from "../../Router"
+
 
 
 const AdminRoutes = () => {
@@ -10,13 +12,13 @@ const AdminRoutes = () => {
     <Sidebar />
       <div className="flex-1 overflow-y-auto p-6">
         <Routes>
-          <Route path="admin/panel-administracion" element={ <PanelAdministracion /> } />
-          <Route path="admin/servicios-transporte" element={ <ServiciosTransportes /> } />
-          <Route path="admin/servicio-turismo" element={ <ServicioTurismo /> } />
-          <Route path="admin/servicios" element={ <Servicios /> } />
-          <Route path="admin/usuarios" element={ <Usuarios /> } />
-          <Route path="admin/reportes" element={ <Reportes /> } />
-          <Route path="admin/perfil" element={ <Reportes /> } />
+          <Route path={ PrivateRoutes.PANEL_ADMIN } element={ <PanelAdministracion /> } />
+          <Route path={ PrivateRoutes.SERVICIOS_TRANSPORTE }   element={ <ServiciosTransportes /> } />
+          <Route path={ PrivateRoutes.SERVICIOS_TURISMO }   element={ <ServicioTurismo /> } />
+          <Route path={ PrivateRoutes.SERVICIOS }  element={ <Servicios /> } />
+          <Route path={ PrivateRoutes.USUARIOS }  element={ <Usuarios /> } />
+          <Route path={ PrivateRoutes.REPORTES }  element={ <Reportes /> } />
+          <Route path={ PrivateRoutes.PERFIL_ADMIN }  element={ <Perfil /> } />
         </Routes>
       </div>
       

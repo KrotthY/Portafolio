@@ -51,8 +51,10 @@ const handlePersonChange = (person) => {
   setParentHuesped(person);
 };
 
-const [parentDateSelected, setParentDateSelected] = useState(0);
-
+const [parentDateSelected, setParentDateSelected] = useState({
+  startDate: null,
+  endDate: null
+});
 const handleDateSelected = (dateSelected) => {
   setParentDateSelected(dateSelected);
 };

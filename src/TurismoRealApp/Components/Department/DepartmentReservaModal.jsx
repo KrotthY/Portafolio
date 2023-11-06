@@ -11,9 +11,33 @@ import logoTurismoReal from "../../../Assets/iconoTurismoReal_logo.png";
 import { reservaDepartamento } from "../../../Api/ReservarDepartamento";
 import Swal from "sweetalert2";
 import useSession from "../../../Auth/Context/UseSession";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from "react-hook-form";
+
+
+const schema = yup.object({
+  nombreCompleto: yup.string()
+                    .required('El nombre es obligatorio')
+                    .min(3, 'El nombre debe tener al menos 3 caracteres')
+                    .max(50, 'El nombre debe tener como máximo 50 caracteres'),
+  telefono: yup.number()
+              .typeError('El teléfono debe ser un número')
+              .required('El teléfono es obligatorio')
+              .positive('El número de teléfono debe ser positivo')
+              .integer('El número de teléfono no puede incluir un punto decimal')
+              .min(10000000, 'El teléfono debe tener al menos 8 dígitos')
+              .max(99999999999, 'El teléfono debe tener como máximo 11 dígitos')
+});
+
 
 const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_COMUNA,NOMBRE_REGION,onClose,showModal,parentHuesped,parentDateSelected}) => {
   const  { user }  = useSession();
+
+
+  const { register, handleSubmit, formState: { errors } , reset} = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const handlePurchase = () => {
     const start_date = parentDateSelected.startDate;
@@ -27,7 +51,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
     reservaDepartamento(user.access_token,start_date,end_date,reservation_value,reservation_debt,reservation_total,department_id,num_hosts)
     .then(() => {
       onClose();
-
+      reset();
       Swal.fire({
         icon: 'success',
         title: 'Pago exitoso',
@@ -50,7 +74,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
 
   return (
     <>
-    <Dialog open={showModal} className="my-auto bg-gray-200">
+    <Dialog open={showModal} className="my-auto bg-white shadow-lg shadow-blue-700">
         <DialogHeader className="text-lg flex justify-between items-center my-auto" >
           <span>
           { NOMBRE_TOUR}
@@ -66,7 +90,9 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
             {NOMBRE_REGION}
           </span>
           </div>
+
         </DialogHeader>
+          <form onSubmit={handleSubmit(handlePurchase)}>
             <DialogBody>
               <div className="flex flex-col items-center ">
                 <Typography variant="h5">
@@ -86,12 +112,24 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                   Lista de Huespedes 
                 </h5>
               </div>
+              
 
               {
                 Array.from({ length: (parentHuesped) }).map((_, index) => (
                   <div key={index} className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 mx-3">
-                    <input type="text" id="fname" name="fname" placeholder="Nombre Completo" className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                    <input type="text" id="fname" name="fname" placeholder="Telefono" className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700"/>
+                    <div className="flex flex-col justify-center">
+                      <input type="text"  name="nombreCompleto" placeholder="Nombre Completo" 
+                        { ...register("nombreCompleto") }
+                        className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
+                      {errors.nombreCompleto && <p className="text-red-500">{errors.nombreCompleto.message}</p>}
+                    </div>
+                    <div className="flex flex-col justify-center items-center">
+                      <input type="number"  name="telefono" 
+                        { ...register("telefono") }
+                        placeholder="Telefono" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700"/>
+                    {errors.telefono && <p className="text-red-500">{errors.telefono.message}</p>}
+                    </div>
+
                   </div>
                 ))
               }
@@ -102,13 +140,14 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
             color="red"
             onClick={onClose}
             className="mr-1"
-          >
+            >
             <span>Cancelar</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handlePurchase}>
+          <Button variant="gradient" color="green" type="submit"  >
             <span>Confirmar Reserva</span>
           </Button>
         </DialogFooter>
+        </form>
       </Dialog>
     
     </>

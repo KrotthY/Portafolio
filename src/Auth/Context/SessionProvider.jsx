@@ -15,8 +15,8 @@ const SesionProvider = ({ children }) => {
       role: user.role
     })
 
-    Cookies.set('authToken', user.access_token);
-    Cookies.set('userRole', user.role);
+    Cookies.set('authToken', user.access_token, { httpOnly: true, secure: true });
+    Cookies.set('userRole', user.role, { httpOnly: true, secure: true });
   }
 
   const logout = () => {
@@ -33,7 +33,6 @@ const SesionProvider = ({ children }) => {
     </SessionContext.Provider>
   )
 }
-
 
 SesionProvider.propTypes = {
   children: PropTypes.node.isRequired

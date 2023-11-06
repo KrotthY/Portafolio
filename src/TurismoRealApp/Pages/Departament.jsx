@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { DepartmentCard } from "../Components";
 const URL_API_GET_DEPARTMENTS = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos';
 
-export const Departament = () => {
+const Departament = () => {
 
   const [ deparments , setDeparments ] = useState([]);
   useEffect(() => {
@@ -15,7 +15,7 @@ export const Departament = () => {
       .then(response => response.json())
       .then(data => {
         setDeparments(data)
-        console.log(data)
+        
       })
       .catch(error => console.log(error))
   }, []);
@@ -42,3 +42,5 @@ export const Departament = () => {
     </>
   )
 }
+
+export default Departament
