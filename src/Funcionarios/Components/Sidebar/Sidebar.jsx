@@ -8,7 +8,6 @@ import {
 } from "@material-tailwind/react";
 import {
   PowerIcon,
-  GlobeAmericasIcon,
   ChatBubbleBottomCenterTextIcon
 } from "@heroicons/react/24/solid";
 
@@ -26,42 +25,42 @@ export function Sidebar() {
 
   
   return (
-    <Card className="h-[100vh] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5 bg-blue-gray-50  rounded-none">
+    <Card className="h-[100vh] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-500/5 bg-blue-gray-800  rounded-none ">
       <div className="mb-2 p-4">
-        <Typography variant="h5" color="blue-gray">
+        <Typography variant="h5" color="white">
           Panel de Funcionarios
         </Typography>
       </div>
-      <List>
+      <div className="flex flex-col h-full">
+      <List className="flex-1">
         <Link to="/colaborador/check-in" >
-          <ListItem onClick={ () => SetSelectedSideBar("ServicioTransporte") } className={ SelectedSideBar === "ServicioTransporte" ? valueSelected : ''}>
+          <ListItem onClick={ () => SetSelectedSideBar("ServicioTransporte") } 
+          className= {` font-bold text-white  ${SelectedSideBar === "ServicioTransporte" ? valueSelected : ''}`}
+          >
             <ListItemPrefix>
               <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Check In
+            Registro de huespedes
           </ListItem>
         </Link>
-        <Link to="/colaborador/check-out" >
-          <ListItem onClick={ () => SetSelectedSideBar("ServicioTurismo") } className={ SelectedSideBar === "ServicioTurismo" ? valueSelected : ''}>
-            <ListItemPrefix>
-              <GlobeAmericasIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Check Out
-          </ListItem>
-        </Link>
+      </List>
+      <List className="mt-auto">
         <ListItem onClick={ () => {
 
             SetSelectedSideBar("Cerrar")
             logout();
             navigate(PublicRoutes.LOGOUT, { replace: true });
 
-          } } className={ SelectedSideBar === "Cerrar" ? valueSelected : ''}>
+          } } 
+          className= {` font-bold text-white  ${SelectedSideBar === "Cerrar" ? valueSelected : ''}`}
+          >
           <ListItemPrefix>
             <PowerIcon className="h-5 w-5" />
           </ListItemPrefix>
           Cerrar Sesión
         </ListItem>
       </List>
+      </div>
     </Card>
   );
 }

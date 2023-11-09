@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Chip } from '@material-tailwind/react';
 import { useState } from 'react';
 import TourModal from './TourModal';
+import Swal from 'sweetalert2';
 
 const TourOffer = ({ idTour, imgSrc,qtyPerson,description,title,price,status}) => {
 
@@ -13,8 +14,17 @@ const TourOffer = ({ idTour, imgSrc,qtyPerson,description,title,price,status}) =
   const chipValue = isAvailable ? 'Disponible' : 'Agotado';
 
   const handleOpen = (e) => {
-    e.preventDefault();
-    setShowModal(true);
+    if(isAvailable){
+      e.preventDefault();
+      setShowModal(true);
+    }else{
+      Swal.fire({
+        icon: 'info',
+        title: 'Ups!',
+        text: 'No quedan cupos disponibles para este tour',
+        confirmButtonText: 'Entendido'
+      });
+    }
   }
   
   const closeModal = () => {

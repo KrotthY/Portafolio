@@ -64,7 +64,7 @@ const Login = () => {
       }
 
       const { access_token,token_role } = await response.json();
-      const role = 'cliente'
+      const role = 'funcionario'
       console.log(token_role)
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);

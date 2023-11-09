@@ -39,38 +39,58 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
     resolver: yupResolver(schema),
   });
 
-  const handlePurchase = () => {
-    const start_date = parentDateSelected.startDate;
-    const end_date = parentDateSelected.endDate;
-    const reservation_value = parentTotalCost;
-    const reservation_debt = parentTotalCost;
-    const reservation_total = parentTotalCost;
-    const department_id = idDepartamento;
-    const num_hosts = parentHuesped;
-    
-    reservaDepartamento(user.access_token,start_date,end_date,reservation_value,reservation_debt,reservation_total,department_id,num_hosts)
-    .then(() => {
+
+  const handlePurchase = async () => {
+    try {
+      if(!user){
+        throw new Error('Para continuar, debes iniciar sesión');
+      }
+      const {
+        startDate: start_date,
+        endDate: end_date
+      } = parentDateSelected;
+      const reservation_value = parentTotalCost;
+      const reservation_debt = parentTotalCost; 
+      const reservation_total = parentTotalCost;
+      const department_id = idDepartamento;
+      const num_hosts = parentHuesped;
+
+      const datosDeReserva = {
+        access_token: user.access_token,
+        start_date,
+        end_date,
+        reservation_value,
+        reservation_debt,
+        reservation_total,
+        department_id,
+        num_hosts
+      };
+
+  
+
+      await reservaDepartamento(datosDeReserva);
+      
       onClose();
-      reset();
+      reset(); 
       Swal.fire({
         icon: 'success',
         title: 'Pago exitoso',
         text: '¡Tu pago se ha realizado con éxito!',
         confirmButtonText: 'Ok'
       });
-    })
-    .catch(() => {
-      onClose();
-
       
+    } catch (error) {
+      onClose(); 
+      console.error(error);
       Swal.fire({
         icon: 'error',
         title: 'Error en el pago',
-        text: 'No se le realizaron cargos. Por favor, intente nuevamente.',
+        text: error,
         confirmButtonText: 'Entendido'
       });
-    });
+    }
   };
+
 
   return (
     <>

@@ -39,47 +39,55 @@ const TourModal = ({ idTour, onClose,showModal}) => {
   };
 
 const [parentTotalCost, setParentTotalCost] = useState(0);
+const showAlert = (icon, title, text) => {
+  Swal.fire({
+    icon,
+    title,
+    text,
+    confirmButtonText: 'Entendido'
+  });
+};
+
+const resetState = () => {
+  onClose();
+  setSelectedTourDate('');
+  setParentTotalCost(0);
+}
 
 const handleTotalCostChange = (cost) => {
     setParentTotalCost(cost);
 };
 
-
-  
   const  { user }  = useSession();
-  const handlePurchase = () => {
-    
-    const tour_agendado_id = toursId?.TOUR_ID;
+  const handlePurchase = async () => {
+    let errorMessage = '';
 
-    purchaseTour(user.access_token,tour_agendado_id)
-    .then(() => {
-      onClose();
+    if (!selectedTourDate) {
+      errorMessage = 'Debe seleccionar una fecha para continuar.';
+    } else if (parentTotalCost <= 0) {
+      errorMessage = 'Debe haber al menos un participante seleccionado.';
+    } else if (!toursId?.TOUR_ID) {
+      errorMessage = 'El tour no es válido.';
+    } else if (!user || !user.access_token) {
+      errorMessage = 'Para continuar, debes iniciar sesión.';
+    }
 
-      setSelectedTourDate(null);
-      setParentTotalCost(null);
+    if (errorMessage) {
+      showAlert('warning', 'Información Incompleta', errorMessage);
+      resetState();
+      return; 
+    }
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Pago exitoso',
-        text: '¡Tu pago se ha realizado con éxito!',
-        confirmButtonText: 'Ok'
-      });
-    })
-    .catch(() => {
-      onClose();
-
-      setSelectedTourDate(null);
-      setParentTotalCost(null);
-
-      
-      Swal.fire({
-        icon: 'error',
-        title: 'Error en el pago',
-        text: 'No se le realizaron cargos. Por favor, intente nuevamente.',
-        confirmButtonText: 'Entendido'
-      });
-    });
+    try {
+      await purchaseTour(user.access_token, toursId.TOUR_ID);
+      showAlert('success', 'Pago exitoso', '¡Tu pago se ha realizado con éxito!');
+      resetState();
+    } catch (error) {
+      showAlert('error', 'Error en el pago', error.message || 'No se le realizaron cargos. Por favor, intente nuevamente.');
+      resetState();
+    }
   };
+  
 
   return (
     <>
@@ -100,20 +108,19 @@ const handleTotalCostChange = (cost) => {
           </span>
           </div>
         </DialogHeader>
-          {
-            toursId &&
-            <DialogBody className="flex justify-center items-center overflow-y-auto mt-auto max-h-[calc(100vh-200px)]">
-                <TourCardReserva 
-                  DURACION={ toursId?.DURACION } 
-                  CAPACIDAD_PARTICIPANTES={toursId?.CAPACIDAD_PARTICIPANTES} 
-                  VALOR_MINIMO={toursId?.VALOR_MINIMO} 
-                  FECHAS={toursId?.FECHAS}
-                  onDateChange={handleTourDateChange}
-                  onTotalCostChange={handleTotalCostChange}
-                />
-            </DialogBody>
-          }
-
+        {
+          toursId &&
+          <DialogBody className="flex justify-center items-center overflow-y-auto mt-auto max-h-[calc(100vh-200px)]">
+              <TourCardReserva 
+                DURACION={ toursId?.DURACION } 
+                CAPACIDAD_PARTICIPANTES={toursId?.CAPACIDAD_PARTICIPANTES} 
+                VALOR_MINIMO={toursId?.VALOR_MINIMO} 
+                FECHAS={toursId?.FECHAS}
+                onDateChange={handleTourDateChange}
+                onTotalCostChange={handleTotalCostChange}
+              />
+          </DialogBody>
+        }
         <DialogFooter>
           <Button
             variant="text"
@@ -138,6 +145,5 @@ TourModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
 }
-
 
 export default TourModal
