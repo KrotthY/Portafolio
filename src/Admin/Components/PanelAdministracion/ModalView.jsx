@@ -1,18 +1,10 @@
 import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 
-const ModalRegistroEntrada = ({onClose,showModal}) => {
+const ModalView = ({onClose,showModal}) => {
 
   return (
-    <Dialog open={showModal}  
-      animate={{
-        mount: { scale: 1, y: 0 },
-        unmount: { scale: 0.9, y: -100 },
-      }}  
-      aria-labelledby="modalRegistro" 
-      size="lg" 
-      className="max-w-full max-h-screen py-2  overflow-scroll"
-    >
+    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="md">
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
         <span className="text-2xl tracking-tight font-extrabold text-gray-900">Proceso de Registro</span>
         <IconButton
@@ -41,7 +33,7 @@ const ModalRegistroEntrada = ({onClose,showModal}) => {
           <Typography className="-mb-2" variant="h5">
             Huesped titular
           </Typography>
-        <div className="flex items-center justify-between sm:grid sm:grid-cols-2  gap-6 my-12 border-b-4 pb-12 border-b-gray-200">
+        <div className="flex items-center justify-between gap-6 my-12 border-b-4 pb-12 border-b-gray-200">
           <Input label="Rut" size="xs" />
           <Input label="Nombre" size="xs" />
           <Input label="Apellido" size="xs" />
@@ -54,6 +46,7 @@ const ModalRegistroEntrada = ({onClose,showModal}) => {
         <div className="font-normal border-b-4 pb-12 border-b-gray-200 my-12">
           <div className="flex items-center justify-between gap-6 my-6">
           <span className="w-1/2 ">Acompañante 1</span>
+
             <Input label="Nombre" size="xs"  />
             <Input label="Apellido" size="xs" />
             <Input label="Teléfono" size="xs" />
@@ -113,6 +106,7 @@ const ModalRegistroEntrada = ({onClose,showModal}) => {
           </div>
         </div>
 
+
       </DialogBody>
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
         <button
@@ -131,9 +125,9 @@ const ModalRegistroEntrada = ({onClose,showModal}) => {
   );
 };
 
-ModalRegistroEntrada.propTypes = {
+ModalView.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
 }
 
-export default ModalRegistroEntrada;
+export default ModalView;

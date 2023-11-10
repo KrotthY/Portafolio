@@ -35,7 +35,7 @@ const Navbar = () => {
               className={`flex hover:text-gray-600 cursor-pointer transition-colors duration-300 font-semibold text-blue-600 ${activeLink === 'Inicio' ? 'border-b-4 border-blue-600' : ''}`}
               onClick={() => setActiveLink('Inicio')}
             >
-                Inicio
+                Departamentos
               </NavLink>
               <NavLink 
                 to={ PublicRoutes.TOURS }

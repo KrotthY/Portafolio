@@ -4,7 +4,8 @@ import * as yup from 'yup';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { logoTurismoReal } from "../../Assets"
-import {  useNavigate } from 'react-router-dom';
+import {  NavLink, useNavigate } from 'react-router-dom';
+import { PublicRoutes } from '../../Router';
 
 const BASE_CREATE_USER = 'https://fastapi-gv342xsbja-tl.a.run.app/crear_cliente';
 
@@ -164,10 +165,18 @@ const CreateAccount = () => {
               className=" w-full select-none rounded-lg bg-blue-500 py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 
             >
-              Registrate !
+              ¡ Registrate !
             </button>
         </div>
         </form>
+        <div className="mt-4 flex items-center justify-center">
+          <NavLink 
+            to={ PublicRoutes.HOME}
+            className="font-semibold text-base text-gray-900 hover:text-blue-700"
+          >
+            Volver al Inicio
+          </NavLink>
+          </div>
         <p className="text-xs text-gray-600 text-center mt-8">&copy; 2023 Turismo Real</p>
       </div>
     </div>

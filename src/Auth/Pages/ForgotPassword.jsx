@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import { logoTurismoReal } from "../../Assets"
+import { PublicRoutes } from "../../Router"
 
 const ForgotPassword = () => {
   return (
@@ -32,6 +33,14 @@ const ForgotPassword = () => {
                 Enviar
               </button>
             </Link>
+          </div>
+          <div className="mt-4 flex items-center justify-center">
+          <NavLink 
+            to={ PublicRoutes.HOME}
+            className="font-semibold text-base text-gray-900 hover:text-blue-700"
+          >
+            Volver al Inicio
+          </NavLink>
           </div>
           <p className="text-xs text-gray-600 text-center mt-8">&copy; 2023 Turismo Real</p>
         </div>

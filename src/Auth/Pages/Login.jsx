@@ -64,7 +64,7 @@ const Login = () => {
       }
 
       const { access_token,token_role } = await response.json();
-      const role = 'admin'
+      const role = token_role.toLowerCase();
       console.log(token_role)
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);
@@ -157,7 +157,14 @@ return (
             </button>
         </div>
         </form>
-
+        <div className="mt-4 flex items-center justify-center">
+          <NavLink 
+            to={ PublicRoutes.HOME}
+            className="font-semibold text-base text-gray-900 hover:text-blue-700"
+          >
+            Volver al Inicio
+          </NavLink>
+          </div>
         <p className="text-xs text-gray-600 text-center mt-8">&copy; 2023 Turismo Real</p>
       </div>
     </div>

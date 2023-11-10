@@ -1,8 +1,8 @@
 
 export const PublicRoutes = {
-  LOGIN : 'inicio-sesion',
-  REGISTER : 'crear-cuenta',
-  RECOVER_PASSWORD : 'recuperar-contrasena',
+  LOGIN : '/inicio-sesion',
+  REGISTER : '/crear-cuenta',
+  RECOVER_PASSWORD : '/recuperar-contrasena',
 
   CLIENTE_ROL : '/departamentos',
 

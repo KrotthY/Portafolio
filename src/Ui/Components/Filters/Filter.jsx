@@ -11,9 +11,9 @@ const Filter = () => {
                 </select>
             </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4  p-6 w-full sm:w-auto justify-around border-2 rounded-lg border-white">
+        <div className="flex flex-col items-center sm:flex-row gap-4  p-6 w-full sm:w-auto justify-around border-2 rounded-lg border-white">
             <label className=" text-sm text-blue-500 font-semibold ">Disponibilidad</label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex items-center flex-col sm:flex-row gap-2">
                 <label htmlFor="fechaDesde" className="mr-1 text-sm text-blue-500">Desde:</label>
                 <input 
                     min="2023-10-01" 
@@ -23,7 +23,7 @@ const Filter = () => {
                     type="date"
                 />
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col items-center sm:flex-row gap-2">
                 <label htmlFor="fechaHasta" className="mr-1 text-sm text-blue-500">Hasta:</label>
                 <input 
                     min="2023-10-01" 

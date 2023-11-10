@@ -11,6 +11,7 @@ const URL_API_GET_CHECK_IN = 'https://fastapi-gv342xsbja-tl.a.run.app/check-in';
 
 const CheckInFuncionario = () => {
 
+  
   const [ checkIn , setCheckIn ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
 

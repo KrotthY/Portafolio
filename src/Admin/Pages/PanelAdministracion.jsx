@@ -1,19 +1,28 @@
 
 import {  Chip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
+import useSession from "../../Auth/Context/UseSession";
+import ModalEdit from "../Components/PanelAdministracion/ModalEdit";
+import ModalView from "../Components/PanelAdministracion/ModalView";
+import ModalMaintence from "../Components/PanelAdministracion/ModalMaintence";
+import ModalDelete from "../Components/PanelAdministracion/ModalDelete";
 
-const URL_API_GET_DEPTO = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos';
+const URL_API_GET_DEPTO = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos/admin';
 
 
 const PanelAdministracion = () => {
 
   const [ depto , setDepto ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
-
+  const { user } = useSession();
 
   useEffect(() => {
     const requestOptions = {
       method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${user.access_token}`,
+      },
     };
 
     fetch(URL_API_GET_DEPTO,requestOptions)
@@ -23,7 +32,7 @@ const PanelAdministracion = () => {
         setDepto(data)
       })
       .catch(error => console.log(error))
-  }, []);
+  }, [user.access_token]);
 
 
 
@@ -33,24 +42,26 @@ const PanelAdministracion = () => {
       case 1:
         return (
           <div className="font-extrabold flex items-center gap-x-6">
-            <button onClick={handleOpenModalCheckIn} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-green-500 bg-green-300 group  active:bg-green-500 active:border-green-500" href="{{ route('process.create') }}">
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-green-300 hover:bg-green-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+            <button onClick={handleOpenModalEdit} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
+              <span className="absolute right-0 h-full w-11 rounded-lg bg-blue-300 hover:bg-blue-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+              <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
+                <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>
+              </svg>
               </span>
             </button>
-            <button onClick={handleOpenModalCheckOut} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
+            <button onClick={handleOpenModalView} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-gray-500 bg-gray-300 group active:bg-gray-500 active:border-gray-500" href="{{ route('process.create') }}">
+              <span className="absolute right-0 h-full w-11 rounded-lg bg-gray-300 hover:bg-gray-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+                <svg style={{fill:"#000"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg>
               </span>
             </button>
-            <button onClick={handleOpenModalCheckOut} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
+            <button onClick={handleOpenModalMaintence} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-yellow-500 bg-yellow-300 group active:bg-yellow-500 active:border-yellow-500" href="{{ route('process.create') }}">
+              <span className="absolute right-0 h-full w-11 rounded-lg bg-yellow-300 hover:bg-yellow-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+              <svg style={{fill:"#000"}}  xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M352 320c88.4 0 160-71.6 160-160c0-15.3-2.2-30.1-6.2-44.2c-3.1-10.8-16.4-13.2-24.3-5.3l-76.8 76.8c-3 3-7.1 4.7-11.3 4.7H336c-8.8 0-16-7.2-16-16V118.6c0-4.2 1.7-8.3 4.7-11.3l76.8-76.8c7.9-7.9 5.4-21.2-5.3-24.3C382.1 2.2 367.3 0 352 0C263.6 0 192 71.6 192 160c0 19.1 3.4 37.5 9.5 54.5L19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L297.5 310.5c17 6.2 35.4 9.5 54.5 9.5zM80 408a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
               </span>
             </button>
-            <button onClick={handleOpenModalCheckOut} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
+            <button onClick={handleOpenModalDelete} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
+              <span className="absolute right-0 h-full w-11 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+              <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
               </span>
             </button>
           </div>
@@ -75,6 +86,7 @@ const PanelAdministracion = () => {
         }
       />
         );
+      
       case 2:
         return (
           <Chip
@@ -89,7 +101,8 @@ const PanelAdministracion = () => {
 
           
         );
-      default:
+    
+      case 3:
         return (
           <Chip
           variant="ghost"
@@ -97,11 +110,13 @@ const PanelAdministracion = () => {
           size="sm"
           value="Mantención"
           icon={
-            <span className="mx-auto mt-1 block h-2 w-2 rounded-full bg-yellow-900 content-['']" />
+            <span className="mx-auto mt-1 block h-2 w-2 rounded-full bg-red-900 content-['']" />
           }
         />
 
+          
         );
+
     }
   };
 
@@ -128,27 +143,52 @@ const PanelAdministracion = () => {
       setCurrentPage(pageNumber);
     };
 
-  const [showModalIn, setShowModalIn] = useState(false);
+  const [showModalEdit, setShowModalEdit] = useState(false);
 
-  const handleOpenModalCheckIn = (e) => {
+  const handleOpenModalEdit = (e) => {
     e.preventDefault();
-    setShowModalIn(true);
+    setShowModalEdit(true);
   }
   
-  const closeModalIn = () => {
-    setShowModalIn(false);
+  const closeModalEdit = () => {
+    setShowModalEdit(false);
   }
 
-  const [showModalOut, setShowModalOut] = useState(false);
 
-  const handleOpenModalCheckOut = (e) => {
+  const [showModalView, setShowModalView] = useState(false);
+
+  const handleOpenModalView = (e) => {
     e.preventDefault();
-    setShowModalOut(true);
+    setShowModalView(true);
   }
   
-  const closeModalOut = () => {
-    setShowModalOut(false);
+  const closeModalView = () => {
+    setShowModalView(false);
   }
+
+  const [showModalMaintence, setShowModalMaintence] = useState(false);
+
+  const handleOpenModalMaintence = (e) => {
+    e.preventDefault();
+    setShowModalMaintence(true);
+  }
+  
+  const closeModalMaintence= () => {
+    setShowModalMaintence(false);
+  }
+
+  const [showModalDelete, setShowModalDelete] = useState(false);
+
+  const handleOpenModalDelete = (e) => {
+    e.preventDefault();
+    setShowModalDelete(true);
+  }
+  
+  const closeModalDelete = () => {
+    setShowModalDelete(false);
+  }
+
+
 
   return (
     <>
@@ -210,7 +250,7 @@ const PanelAdministracion = () => {
                   <tr key={departamentoItem.DEPARTAMENTO_ID} className="hover:bg-gray-100 italic ">
                     <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap ">{departamentoItem.DEPARTAMENTO_ID}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.NOMBRE}</td>
-                    <td className="px-4 py-4 ">{evaluateStatusDepto(1)}</td>
+                    <td className="px-4 py-4 ">{evaluateStatusDepto(departamentoItem.ACTIVO)}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.TARIFA_DIARIA}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.DIRECCION}</td>
                     <td className="px-4 py-4 text-sm flex items-center justify-center">
@@ -263,7 +303,11 @@ const PanelAdministracion = () => {
           </div>
         </div>
       </div>
-    
+    <ModalEdit onClose={closeModalEdit} showModal={showModalEdit} />
+    <ModalView onClose={closeModalView} showModal={showModalView} />
+    <ModalMaintence onClose={closeModalMaintence} showModal={showModalMaintence} />
+    <ModalDelete onClose={closeModalDelete} showModal={showModalDelete} />
+
   </section>
     </>
   );
