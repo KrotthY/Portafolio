@@ -16,9 +16,6 @@ const schema = yup.object({
   password: yup.string().required('La contraseña es obligatoria').min(8, 'La contraseña debe tener al menos 8 caracteres').max(20, 'La contraseña debe tener como máximo 20 caracteres')
 });
 
-
-
-
 const Login = () => {
   const navigate = useNavigate();
   
@@ -47,8 +44,6 @@ const Login = () => {
       urlencoded.append("client_id", "");
       urlencoded.append("client_secret", "");
 
-
-
       const response = await fetch(BASE_LOGIN_USER, {
         method: 'POST',
         headers: {
@@ -65,7 +60,6 @@ const Login = () => {
 
       const { access_token,token_role } = await response.json();
       const role = token_role.toLowerCase();
-      console.log(token_role)
       login({ access_token, role });
       const route = getRoleSpecificRoute(role);
       navigate(route, { replace: true });

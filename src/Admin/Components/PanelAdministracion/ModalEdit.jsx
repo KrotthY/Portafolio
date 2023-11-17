@@ -83,7 +83,7 @@ const ModalEdit = ({onClose,showModal}) => {
           </div>
           <div>
           <Typography className="-mb-2" variant="h6">
-            Servicios
+            Servicios disponibles
           </Typography>
           <div className="grid grid-cols-2 py-2">
             <span className="flex items-center">

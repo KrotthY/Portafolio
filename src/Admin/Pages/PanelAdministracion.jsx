@@ -6,6 +6,7 @@ import ModalEdit from "../Components/PanelAdministracion/ModalEdit";
 import ModalView from "../Components/PanelAdministracion/ModalView";
 import ModalMaintence from "../Components/PanelAdministracion/ModalMaintence";
 import ModalDelete from "../Components/PanelAdministracion/ModalDelete";
+import ModalCreate from "../Components/PanelAdministracion/ModalCreate";
 
 const URL_API_GET_DEPTO = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos/admin';
 
@@ -143,6 +144,17 @@ const PanelAdministracion = () => {
       setCurrentPage(pageNumber);
     };
 
+  const [showModalCreate, setShowModalCreate] = useState(false);
+  const handleOpenModalCreate = (e) => {
+    e.preventDefault();
+    setShowModalCreate(true);
+  }
+
+  const closeModalCreate = () => {
+    setShowModalCreate(false);
+  }
+
+
   const [showModalEdit, setShowModalEdit] = useState(false);
 
   const handleOpenModalEdit = (e) => {
@@ -211,7 +223,6 @@ const PanelAdministracion = () => {
         <div className="bg-white  relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
-
               <form className="flex items-center">
                 <label htmlFor="simple-search" className="sr-only">Buscar</label>
                 <div className="relative w-full">
@@ -229,6 +240,11 @@ const PanelAdministracion = () => {
                 </div>
               </form>
 
+            </div>
+            <div>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleOpenModalCreate}
+              > Crear Departamento </button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -303,6 +319,7 @@ const PanelAdministracion = () => {
           </div>
         </div>
       </div>
+    <ModalCreate onClose={closeModalCreate} showModal={showModalCreate} />
     <ModalEdit onClose={closeModalEdit} showModal={showModalEdit} />
     <ModalView onClose={closeModalView} showModal={showModalView} />
     <ModalMaintence onClose={closeModalMaintence} showModal={showModalMaintence} />

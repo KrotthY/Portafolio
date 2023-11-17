@@ -34,10 +34,10 @@ const ModalView = ({onClose,showModal}) => {
             Huesped titular
           </Typography>
         <div className="flex items-center justify-between gap-6 my-12 border-b-4 pb-12 border-b-gray-200">
-          <Input label="Rut" size="xs" />
-          <Input label="Nombre" size="xs" />
-          <Input label="Apellido" size="xs" />
-          <Input label="Teléfono" size="xs" />
+          <Input label="Rut" size="md" />
+          <Input label="Nombre" size="md" />
+          <Input label="Apellido" size="md" />
+          <Input label="Teléfono" size="md" />
         </div>
 
         <Typography className="-mb-2" variant="h6">
@@ -47,21 +47,21 @@ const ModalView = ({onClose,showModal}) => {
           <div className="flex items-center justify-between gap-6 my-6">
           <span className="w-1/2 ">Acompañante 1</span>
 
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
+            <Input label="Nombre" size="md"  />
+            <Input label="Apellido" size="md" />
+            <Input label="Teléfono" size="md" />
           </div>
           <div className="flex items-center justify-between gap-6 my-6">
           <span className="w-1/2 ">Acompañante 2</span>
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
+            <Input label="Nombre" size="md"  />
+            <Input label="Apellido" size="md" />
+            <Input label="Teléfono" size="md" />
           </div>
           <div className="flex items-center justify-between gap-6 my-6">
           <span className="w-1/2">Acompañante3</span>
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
+            <Input label="Nombre" size="md"  />
+            <Input label="Apellido" size="md" />
+            <Input label="Teléfono" size="md" />
           </div>
         </div>
         <Typography className="-mb-2" variant="h5">
