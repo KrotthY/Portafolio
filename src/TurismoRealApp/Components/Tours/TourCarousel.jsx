@@ -11,8 +11,9 @@ const TourCarousel = () => {
           alt="image 1"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 grid h-full w-full place-items-center bg-black/50">
+        <div className="absolute inset-0 grid h-full w-full place-items-center bg-black/25">
           <div className="w-3/4 text-center md:w-2/4">
+            <div className="w-auto">
             <Typography
               variant="h1"
               color="white"
@@ -20,10 +21,11 @@ const TourCarousel = () => {
             >
               Trekking
             </Typography>
+            </div>
             <Typography
               variant="lead"
               color="white"
-              className="mb-12 opacity-80"
+              className="mb-12 "
             >
               Las mejores rutas de trecking con paisajes inolvidables y muchos mas.
             </Typography>
@@ -41,7 +43,7 @@ const TourCarousel = () => {
           alt="image 2"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 grid h-full w-full items-center bg-black/75">
+        <div className="absolute inset-0 grid h-full w-full items-center bg-black/25">
           <div className="w-3/4 pl-12 md:w-2/4 md:pl-20 lg:pl-32">
             <Typography
               variant="h1"
@@ -66,7 +68,7 @@ const TourCarousel = () => {
           alt="image 3"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 grid h-full w-full items-end bg-black/75">
+        <div className="absolute inset-0 grid h-full w-full items-end bg-black/25">
           <div className="w-3/4 pl-12 pb-12 md:w-2/4 md:pl-20 md:pb-20 lg:pl-32 lg:pb-32">
             <Typography
               variant="h1"

@@ -6,7 +6,7 @@ const HeroDepartment = () => {
   return (
     <>
       <div className="py-10 bg-gray-50 flex items-center">
-        <section className="w-full bg-cover bg-center py-32" style={{ backgroundImage: ` linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),  url(${departmentOne})` }}>
+        <section className="w-full bg-cover bg-center py-32" style={{ backgroundImage: ` linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.1)),  url(${departmentOne})` }}>
           <div className="container mx-5 text-left text-zinc-200">
           <Typography
               variant="h1"

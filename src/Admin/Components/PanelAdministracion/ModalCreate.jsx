@@ -85,7 +85,7 @@ const ModalCreate = ({onClose,showModal}) => {
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear Departamento</span>
+        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear Propiedad</span>
         <IconButton
         color="blue-gray"
         size="sm"

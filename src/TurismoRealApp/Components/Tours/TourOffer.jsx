@@ -51,8 +51,9 @@ const TourOffer = ({ idTour, imgSrc,qtyPerson,description,title,price,status}) =
             <p className="text-xs flex items-center justify-between">
               location
             </p>
-            <p className="text-xs font-normal my-4">
+            <p className="text-xs font-normal my-4  h-16">
               {description}
+
             </p>
             <div className="flex flex-col items-center">
               <p className=" text-xs font-light ">Capacidad</p>
