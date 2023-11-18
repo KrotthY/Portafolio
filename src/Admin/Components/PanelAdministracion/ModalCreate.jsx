@@ -53,7 +53,6 @@ const ModalCreate = ({onClose,showModal}) => {
         active: formData.active,
         tipo: formData.tipo,
       }
-      console.log(crearDepartamento)
       await CreateNewDpto(crearDepartamento);
       onClose();
       reset(); 
@@ -66,7 +65,6 @@ const ModalCreate = ({onClose,showModal}) => {
       
     } catch (error) {
       onClose(); 
-      console.error(error);
       Swal.fire({
         icon: 'error',
         title: 'Error al crear departamento',

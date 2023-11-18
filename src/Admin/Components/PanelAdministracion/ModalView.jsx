@@ -1,27 +1,86 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Select, Option, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
-import { useState } from "react";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+
+const schema = yup.object({
+  nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  numero: yup.string().required('Número requerido').min(3, 'Mín. 3 dígitos').max(50, 'Máx. 50 dígitos'),
+  region: yup.string(),
+  comuna: yup.string(),
+  tipo: yup.string(),
+  tarifa: yup.number().typeError('Tarifa debe ser un número').required('Tarifa requerida').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(999999999, 'Demasiado alto'),
+  direccion: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
+  banos: yup.number().typeError('Baños debe ser un número').required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
+  habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
+  camas: yup.number().typeError('Camas debe ser un número').required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
+  huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
+  active: yup.boolean().required('Estado requerido'),
+});
 
 
 
+const ModalView = ({onClose,showModal,deptoId}) => {
 
-const ModalView = ({onClose,showModal}) => {
+  const {register ,setValue} = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const [tipo, setTipo] = useState('');
-  const [comuna, setComuna] = useState('');
-  const [region, setRegion] = useState('');
+  const URL_API_GET_DEPARTMENTS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos/${deptoId}`;
+  const [deparmentsId, setDeparmentsId] = useState(null);
+
+  useEffect(() => {
+    if(deptoId){
+      const requestOptions = {
+        method: 'GET',
+      };
+      
+      fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeparmentsId(data);
+      })
+      .catch(error => console.log(error));
+    }
+  }, [deptoId, URL_API_GET_DEPARTMENTS_ID])
+
+  useEffect(() => {
+    if(deparmentsId){
+      setValue('nombre', deparmentsId?.NOMBRE);
+      setValue('numero', deparmentsId?.NUMERO);
+      setValue('region', deparmentsId?.NOMBRE_REGION);
+      setValue('tarifa', deparmentsId?.TARIFA_DIARIA);
+      setValue('comuna', deparmentsId?.NOMBRE_COMUNA);
+      setValue('direccion', deparmentsId?.DIRECCION);
+      setValue('descripcion', deparmentsId?.DESCRIPCION);
+      setValue('banos', deparmentsId?.BANOS);
+      setValue('habitaciones', deparmentsId?.DORMITORIOS);
+      setValue('camas', deparmentsId?.CAMAS);
+      setValue('huespedes', deparmentsId?.MAX_HUESPEDES);
+      setValue('active', deparmentsId?.ACTIVO === 'S'? true : false);
+      setValue('tipo', deparmentsId?.TIPO);
+
+
+    }
+
+  }, [deparmentsId,setValue])
 
   return (
-    <Dialog open={showModal}  aria-labelledby="modalCrear" size="xl"
+    <Dialog open={showModal}  aria-labelledby="modalActualizar" size="xl"
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Ver Propiedad</span>
+        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Editar Propiedad  <span className="font-normal"> - {deparmentsId?.NOMBRE}</span></span>
         <IconButton
         color="blue-gray"
         size="sm"
         variant="text"
-        onClick={onClose}
+        onClick={ () => {
+          onClose();
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,83 +98,66 @@ const ModalView = ({onClose,showModal}) => {
         </svg>
       </IconButton>
       </DialogHeader>
+      <form >
       <DialogBody>
         <Typography>
           Datos de la propiedad
         </Typography>
         <div className="grid grid-cols-2  gap-6 my-12 border-b-4 pb-12 border-b-blue-200">
-          <div className="relative">
-            <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
-            disabled
+          <div className="relative bg-gray-100 ">
+            <Input type="text" name="nombre" color="blue" label="Nombre" size="md" readOnly
+              { ...register("nombre") }
             />
           </div>
+
 
           <div className="flex  justify-center items-center gap-11">
-            <div className="relative w-full">
+            <div className="relative bg-gray-100  w-full">
               <Input color="blue" label="Número" name="numero" size="md" 
+              { ...register("numero") }
               type="text"
-              disabled
+              readOnly
               />
             </div>
-            <div className="relative w-full">
-              <Select color="blue" label="Tipo de Propiedad" size="md"
-              value={tipo}
-              disabled
-              onChange={e =>{
-                setTipo(e)
-              }} 
-              >
-                <Option value="Departamento">Departamento</Option>
-                <Option value="Casa">Casa</Option>
-              </Select>
-
+            <div className="relative bg-gray-100 w-full">
+            <Input color="blue" label="Tipo de Propiedad" size="md"  name="tipo"
+            { ...register("tipo") }
+            readOnly
+            />
             </div>
           </div>
-          <div className="relative">
-            <Select color="blue" label="Región" size="md"
-            value={region}
-            disabled
-            onChange={e =>{
-              setRegion(e)
-            }}
-            >
-              <Option value="1">Region 1</Option>
-              <Option value="2">Material Tailwind React</Option>
-            </Select>
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Región" size="md"  name="region"
+            { ...register("region") }
+            readOnly
+            />
           </div>
-          <div className="relative">
+          <div className="relative bg-gray-100">
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
-            disabled
+            { ...register("tarifa") }
             type="number"
+            readOnly
             />
           </div>
-          <div className="relative">
-            <Select color="blue" label="Comuna" size="md"
-            disabled
-            value={comuna}
-            onChange={e =>{ 
-              setComuna(e) 
-            }}
-
-            >
-              <Option value="1" >comuna 1</Option>
-              <Option value="2" >Material Tailwind React</Option>
-              <Option value="3" >Material Tailwind Vue</Option>
-            </Select>
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Comuna" size="md"  name="Comuna"
+            { ...register("comuna") }
+            readOnly
+            />
           </div>
-          <div className="relative">
-            <Input color="blue" label="Calle" size="md"  name="calle"
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Dirección" size="md"  name="direccion"
+            { ...register("direccion") }
             type="text"
-            disabled
+            readOnly
             />
           </div>
           <div className="relative">
-            <Textarea  color="blue" label="Descripción" size="md" name="descripcion"
+            <Textarea style={{backgroundColor:"#f5f5f5"}}   color="blue" label="Descripción" size="md" name="descripcion"
+            { ...register("descripcion") }
             type="text"
-            disabled
-
+            readOnly
             />
-  
           </div>
           <div className="grid w-full grid-cols-1 md:grid-cols-2  gap-4">
             <div className="grid grid-cols-2 grid-rows-2 w-full h-full gap-2">
@@ -150,40 +192,53 @@ const ModalView = ({onClose,showModal}) => {
             </div>
           </div>
         </div>
-        <Typography>
+        <Typography className="mb-6">
           Datos del Departamento
         </Typography>
         <div className="grid grid-cols-4  gap-6">
-          <div className="relative">
+          <div className="relative bg-gray-50">
             <Input color="blue" label="Cantidad de Baños" size="md" 
+              { ...register("banos") }
               type="number"
-              disabled
+              name="banos"
+              readOnly
+            />
+          
+          </div>
+          <div className="relative bg-gray-50">
+            <Input name="habitaciones" color="blue" label="Cantidad de Habitaciones" size="md"  
+              { ...register("habitaciones") }
+              type="number"
+              max={10} min={1}
+              readOnly
             />
 
           </div>
-          <div className="relative">
-            <Input name="habitaciones" color="blue" label="Cantidad de Habitaciones" size="md"  
-              type="number"
-              disabled
-            />
-          </div>
-          <div>
+          <div className="relative bg-gray-50">
             <Input name="camas" color="blue" label="Cantidad de Camas" size="md"  
+              { ...register("camas") }
+              max={20} min={1}
               type="number"
-              disabled
+              readOnly
             />
           </div>
-          <div className="relative">
+          <div className="relative bg-gray-50">
             <Input color="blue" label="Cantidad de Huespedes" size="md"  max={20} min={1} 
+              { ...register("huespedes") }
               type="number"
-              disabled
+              name="huespedes"
+              readOnly
             />
           </div>
+    
+
         </div>
         <div className="flex items-center justify-center my-6 ">
           <span className="flex items-center">
-            <Checkbox color="blue" defaultChecked size="sm"
+            <Checkbox color="blue"  size="sm"
             name="active"
+            { ...register("active") }
+
             disabled
             />
             Habilitar departamento 
@@ -193,14 +248,18 @@ const ModalView = ({onClose,showModal}) => {
 
       </DialogBody>
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
-        <button
-          onClick={onClose}
+      <button
+            onClick={ () => {
+              onClose();
+            }}
           type="button"
-          className="text-white   bg-gray-500 hover:bg-gray-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
+          className="text-white bg-gray-900 hover:bg-gray-300 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
         >
-        Cerrar ventana
+          Cerrar Ventana
         </button>
+
       </DialogFooter>
+      </form>
     </Dialog>
   );
 };
@@ -208,6 +267,7 @@ const ModalView = ({onClose,showModal}) => {
 ModalView.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
+  deptoId: PropTypes.number,
 }
 
 export default ModalView;

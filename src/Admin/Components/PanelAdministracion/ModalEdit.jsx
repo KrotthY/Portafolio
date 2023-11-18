@@ -1,12 +1,12 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Select, Option, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
-import { CreateNewDpto } from "../../Api/Departamento/actualizarDpto";
+import { ActualizarDpto } from "../../Api/Departamento/actualizarDpto";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -15,7 +15,7 @@ const schema = yup.object({
   comuna: yup.string(),
   tipo: yup.string(),
   tarifa: yup.number().typeError('Tarifa debe ser un número').required('Tarifa requerida').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(999999999, 'Demasiado alto'),
-  calle: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  direccion: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
   banos: yup.number().typeError('Baños debe ser un número').required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
@@ -26,7 +26,7 @@ const schema = yup.object({
 
 
 
-const ModalEdit = ({onClose,showModal}) => {
+const ModalEdit = ({onClose,showModal,deptoId}) => {
 
   const  { user }  = useSession();
 
@@ -34,17 +34,16 @@ const ModalEdit = ({onClose,showModal}) => {
     resolver: yupResolver(schema),
   });
 
-
   const handleSubmitForm = async (formData) => {
     try {
-      const crearDepartamento = {
+      const actualizarDepartamento = {
         access_token: user.access_token,
         nombre: formData.nombre,
         numero: formData.numero,
         region: formData.region,
         tarifa: formData.tarifa,
         comuna: formData.comuna,
-        calle: formData.calle,
+        direccion: formData.direccion,
         descripcion: formData.descripcion,
         banos: formData.banos,
         habitaciones: formData.habitaciones,
@@ -53,8 +52,7 @@ const ModalEdit = ({onClose,showModal}) => {
         active: formData.active,
         tipo: formData.tipo,
       }
-      console.log(crearDepartamento)
-      await CreateNewDpto(crearDepartamento);
+      await ActualizarDpto(actualizarDepartamento);
       onClose();
       reset(); 
       Swal.fire({
@@ -66,7 +64,6 @@ const ModalEdit = ({onClose,showModal}) => {
       
     } catch (error) {
       onClose(); 
-      console.error(error);
       Swal.fire({
         icon: 'error',
         title: 'Error al actualizar departamento',
@@ -76,16 +73,50 @@ const ModalEdit = ({onClose,showModal}) => {
     }
   }
 
-  const [tipo, setTipo] = useState('');
-  const [comuna, setComuna] = useState('');
-  const [region, setRegion] = useState('');
+  const URL_API_GET_DEPARTMENTS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos/${deptoId}`;
+  const [deparmentsId, setDeparmentsId] = useState(null);
 
+  useEffect(() => {
+    if(deptoId){
+      const requestOptions = {
+        method: 'GET',
+      };
+      
+      fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeparmentsId(data);
+      })
+      .catch(error => console.log(error));
+    }
+  }, [deptoId, URL_API_GET_DEPARTMENTS_ID])
+
+  useEffect(() => {
+    if(deparmentsId){
+      setValue('nombre', deparmentsId?.NOMBRE);
+      setValue('numero', deparmentsId?.NUMERO);
+      setValue('region', deparmentsId?.NOMBRE_REGION);
+      setValue('tarifa', deparmentsId?.TARIFA_DIARIA);
+      setValue('comuna', deparmentsId?.NOMBRE_COMUNA);
+      setValue('direccion', deparmentsId?.DIRECCION);
+      setValue('descripcion', deparmentsId?.DESCRIPCION);
+      setValue('banos', deparmentsId?.BANOS);
+      setValue('habitaciones', deparmentsId?.DORMITORIOS);
+      setValue('camas', deparmentsId?.CAMAS);
+      setValue('huespedes', deparmentsId?.MAX_HUESPEDES);
+      setValue('active', deparmentsId?.ACTIVO === 'S'? true : false);
+      setValue('tipo', deparmentsId?.TIPO);
+
+
+    }
+
+  }, [deparmentsId,setValue])
   return (
     <Dialog open={showModal}  aria-labelledby="modalActualizar" size="xl"
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Editar Propiedad</span>
+        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Editar Propiedad  <span className="font-normal"> - {deparmentsId?.NOMBRE}</span></span>
         <IconButton
         color="blue-gray"
         size="sm"
@@ -133,60 +164,30 @@ const ModalEdit = ({onClose,showModal}) => {
 
 
           <div className="flex  justify-center items-center gap-11">
-            <div className="relative w-full">
+            <div className="relative bg-gray-100  w-full">
               <Input color="blue" label="Número" name="numero" size="md" 
               { ...register("numero") }
               type="text"
-              max={50} min={3}
-              error={Boolean(errors.numero)}
               success={!errors.numero  && getValues('numero') }
+              readOnly
               />
-              {errors.numero && (
-              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.numero.message}
-              </div>
-              )}
             </div>
-            <div className="relative w-full">
-              <Select color="blue" label="Tipo de Propiedad" size="md"
-              value={tipo}
-              onChange={e =>{
-                setValue('tipo',e)
-                setTipo(e)
-              }}
-              error={Boolean(errors.tipo)}
-              success={!errors.tipo  && getValues('tipo') }
-              
-              >
-                <Option value="Departamento">Departamento</Option>
-                <Option value="Casa">Casa</Option>
-              </Select>
-              {errors.tipo && (
-              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.tipo.message}
-              </div>
-              )}
+            <div className="relative bg-gray-100 w-full">
+            <Input color="blue" label="Tipo de Propiedad" size="md"  name="tipo"
+            { ...register("tipo") }
+            success={!errors.tipo  && getValues('tipo') }
+
+            readOnly
+            />
             </div>
           </div>
-          <div className="relative">
-            <Select color="blue" label="Región" size="md"
-            value={region}
-            error={Boolean(errors.region)}
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Región" size="md"  name="region"
+            { ...register("region") }
             success={!errors.region  && getValues('region') }
-            onChange={e =>{
-              setValue('region',e)
-              setRegion(e)
-            }}
 
-            >
-              <Option value="1">Region 1</Option>
-              <Option value="2">Material Tailwind React</Option>
-            </Select>
-            {errors.region && (
-              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.region.message}
-              </div>
-              )}
+            readOnly
+            />
           </div>
           <div className="relative">
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
@@ -201,43 +202,26 @@ const ModalEdit = ({onClose,showModal}) => {
               </div>
               )}
           </div>
-          <div className="relative">
-            <Select color="blue" label="Comuna" size="md"
-            value={comuna}
-            error={Boolean(errors.comuna)}
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Comuna" size="md"  name="Comuna"
+            { ...register("comuna") }
             success={!errors.comuna  && getValues('comuna') }
-            onChange={e =>{ 
-              setValue('comuna',e)
-              setComuna(e) 
-            }}
 
-            >
-              <Option value="1" >comuna 1</Option>
-              <Option value="2" >Material Tailwind React</Option>
-              <Option value="3" >Material Tailwind Vue</Option>
-            </Select>
-            {errors.comuna && (
-              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.comuna.message}
-              </div>
-              )}
+            readOnly
+            />
           </div>
-          <div className="relative">
-            <Input color="blue" label="Calle" size="md"  name="calle"
-            { ...register("calle") }
+          <div className="relative bg-gray-100">
+            <Input color="blue" label="Dirección" size="md"  name="direccion"
+            { ...register("direccion") }
             type="text"
             max={50} min={3}
-            error={Boolean(errors.calle)}
-            success={!errors.calle  && getValues('calle') }
+            error={Boolean(errors.direccion)}
+            success={!errors.direccion  && getValues('direccion') }
+            readOnly
             />
-            {errors.calle && (
-              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.calle.message}
-              </div>
-            )}
           </div>
           <div className="relative">
-            <Textarea  color="blue" label="Descripción" size="md" name="descripcion"
+            <Textarea   color="blue" label="Descripción" size="md" name="descripcion"
             { ...register("descripcion") }
             max={250} min={10}
             type="text"
@@ -283,7 +267,7 @@ const ModalEdit = ({onClose,showModal}) => {
             </div>
           </div>
         </div>
-        <Typography>
+        <Typography className="mb-6">
           Datos del Departamento
         </Typography>
         <div className="grid grid-cols-4  gap-6">
@@ -294,7 +278,7 @@ const ModalEdit = ({onClose,showModal}) => {
               name="banos"
               max={10} min={1}
               error={Boolean(errors.banos)}
-              success={!errors.banos  && getValues('message') }
+              success={!errors.banos  && getValues('banos') }
             />
             {errors.banos && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -349,12 +333,9 @@ const ModalEdit = ({onClose,showModal}) => {
         </div>
         <div className="flex items-center justify-center my-6 ">
           <span className="flex items-center">
-            <Checkbox color="blue" defaultChecked size="sm"
+            <Checkbox color="blue"  size="sm"
             name="active"
             { ...register("active") }
-            error={Boolean(errors.active)}
-            success={!errors.active  && getValues('active') }
-
             />
             Habilitar departamento 
           </span>
@@ -389,6 +370,7 @@ const ModalEdit = ({onClose,showModal}) => {
 ModalEdit.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
+  deptoId: PropTypes.number,
 }
 
 export default ModalEdit;

@@ -1,6 +1,6 @@
 const URL_API_CREATE_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_departamento`;
 
-export const CreateNewDpto = async (crearDepartamento) => {
+export const ActualizarDpto = async (crearDepartamento) => {
 
   const queryParams = {
     name: crearDepartamento.nombre,

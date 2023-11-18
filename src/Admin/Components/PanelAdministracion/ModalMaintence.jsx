@@ -1,17 +1,120 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
+import { useEffect, useState } from "react";
+import Datepicker from "react-tailwindcss-datepicker";
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import useSession from "../../../Auth/Context/UseSession";
+import { CrearMatencion } from "../../Api/Departamento/crearMantencion";
+import Swal from "sweetalert2";
 
-const ModalMaintence = ({onClose,showModal}) => {
+const schema = yup.object({
+  tipoMantencion: yup.string().required(),
+  encargado: yup.string().required('Encargado requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+});
+
+const ModalMaintence = ({onClose,showModal,deptoId}) => {
+  const { user } = useSession();
+  const [tipoMantencion, setTipoMantencion] = useState('');
+  const [listaTransformada, setListaTransformada] = useState([]);
+  const [dateToday, setDateToday] = useState({
+    startDate: null,
+    endDate: null
+  });
+  const URL_API_GET_DEPARTMENTS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos/${deptoId}`;
+  const [deparmentsId, setDeparmentsId] = useState(null);
+  const today = new Date();
+  const oneYearLater = new Date();
+  oneYearLater.setFullYear(today.getFullYear() + 1);
+  const { register, handleSubmit, formState: { errors } , setValue,getValues ,reset} = useForm({
+    resolver: yupResolver(schema)
+  });
+
+  const handleSubmitForm = async (data) => {
+    try{
+      const asignarMantencion = {
+        "access_token": user.access_token,
+        "tipoMantencion": data.tipoMantencion,
+        "encargado": data.encargado,
+        "startDate": dateToday.startDate,
+        "endDate": dateToday.endDate
+      }
+
+      console.log(asignarMantencion);
+      await CrearMatencion(asignarMantencion);
+      reset(); 
+      onClose();
+      setDateToday(null)
+      Swal.fire({
+        icon: 'success',
+        title: 'Asignacion de Mantención',
+        text: 'La mantención se ha asignado correctamente',
+        confirmButtonText: 'Ok'
+      });
+      
+    } catch (error) {
+      onClose(); 
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al asignar Mantención',
+        text: error,
+        confirmButtonText: 'Ok'
+      });
+    }
+  };
+
+  const handleValueChange = newDateSelected => {
+    setDateToday(newDateSelected);
+  };
+
+  useEffect(() => {
+    if(deptoId){
+      const requestOptions = {
+        method: 'GET',
+      };
+      
+      fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeparmentsId(data);
+      })
+      .catch(error => console.log(error));
+    }
+  }, [deptoId, URL_API_GET_DEPARTMENTS_ID]);
+  
+  useEffect(() => {
+    if (deparmentsId && deparmentsId.DIAS_RESERVADOS) {
+      const listaApiTransformada = deparmentsId.DIAS_RESERVADOS.map(obj => ({
+        startDate: obj.STARTDATE,
+        endDate: obj.ENDDATE
+      }));
+
+      setListaTransformada(listaApiTransformada);
+    }
+    else {
+      setListaTransformada([]);
+    }
+  }, [deparmentsId]); 
+
+
+
+
+
 
   return (
-    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="md">
+    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="xs">
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Proceso de Registro</span>
+        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Mantención de Propiedad</span>
         <IconButton
         color="blue-gray"
         size="sm"
         variant="text"
-        onClick={onClose}
+        onClick={ ()=>{
+          reset();
+          setDateToday(null)
+          onClose();
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -29,98 +132,96 @@ const ModalMaintence = ({onClose,showModal}) => {
         </svg>
       </IconButton>
       </DialogHeader>
+      <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-          <Typography className="-mb-2" variant="h5">
-            Huesped titular
+        <div className="flex items-center justify-center">
+          
+          <Typography className="-mb-2 mr-5" variant="h5">
+            Matención de Nombre de propiedad
           </Typography>
-        <div className="flex items-center justify-between gap-6 my-12 border-b-4 pb-12 border-b-gray-200">
-          <Input label="Rut" size="xs" />
-          <Input label="Nombre" size="xs" />
-          <Input label="Apellido" size="xs" />
-          <Input label="Teléfono" size="xs" />
+
+        </div>
+        <div className="flex items-center justify-between gap-6 my-12 ">
+          <div className="relative w-full">
+
+            <Select color="blue" label="Tipo de Mantenimiento" size="md"
+              value={tipoMantencion}
+              onChange={e =>{ 
+                setTipoMantencion(e) 
+                setValue("tipoMantencion", e);
+              }}
+              error={Boolean(errors.tipoMantencion)}
+              success={Boolean(!errors.tipoMantencion  && getValues('tipoMantencion')) }
+              >
+              <Option value="1" >Mantenimiento Preventivo</Option>
+              <Option value="2" >Mantenimiento Correctivo</Option>
+              <Option value="3" >Mantenimiento Cosmético</Option>
+              <Option value="4" >Mantenimiento Emergencia</Option>
+              <Option value="5" >Mantenimiento Temporada</Option>
+              <Option value="6" >Mantenimiento Seguridad</Option>
+              <Option value="7" >Mantenimiento Legal</Option>
+            </Select>
+            {errors.tipoMantencion && (
+              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                {errors.tipoMantencion.message}
+              </div>
+              )}
+          </div>
+          <div className="relative w-full">
+            <Input color="blue" type="text"  label="Encargado" size="md" 
+              {...register("encargado")}
+              max={50} min={3}
+              error={Boolean(errors.encargado)}
+              success={Boolean(!errors.encargado  && getValues('encargado')) }
+            />
+            {errors.encargado && (
+              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                {errors.encargado.message}
+              </div>
+              )}
+          </div>
+        </div>
+        <div className="bg-blue-100/50 p-2 rounded-lg my-6 flex flex-col items-center w-80 mx-auto">
+        <Typography className="my-2 font-medium" color="black">
+            Fechas de Mantención
+          </Typography>
+          <Datepicker 
+            classNames="text-center"
+            useRange={false} 
+            value={dateToday} 
+            readOnly={true} 
+            onChange={handleValueChange} 
+            minDate={today}
+            maxDate={oneYearLater}
+            primaryColor={"blue"}
+            disabledDates={listaTransformada}
+            
+          />
         </div>
 
-        <Typography className="-mb-2" variant="h6">
-            Acompañantes
-          </Typography>
-        <div className="font-normal border-b-4 pb-12 border-b-gray-200 my-12">
-          <div className="flex items-center justify-between gap-6 my-6">
-          <span className="w-1/2 ">Acompañante 1</span>
-
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
-          </div>
-          <div className="flex items-center justify-between gap-6 my-6">
-          <span className="w-1/2 ">Acompañante 2</span>
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
-          </div>
-          <div className="flex items-center justify-between gap-6 my-6">
-          <span className="w-1/2">Acompañante3</span>
-            <Input label="Nombre" size="xs"  />
-            <Input label="Apellido" size="xs" />
-            <Input label="Teléfono" size="xs" />
-          </div>
-        </div>
-        <Typography className="-mb-2" variant="h5">
-            Resumen de reserva
-        </Typography>
-        <div className="grid grid-cols-3 my-12 gap-2 text-left text-base rounded-lg bg-blue-50/30   p-6 ">
-          <div >
-            <span className="font-normal">Nombre:</span>
-            <span className="italic font-semibold"> Departamento 1</span> 
-          </div>
-          <div>
-            <span className="font-normal">Fecha de entrada:</span>
-            <span className="italic font-semibold"> 20/10/2021</span>
-          </div>
-          <div>
-            <span className="font-normal">Fecha de salida:</span>
-            <span className="italic font-semibold"> 20/10/2021</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-left text-base border-2 rounded-lg bg-blue-100/30  p-3 ">
-          <div>
-            <span className="font-normal">Total de noches:</span>
-            <span className="italic font-semibold"> 1</span>
-          </div>
-          <div>
-            <span className="font-normal">Total de personas:</span>
-            <span className="italic font-semibold"> 2</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 my-12 gap-2 text-left text-base border-4 rounded-lg bg-blue-200/30   p-6 ">
-          <div>
-            <span className="font-normal">Costo diario:</span>
-            <span className="italic font-semibold"> $100.000</span>
-          </div>
-          <div>
-            <span className="font-normal">Monto Abonado:</span>
-            <span className="italic font-semibold"> $100.000</span>
-          </div>
-          <div>
-            <span className="font-normal">Monto Total Adeudado:</span>
-            <span className="italic font-semibold"> $100.000</span>
-          </div>
-        </div>
 
 
       </DialogBody>
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
         <button
-          onClick={onClose}
+        type="button"
+        onClick={ ()=>{
+          reset();
+          setDateToday(null)
+          onClose();
+        }}
           className="text-gray-500 bg-white hover:bg-red-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
         >
           Cancelar
         </button>
         <button
+          type="submit"
           className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
         >
-          Pagar  Total
+          Crear Mantención
         </button>
       </DialogFooter>
+      </form>
     </Dialog>
   );
 };
@@ -128,6 +229,7 @@ const ModalMaintence = ({onClose,showModal}) => {
 ModalMaintence.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
+  deptoId: PropTypes.number,
 }
 
 export default ModalMaintence;
