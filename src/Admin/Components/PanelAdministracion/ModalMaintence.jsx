@@ -41,7 +41,6 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
         "endDate": dateToday.endDate
       }
 
-      console.log(asignarMantencion);
       await CrearMatencion(asignarMantencion);
       reset(); 
       onClose();

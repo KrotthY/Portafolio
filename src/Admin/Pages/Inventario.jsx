@@ -3,20 +3,21 @@ import {  Chip, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import useSession from "../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
-import { eliminarServicios } from "../Api/Servicios/eliminarServicios";
-import { ModalCreateServicios, ModalEditServicios } from "../Components";
+import ModalEditInventario from "../Components/Inventario/ModalEditInventario";
+import ModalCreateInventario from "../Components/Inventario/ModalCreateInventario";
+import { eliminarInventario } from "../Api/Inventario/eliminarInventario";
 
-const URL_API_GET_INVENTARIO = 'https://fastapi-gv342xsbja-tl.a.run.app/servicios';
+const URL_API_GET_INVENTARIO = 'https://fastapi-gv342xsbja-tl.a.run.app/inventario';
 
 
-const Servicios = () => {
+const Inventario = () => {
 
-  const [currentServicioId, setCurrentServicioId] = useState(null);
-  const [ servicios , setServicios ] = useState([]);
+  const [currentInventarioId, setCurrentInventarioId] = useState(null);
+  const [ inventario , setInventario ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
   const { user } = useSession();
 
-  const cargarServicios =  () => {
+  const cargarInventario =  () => {
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -28,22 +29,22 @@ const Servicios = () => {
     fetch(URL_API_GET_INVENTARIO,requestOptions)
       .then(response => response.json())
       .then(data => {
-        setServicios(data)
+        setInventario(data)
       })
       .catch(error => console.log(error))
   };
 
   useEffect(() => {
-    cargarServicios();
+    cargarInventario();
   },[]);
 
 
 
-  const evaluateStatusBtn = (idServicio) => {
+  const evaluateStatusBtn = (idInventario) => {
     return (
       <div className="font-extrabold flex items-center gap-x-6">
-        <Tooltip content="Editar servicio" placement="top">
-        <button onClick={(e)=>{handleOpenModalEdit(e,idServicio)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
+        <Tooltip content="Editar inventario" placement="top">
+        <button onClick={(e)=>{handleOpenModalEdit(e,idInventario)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
           <span className="absolute right-0 h-full w-11 rounded-lg bg-blue-300 hover:bg-blue-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
           <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
             <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>
@@ -53,8 +54,8 @@ const Servicios = () => {
         </Tooltip>
 
 
-        <Tooltip content="Borrar servicio" placement="top">
-        <button onClick={(e)=>{handleServiceDelete(e,idServicio)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
+        <Tooltip content="Borrar inventario" placement="top">
+        <button onClick={(e)=>{handleDeptoDelete(e,idInventario)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
           <span className="absolute right-0 h-full w-11 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
           <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
           </span>
@@ -108,11 +109,11 @@ const Servicios = () => {
     }
   };
 
-  const filteredServicios = servicios.filter((inventarioItem) => {
+  const filteredInventario = inventario.filter((inventarioItem) => {
     return Object.values(inventarioItem).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()));
   })
 
-  const totalItems = filteredServicios.length;
+  const totalItems = filteredInventario.length;
   const itemsPerPage = 10;
     const [currentPage, setCurrentPage] = useState(1);
   
@@ -132,21 +133,21 @@ const Servicios = () => {
   }
 
   const closeModalCreate = () => {
-    cargarServicios();
+    cargarInventario();
     setShowModalCreate(false);
   }
 
 
   const [showModalEdit, setShowModalEdit] = useState(false);
 
-  const handleOpenModalEdit = (e,idServicios) => {
+  const handleOpenModalEdit = (e,idInventario) => {
     e.preventDefault();
-    setCurrentServicioId(idServicios)
+    setCurrentInventarioId(idInventario)
     setShowModalEdit(true);
   }
   
   const closeModalEdit = () => {
-    cargarServicios();
+    cargarInventario();
     setShowModalEdit(false);
   }
 
@@ -154,60 +155,68 @@ const Servicios = () => {
   
 
 
-  const handleServiceDelete = async (e, servicioId) => {
+  const handleDeptoDelete = (e,idInventario) => {
     e.preventDefault();
     try {
+      const borrarInventario = {
+        "access_token":user.access_token,
+        "inventarioId":idInventario
+      }
 
-      const confirmResult = await Swal.fire({
+      Swal.fire({
         title: '¿Estás seguro?',
         text: "No podrás revertir esta acción",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#4299e1',
         cancelButtonColor: '#EF4444',
-        confirmButtonText: 'Si, borrar servicio',
+        confirmButtonText: 'Si, borrar inventario',
         cancelButtonText: 'Cancelar'
-      });
-  
-      if (confirmResult.isConfirmed) {
-        const borrarServicios = {
-          "access_token": user.access_token,
-          "servicioId": servicioId
-        };
-  
-        await eliminarServicios(borrarServicios);
-        cargarServicios();
-        Swal.fire({
-          icon: 'success',
-          title: 'Servicio eliminado',
-          text: 'El servicio se ha eliminado correctamente',
-          confirmButtonText: 'Ok'
-        });
-      }
+      }).then((result) => {
+        if (result.isConfirmed) {
+        
+          eliminarInventario(borrarInventario)
+          cargarInventario()  
+          Swal.fire({
+            icon: 'success',
+            title: 'Inventario eliminado',
+            text: 'El inventario se ha eliminado correctamente',
+            confirmButtonText: 'Ok'
+          })
+        }
+      })
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Error al eliminar servicio',
-        text: error.toString(),
+        title: 'Error al eliminar inventario',
+        text: error,
         confirmButtonText: 'Ok'
       });
     }
-  };
+  }
   
-  
+
+  function formatNumberWithDollar(value) {
+    value = value.toString();
+    const numericValue = value.replace(/\$|\.|,/g, '');
+    const formattedValue = new Intl.NumberFormat().format(numericValue);
+    return `$${formattedValue}`;
+  }
+
+
   return (
     <>
       <div className="flex flex-col items-center ">
       <Typography className="py-6" variant="h3">
-        Administración de Servicios
+        Administración de Inventario
       </Typography>
       </div>        
       <div className="mb-2 ml-6 flex flex-col justify-start gap-8">
           <Typography variant="h5" color="blue-gray">
-            Lista de Servicios
+            Lista de Inventario
           </Typography>
           <Typography color="gray" className=" font-normal">
-          En esta Seccion podras gestionar los servicios asociados a sus propiedades.
+          En esta Seccion podras gestionar los inventarios de los departamentos de tu edificio.
           </Typography>
       </div>
       <section className="my-9 w-full">
@@ -237,7 +246,7 @@ const Servicios = () => {
             <div>
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleOpenModalCreate}
-              > Crear Servicios </button>
+              > Crear Inventario </button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -246,21 +255,28 @@ const Servicios = () => {
                 <tr>
                   <th scope="col" className="px-4 py-3 w-auto">ID</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Nombre</th>
+                  <th scope="col" className="px-4 py-3 w-auto">Descripción</th>
                   <th scope="col" className="px-4 py-3 w-auto">Estado</th>
+                  <th scope="col" className="px-4 py-3 w-auto">Costo</th> 
+                  <th scope="col" className="px-4 py-3 w-auto">Porcentaje de Multa</th>
+                  <th scope="col" className="px-4 py-3 w-auto">Nombre de departamento</th>
                   <th scope="col" className="relative py-3.5 px-4 w-auto">Acciones</th> 
                 </tr>
               </thead>
               <tbody>
-                {filteredServicios
+                {filteredInventario
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                .map((serviciosItem) => (
-                  <tr key={serviciosItem.SERVICIO_ID} className="hover:bg-gray-100 italic text-center">
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{serviciosItem.SERVICIO_ID}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{serviciosItem.NOMBRE}</td>
+                .map((inventarioItem) => (
+                  <tr key={inventarioItem.INVENTARIO_ID} className="hover:bg-gray-100 italic text-center">
+                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{inventarioItem.INVENTARIO_ID}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.NOMBRE}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{inventarioItem.DESCRIPCION}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(1)}</td>
-
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{  formatNumberWithDollar(inventarioItem.VALOR) }</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.PORCENTAJE_MULTA}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.NOMBRE_DPTO}</td>
                     <td className="px-4 py-4 text-sm flex items-center justify-center">
-                      {evaluateStatusBtn( serviciosItem.SERVICIO_ID)}
+                      {evaluateStatusBtn( inventarioItem.INVENTARIO_ID)}
                     </td>
                   </tr>
                 ))}
@@ -309,12 +325,12 @@ const Servicios = () => {
           </div>
         </div>
       </div>
-    <ModalCreateServicios onClose={closeModalCreate} showModal={showModalCreate} /> 
-    <ModalEditServicios onClose={closeModalEdit} showModal={showModalEdit} servicioId={currentServicioId} /> 
+     <ModalCreateInventario onClose={closeModalCreate} showModal={showModalCreate} /> 
+    <ModalEditInventario onClose={closeModalEdit} showModal={showModalEdit} inventarioId={currentInventarioId} /> 
 
   </section>
     </>
   );
 };
 
-export default Servicios;
+export default Inventario;

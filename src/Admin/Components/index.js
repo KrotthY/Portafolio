@@ -1,0 +1,11 @@
+export * from './Card/Card';
+export { default as Card2 } from './Card/Card2';
+export { default as ModalCreateInventario } from './Inventario/ModalCreateInventario';
+export { default as ModalEditInventario } from './Inventario/ModalEditInventario';
+export { default as ModalCreate } from './PanelAdministracion/ModalCreate';
+export { default as ModalEdit } from './PanelAdministracion/ModalEdit';
+export { default as ModalMaintence } from './PanelAdministracion/ModalMaintence';
+export { default as ModalView } from './PanelAdministracion/ModalView';
+export { default as ModalCreateServicios } from './Servicios/ModalCreateServicios';
+export { default as ModalEditServicios } from './Servicios/ModalEditServicios';
+export * from './Sidebar/Sidebar';

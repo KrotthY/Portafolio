@@ -47,7 +47,7 @@ export function Sidebar() {
               <ListItemPrefix>
                 <BuildingOffice2Icon className="h-5 w-5" />
               </ListItemPrefix>
-              Departamentos
+              Propiedades
             </ListItem>
           </Link>
           <Link to="/admin/servicios-transporte" >
@@ -67,6 +67,16 @@ export function Sidebar() {
                 <GlobeAmericasIcon className="h-5 w-5" />
               </ListItemPrefix>
               Servicio de Turismo
+            </ListItem>
+          </Link>
+          <Link to="/admin/inventario" >
+            <ListItem onClick={ () => SetSelectedSideBar("Inventario") } 
+              className={`  font-normal text-white  ${ SelectedSideBar === "Inventario" ? valueSelected : ''} `}
+              >
+              <ListItemPrefix>
+                <GlobeAmericasIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Inventario
             </ListItem>
           </Link>
           <Link to="/admin/servicios" >
