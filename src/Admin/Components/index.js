@@ -9,3 +9,5 @@ export { default as ModalView } from './PanelAdministracion/ModalView';
 export { default as ModalCreateServicios } from './Servicios/ModalCreateServicios';
 export { default as ModalEditServicios } from './Servicios/ModalEditServicios';
 export * from './Sidebar/Sidebar';
+export { default as ModalCreateTour } from './Tour/ModalCreateTour';
+export { default as ModalEditTour } from './Tour/ModalEditTour';

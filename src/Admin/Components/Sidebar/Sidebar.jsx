@@ -14,7 +14,8 @@ import {
   WrenchScrewdriverIcon,
   PowerIcon,
   GlobeAmericasIcon,
-  ChatBubbleBottomCenterTextIcon
+  ChatBubbleBottomCenterTextIcon,
+  ArchiveBoxIcon
 } from "@heroicons/react/24/solid";
 
 import { useState } from "react";
@@ -32,7 +33,7 @@ export function Sidebar() {
 
   
   return (
-    <Card className="h-[100vh] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-500/5 bg-blue-gray-900  rounded-none ">
+    <Card className="h-[100vh] md:w-1/4 w-full p-4 shadow-xl shadow-blue-gray-500/5 bg-blue-gray-900 rounded-none">
       <div className="mb-2 p-4">
         <Typography variant="h5" color="white">
           Panel de Administración
@@ -45,7 +46,7 @@ export function Sidebar() {
               className= {` font-normal text-white  ${SelectedSideBar === "Departamentos" ? valueSelected : ''}`}
             >
               <ListItemPrefix>
-                <BuildingOffice2Icon className="h-5 w-5" />
+                <BuildingOffice2Icon className="h-6 w-6" />
               </ListItemPrefix>
               Propiedades
             </ListItem>
@@ -54,7 +55,7 @@ export function Sidebar() {
             <ListItem onClick={ () => SetSelectedSideBar("ServicioTransporte") }
             className={`  font-normal text-white  ${ SelectedSideBar === "ServicioTransporte" ? valueSelected : ''} `}>
               <ListItemPrefix>
-                <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
+                <ChatBubbleBottomCenterTextIcon className="h-6 w-6" />
               </ListItemPrefix>
               Servicios de Transporte
             </ListItem>
@@ -64,7 +65,7 @@ export function Sidebar() {
               className={`  font-normal text-white  ${ SelectedSideBar === "ServicioTurismo" ? valueSelected : ''} `}
               >
               <ListItemPrefix>
-                <GlobeAmericasIcon className="h-5 w-5" />
+                <GlobeAmericasIcon className="h-6 w-6" />
               </ListItemPrefix>
               Servicio de Turismo
             </ListItem>
@@ -74,7 +75,7 @@ export function Sidebar() {
               className={`  font-normal text-white  ${ SelectedSideBar === "Inventario" ? valueSelected : ''} `}
               >
               <ListItemPrefix>
-                <GlobeAmericasIcon className="h-5 w-5" />
+                <ArchiveBoxIcon className="h-6 w-6" />
               </ListItemPrefix>
               Inventario
             </ListItem>
@@ -84,7 +85,7 @@ export function Sidebar() {
             className={`  font-normal text-white  ${ SelectedSideBar === "Servicios" ? valueSelected : ''} `}
             >
               <ListItemPrefix>
-                <WrenchScrewdriverIcon className="h-5 w-5" />
+                <WrenchScrewdriverIcon className="h-6 w-6" />
               </ListItemPrefix>
               Servicios
             </ListItem>
@@ -94,7 +95,7 @@ export function Sidebar() {
             className={`  font-normal text-white  ${ SelectedSideBar === "Usuarios" ? valueSelected : ''} `}
             >
               <ListItemPrefix>
-                <UserGroupIcon className="h-5 w-5" />
+                <UserGroupIcon className="h-6 w-6" />
               </ListItemPrefix>
               Usuarios
             </ListItem>
@@ -104,7 +105,7 @@ export function Sidebar() {
             className={`  font-normal text-white  ${ SelectedSideBar === "Reportes" ? valueSelected : ''} `}
             >
               <ListItemPrefix>
-                <PresentationChartBarIcon className="h-5 w-5" />
+                <PresentationChartBarIcon className="h-6 w-6" />
               </ListItemPrefix>
               Reportes
             </ListItem>
@@ -116,7 +117,7 @@ export function Sidebar() {
             className={`  font-normal text-white  ${ SelectedSideBar === "Perfil" ? valueSelected : ''} `}
             >
               <ListItemPrefix>
-                <UserCircleIcon className="h-5 w-5" />
+                <UserCircleIcon className="h-6 w-6" />
               </ListItemPrefix>
               Perfil
             </ListItem>
@@ -130,7 +131,7 @@ export function Sidebar() {
               } } 
               className={`  font-normal text-white  ${ SelectedSideBar === "cerrar" ? valueSelected : ''} `}>
             <ListItemPrefix>
-              <PowerIcon className="h-5 w-5" />
+              <PowerIcon className="h-6 w-6" />
             </ListItemPrefix>
             Cerrar Sesión
           </ListItem>

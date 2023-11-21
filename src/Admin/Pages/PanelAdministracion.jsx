@@ -8,6 +8,7 @@ import ModalMaintence from "../Components/PanelAdministracion/ModalMaintence";
 import ModalCreate from "../Components/PanelAdministracion/ModalCreate";
 import { eliminarDpto } from "../Api/Departamento/eliminarDpto";
 import Swal from "sweetalert2";
+import formatNumberWithDollar from "../Assets/js/funciones";
 
 const URL_API_GET_DEPTO = 'https://fastapi-gv342xsbja-tl.a.run.app/departamentos/admin';
 
@@ -82,8 +83,8 @@ const PanelAdministracion = () => {
   };
 
   const evaluateStatusDepto = (estadoDpto) => {
-    
-    switch (estadoDpto) {
+    const estado = estadoDpto === "S" ? 1 : estadoDpto === "N" ? 2 : 3;
+    switch (estado) {
       case 1:
         return (
 
@@ -106,11 +107,9 @@ const PanelAdministracion = () => {
           size="sm"
           value="Inactivo"
           icon={
-            <span className="mx-auto mt-1 block h-2 w-2 rounded-full bg-red-900 content-['']" />
+            <span className="mx-auto mt-1 block h-2 w-2  bg-red-900 content-['']" />
           }
         />
-
-          
         );
     
       case 3:
@@ -121,7 +120,7 @@ const PanelAdministracion = () => {
           size="sm"
           value="Mantención"
           icon={
-            <span className="mx-auto mt-1 block h-2 w-2 rounded-full bg-red-900 content-['']" />
+            <span className="mx-auto block h-3 w-3 rounded-full bg-red-900 content-['']" />
           }
         />
 
@@ -248,11 +247,11 @@ const PanelAdministracion = () => {
   return (
     <>
       <div className="flex flex-col items-center ">
-      <Typography className="py-6" variant="h3">
+      <Typography variant="h3">
         Administración de Departamentos
       </Typography>
       </div>        
-      <div className="mb-2 ml-6 flex flex-col justify-start gap-8">
+      <div className="flex flex-col justify-start gap-2">
           <Typography variant="h5" color="blue-gray">
             Lista de Departamentos
           </Typography>
@@ -260,10 +259,10 @@ const PanelAdministracion = () => {
           En esta Seccion podras gestionar los departamentos de tu edificio.
           </Typography>
       </div>
-      <section className="my-9 w-full">
-    <div className="bg-gray-100 p-3 sm:p-5">
-      <div className="mx-auto  px-1 lg:px-12">
-        <div className="bg-white  relative shadow-md sm:rounded-lg overflow-hidden">
+    <section className="my-3 w-full ">
+    <div className="bg-gray-100 p-1">
+      <div className="mx-auto">
+        <div className="bg-white relative shadow-2xl overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
               <form className="flex items-center">
@@ -306,11 +305,11 @@ const PanelAdministracion = () => {
                 {filteredDepto
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((departamentoItem) => (
-                  <tr key={departamentoItem.DEPARTAMENTO_ID} className="hover:bg-gray-100 italic ">
+                  <tr key={departamentoItem.DEPARTAMENTO_ID} className="hover:bg-gray-100 italic text-center">
                     <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap ">{departamentoItem.DEPARTAMENTO_ID}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.NOMBRE}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(departamentoItem.ACTIVO)}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.TARIFA_DIARIA}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{formatNumberWithDollar(departamentoItem.TARIFA_DIARIA)}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{departamentoItem.DIRECCION}</td>
                     <td className="px-4 py-4 text-sm flex items-center justify-center">
                       {evaluateStatusBtn( departamentoItem.DEPARTAMENTO_ID)}
