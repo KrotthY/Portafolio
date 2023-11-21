@@ -2,7 +2,7 @@
 const Perfil = () => {
   return (
     <>
-      <div>Perfil</div>
+      <div>Perfil </div>
     </>
   )
 }
