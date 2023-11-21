@@ -1,12 +1,8 @@
-import { BlogCard } from "../Components/Card/Card"
 
 const Perfil = () => {
   return (
     <>
-         <BlogCard />
-      <BlogCard />
-      <BlogCard />
-      <BlogCard />
+      <div>Perfil</div>
     </>
   )
 }
