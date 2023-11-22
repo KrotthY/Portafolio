@@ -66,7 +66,14 @@ const TourOffer = ({ idTour, imgSrc,qtyPerson,description,title,price,status}) =
             </div>    
             <div className="flex justify-center items-center pt-6">
               <p className=" text-xs ">
-                ${price.toLocaleString('de-DE')} desde x persona
+                ${  
+
+                    price && (
+                      
+                      price.toLocaleString('de-DE')
+                    )
+                
+                } desde x persona
               </p>
             </div>
           

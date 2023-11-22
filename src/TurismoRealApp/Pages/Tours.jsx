@@ -29,7 +29,7 @@ const Tours = () => {
 
           {
             tours.map((tour) => (
-              <TourOffer key={tour.TOUR_ID} idTour={tour.TOUR_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" qtyPerson={tour.CAPACIDAD_PARTICIPANTES} description={tour.DESCRIPCION} title={tour.NOMBRE_TOUR} price={tour.VALOR_MINIMO}  status={tour.ACTIVO} />
+              <TourOffer key={tour?.TOUR_ID} idTour={tour?.TOUR_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" qtyPerson={tour?.CAPACIDAD_PARTICIPANTES} description={tour.DESCRIPCION} title={tour.NOMBRE_TOUR} price={tour.VALOR_MINIMO}  status={tour.ACTIVO} />
             ))
           }
           

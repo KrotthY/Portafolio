@@ -83,7 +83,7 @@ const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS
 TourCardReserva.propTypes = {
   DURACION : PropTypes.number.isRequired, //MINUTOS
   CAPACIDAD_PARTICIPANTES : PropTypes.number.isRequired,
-  VALOR_MINIMO : PropTypes.number.isRequired,
+  VALOR_MINIMO : PropTypes.number,
   FECHAS : PropTypes.array.isRequired,
   onDateChange : PropTypes.func.isRequired,
   onTotalCostChange : PropTypes.func.isRequired,
