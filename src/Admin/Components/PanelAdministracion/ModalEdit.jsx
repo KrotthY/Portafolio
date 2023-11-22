@@ -7,6 +7,7 @@ import useSession from "../../../Auth/Context/UseSession";
 import { ActualizarDpto } from "../../Api/Departamento/actualizarDpto";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
+import formatNumberWithDollar from "../../Assets/js/funciones";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -14,13 +15,19 @@ const schema = yup.object({
   region: yup.string(),
   comuna: yup.string(),
   tipo: yup.string(),
-  tarifa: yup.number().typeError('Tarifa debe ser un número').required('Tarifa requerida').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(999999999, 'Demasiado alto'),
+  tarifa: yup.string()
+  .required('La tarifa es requerido')
+  .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de tarifa inválido')
+  .test('is-valid-number', 'La tarifa debe ser un número válido', value => {
+    const number = parseFloat(value.replace(/[^\d]/g, ''));
+    return !isNaN(number) && number > 0 && number <= 999999999;
+  }),
   direccion: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
   banos: yup.number().typeError('Baños debe ser un número').required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   camas: yup.number().typeError('Camas debe ser un número').required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
-  huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
+  huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(30, 'Máx. 20'),
   active: yup.boolean().required('Estado requerido'),
 });
 
@@ -34,30 +41,27 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
     resolver: yupResolver(schema),
   });
 
+
   const handleSubmitForm = async (formData) => {
     try {
       const actualizarDepartamento = {
         access_token: user.access_token,
+        deptoId: deptoId,
         nombre: formData.nombre,
-        numero: formData.numero,
-        region: formData.region,
-        tarifa: formData.tarifa,
-        comuna: formData.comuna,
-        direccion: formData.direccion,
         descripcion: formData.descripcion,
         banos: formData.banos,
         habitaciones: formData.habitaciones,
         camas: formData.camas,
+        tarifa: parseInt(formData.tarifa.replace(/\$|\.|,/g, '')),
+        active: formData.active ? 'S': 'N',
         huespedes: formData.huespedes,
-        active: formData.active,
-        tipo: formData.tipo,
       }
       await ActualizarDpto(actualizarDepartamento);
       onClose();
       reset(); 
       Swal.fire({
         icon: 'success',
-        title: 'Departmaneto actualizado con éxito',
+        title: '¡Departamento actualizado!',
         text: 'El departamento se ha actualizado correctamente',
         confirmButtonText: 'Ok'
       });
@@ -96,7 +100,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
       setValue('nombre', deparmentsId?.NOMBRE);
       setValue('numero', deparmentsId?.NUMERO);
       setValue('region', deparmentsId?.NOMBRE_REGION);
-      setValue('tarifa', deparmentsId?.TARIFA_DIARIA);
+      setValue('tarifa', formatNumberWithDollar(deparmentsId?.TARIFA_DIARIA));
       setValue('comuna', deparmentsId?.NOMBRE_COMUNA);
       setValue('direccion', deparmentsId?.DIRECCION);
       setValue('descripcion', deparmentsId?.DESCRIPCION);
@@ -106,11 +110,15 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
       setValue('huespedes', deparmentsId?.MAX_HUESPEDES);
       setValue('active', deparmentsId?.ACTIVO === 'S'? true : false);
       setValue('tipo', deparmentsId?.TIPO);
-
-
     }
-
   }, [deparmentsId,setValue])
+
+  const handleFormatNumber = (e) => {
+    console.log(e.target.value)
+    const formatValue = formatNumberWithDollar(e.target.value);
+    setValue('tarifa', formatValue);
+  }
+
   return (
     <Dialog open={showModal}  aria-labelledby="modalActualizar" size="xl"
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
@@ -153,7 +161,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               { ...register("nombre") }
               error={Boolean(errors.nombre)}
               success={!errors.nombre  && getValues('nombre') }
-              max={50} min={3}
             />
             {errors.nombre && (
               <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
@@ -168,15 +175,12 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               <Input color="blue" label="Número" name="numero" size="md" 
               { ...register("numero") }
               type="text"
-              success={!errors.numero  && getValues('numero') }
               readOnly
               />
             </div>
             <div className="relative bg-gray-100 w-full">
             <Input color="blue" label="Tipo de Propiedad" size="md"  name="tipo"
             { ...register("tipo") }
-            success={!errors.tipo  && getValues('tipo') }
-
             readOnly
             />
             </div>
@@ -184,17 +188,16 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
           <div className="relative bg-gray-100">
             <Input color="blue" label="Región" size="md"  name="region"
             { ...register("region") }
-            success={!errors.region  && getValues('region') }
-
             readOnly
             />
           </div>
           <div className="relative">
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
             { ...register("tarifa") }
+            onChange={(e) => handleFormatNumber(e)}
             error={Boolean(errors.tarifa)}
             success={!errors.tarifa  && getValues('tarifa') }
-            type="number"
+            type="text"
             />
             {errors.tarifa && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -205,8 +208,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
           <div className="relative bg-gray-100">
             <Input color="blue" label="Comuna" size="md"  name="Comuna"
             { ...register("comuna") }
-            success={!errors.comuna  && getValues('comuna') }
-
             readOnly
             />
           </div>
@@ -214,16 +215,12 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
             <Input color="blue" label="Dirección" size="md"  name="direccion"
             { ...register("direccion") }
             type="text"
-            max={50} min={3}
-            error={Boolean(errors.direccion)}
-            success={!errors.direccion  && getValues('direccion') }
             readOnly
             />
           </div>
           <div className="relative">
             <Textarea   color="blue" label="Descripción" size="md" name="descripcion"
             { ...register("descripcion") }
-            max={250} min={10}
             type="text"
             error={Boolean(errors.descripcion)}
             success={!errors.descripcion  && getValues('descripcion') }
@@ -276,7 +273,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               { ...register("banos") }
               type="number"
               name="banos"
-              max={10} min={1}
               error={Boolean(errors.banos)}
               success={!errors.banos  && getValues('banos') }
             />
@@ -285,12 +281,12 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
                 {errors.banos.message}
               </div>
             )}
+
           </div>
           <div className="relative">
             <Input name="habitaciones" color="blue" label="Cantidad de Habitaciones" size="md"  
               { ...register("habitaciones") }
               type="number"
-              max={10} min={1}
               error={Boolean(errors.habitaciones)}
               success={!errors.habitaciones  && getValues('habitaciones') }
             />
@@ -303,7 +299,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
           <div className="relative">
             <Input name="camas" color="blue" label="Cantidad de Camas" size="md"  
               { ...register("camas") }
-              max={20} min={1}
               type="number"
               error={Boolean(errors.camas)}
               success={!errors.camas  && getValues('camas') }
@@ -315,7 +310,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
             )}
           </div>
           <div className="relative">
-            <Input color="blue" label="Cantidad de Huespedes" size="md"  max={20} min={1} 
+            <Input color="blue" label="Cantidad de Huespedes" size="md" 
               { ...register("huespedes") }
               type="number"
               name="huespedes"

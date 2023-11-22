@@ -1,35 +1,31 @@
-const URL_API_CREATE_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_departamento`;
+const URL_API_UPDATE_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos`;
 
-export const ActualizarDpto = async (crearDepartamento) => {
+export const ActualizarDpto = async (actualizarDepartamento) => {
 
   const queryParams = {
-    name: crearDepartamento.nombre,
-    description: crearDepartamento.descripcion,
-    baths: crearDepartamento.banos,
-    rooms: crearDepartamento.habitaciones,
-    beds: crearDepartamento.camas,
-    dept_type: crearDepartamento.tipo,
-    daily_rate: crearDepartamento.tarifa,
-    address: crearDepartamento.calle,
-    address_number: crearDepartamento.numero,
-    active: crearDepartamento.active ? 'S': 'N',
-    commune_id: crearDepartamento.comuna,
+    department_id : actualizarDepartamento.deptoId,
+    name: actualizarDepartamento.nombre,
+    description: actualizarDepartamento.descripcion,
+    baths: actualizarDepartamento.banos,
+    rooms: actualizarDepartamento.habitaciones,
+    beds: actualizarDepartamento.camas,
+    daily_rate: actualizarDepartamento.tarifa,
+    active: actualizarDepartamento.active,
+    num_host: actualizarDepartamento.huespedes,
   }
 
   const queryString = new URLSearchParams(queryParams).toString();
-  console.log(queryString)
-  const urlWithParams = `${URL_API_CREATE_DPTO}?${queryString}`;
+  const urlWithParams = `${URL_API_UPDATE_DPTO}?${queryString}`;
   const requestOptions = {
-    method: 'POST',
+    method: 'PUT',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${crearDepartamento.access_token}`,
+      'Authorization': `Bearer ${actualizarDepartamento.access_token}`,
     },
   };
 
   try {
     const response = await fetch(urlWithParams, requestOptions);
-    console.log(response)
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -38,6 +34,6 @@ export const ActualizarDpto = async (crearDepartamento) => {
 
     return await response.json();
   } catch (error) {
-    throw new Error('API Error: ' + error.message || 'Error al crear el departamento');
+    throw new Error('API Error: ' + error.message || 'Error al actualizar el departamento');
   }
 };

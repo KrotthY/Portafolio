@@ -246,7 +246,6 @@ const ServicioTurismo = () => {
                   <th scope="col" className="px-4 py-3 w-auto">Estado</th>
                   <th scope="col" className="px-4 py-3 w-auto">Costo</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Duración</th> 
-                  <th scope="col" className="px-4 py-3 w-auto">Descripción</th>
                   <th scope="col" className="relative py-3.5 px-4 w-auto">Acciones</th> 
                 </tr>
               </thead>
@@ -260,8 +259,6 @@ const ServicioTurismo = () => {
                     <td className="px-4 py-4 ">{evaluateStatusDepto(tourItem.ACTIVO)}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{formatNumberWithDollar(tourItem.VALOR_MINIMO)}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{ formatTime(tourItem.DURACION) }</td>
-
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{tourItem.DESCRIPCION}</td>
                     <td className="px-4 py-4 text-sm flex items-center justify-center">
                       {evaluateStatusBtn( tourItem.TOUR_ID)}
                     </td>

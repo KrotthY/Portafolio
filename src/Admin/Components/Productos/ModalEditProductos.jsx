@@ -1,10 +1,10 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea, Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
-import { ActualizarInventario } from "../../Api/Inventario/actualizarInventario";
+import { ActualizarProducto } from "../../Api/Productos/actualizarProductos";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 
@@ -18,7 +18,7 @@ const schema = yup.object({
     .required('El costo es requerido')
     .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de costo inválido')
     .test('is-valid-number', 'El costo debe ser un número válido', value => {
-      const number = parseFloat(value.replace(/[^\d]/g, '')); // Eliminar todos los caracteres no numéricos para la validación
+      const number = parseFloat(value.replace(/[^\d]/g, '')); 
       return !isNaN(number) && number > 0 && number <= 999999999;
     }),
 
@@ -32,11 +32,11 @@ const schema = yup.object({
     .required('La descripción es requerida')
     .min(10,'La descripción debe tener al menos 10 caracteres')
     .max(250,'La descripción debe tener máximo 250 caracteres'),
+    departamentoId: yup.number().required('El departamento es requerido'),
 });
 
 
-
-const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
+const ModalEditProductos = ({onClose,showModal,productosId}) => {
 
   const  { user }  = useSession();
 
@@ -46,21 +46,21 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
 
   const handleSubmitForm = async (formData) => {
     try {
-      const actualizarInventario = {
+      const actualizarProductosData = {
         access_token: user.access_token,
-        inventarioId:inventarioId,
+        productosId: productosId,
         nombre: formData.nombre,
+        descripcion: formData.descripcion,
         costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
         multa: formData.multa,
-        descripcion: formData.descripcion,
       }
-      await ActualizarInventario(actualizarInventario);
+      await ActualizarProducto(actualizarProductosData);
       onClose();
       reset(); 
       Swal.fire({
         icon: 'success',
-        title: 'Departmaneto actualizado con éxito',
-        text: 'El departamento se ha actualizado correctamente',
+        title: '¡Producto actualizado!',
+        text: 'El productos se ha actualizado correctamente',
         confirmButtonText: 'Ok'
       });
       
@@ -68,7 +68,7 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
       onClose(); 
       Swal.fire({
         icon: 'error',
-        title: 'Error al actualizar departamento',
+        title: 'Error al actualizar productos',
         text: error,
         confirmButtonText: 'Ok'
       });
@@ -83,10 +83,10 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
   }
 
 
-  const URL_API_GET_DEPARTMENTS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/inventario/${inventarioId}`;
-  const [inventarioIdSelected, setInventarioId] = useState(null);
+  const URL_API_GET_PRODUCTOS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/productos/${productosId}`;
+  const [productosIdSelected, setProductosId] = useState(null);
   useEffect(() => {
-    if(inventarioId){
+    if(productosId){
       const requestOptions = {
         method: 'GET',
         headers: {
@@ -94,25 +94,25 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
         },
       };
       
-      fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
+      fetch(URL_API_GET_PRODUCTOS_ID, requestOptions)
       .then(response => response.json())
       .then(data => {
-        setInventarioId(data);
+        setProductosId(data);
       })
       .catch(error => console.log(error));
     }
-  }, [user.access_token,inventarioId, URL_API_GET_DEPARTMENTS_ID])
+  }, [user.access_token,productosId, URL_API_GET_PRODUCTOS_ID])
 
   useEffect(() => {
     
-    if(inventarioIdSelected){
-      setValue('nombre', inventarioIdSelected[0]?.NOMBRE);
-      setValue('multa', inventarioIdSelected[0]?.PORCENTAJE_MULTA);
-      const formattedCost = formatNumberWithDollar(inventarioIdSelected[0]?.VALOR);
+    if(productosIdSelected){
+      setValue('nombre', productosIdSelected[0]?.NOMBRE);
+      setValue('multa', productosIdSelected[0]?.PORCENTAJE_MULTA);
+      const formattedCost = formatNumberWithDollar(productosIdSelected[0]?.VALOR);
       setValue('costo', formattedCost);
-      setValue('descripcion', inventarioIdSelected[0]?.DESCRIPCION)
+      setValue('descripcion', productosIdSelected[0]?.DESCRIPCION)
     }
-  }, [inventarioIdSelected,setValue])
+  }, [productosIdSelected,setValue])
 
 
 
@@ -122,23 +122,48 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
   }
 
 
+  const URL_API_GET_DEPTO_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos`;
+  const [deptoIdSelected, setDeptoId] = useState(null);
+  useEffect(() => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+        },
+      };
+      
+      fetch(URL_API_GET_DEPTO_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeptoId(data);
+      })
+      .catch(error => console.log(error));
+  }, [user.access_token, URL_API_GET_DEPTO_ID])
+
+  const handleDeptoChange = (selectedValueDepto) => {
+    setValue('departamentoId', selectedValueDepto);
+  }
+
   return (
-    <Dialog open={showModal}  aria-labelledby="modalEditar" size="lg"
+    <Dialog open={showModal}  aria-labelledby="modalEditarProductos" size="lg"
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Editar Inventario 
-        {inventarioIdSelected && inventarioIdSelected.length > 0 && (
-          <span className="font-normal"> - {inventarioIdSelected[0]?.NOMBRE}</span>
-        )}
+        <div className="flex justify-start items-center gap-1">
+          <span className="text-2xl tracking-tight font-extrabold text-gray-900">Editar Producto </span>
+
+          {productosIdSelected  && (
+            <span className="font-normal"> - {productosIdSelected[0]?.NOMBRE}</span>
+            )}
+          
+        </div>
         
-        </span>
         <IconButton
         color="blue-gray"
         size="sm"
         variant="text"
         onClick={ () => {
-          reset(); 
+        
           onClose();
         }}
       >
@@ -160,24 +185,46 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
       </DialogHeader>
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-        <Typography>
-          <h6 className="text-gray-500 text-sm font-bold">Información del inventario</h6>
+        <Typography variant="h6">
+          Información de los productos
         </Typography>
         <div className="grid grid-cols-2  gap-6  my-12 ">
           <div className="space-y-4">
-            <div className="relative">
-              <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
-                { ...register("nombre") }
-                error={Boolean(errors.nombre)}
-                success={!errors.nombre  && getValues('nombre') }
-                max={50} min={3}
-              />
-              {errors.nombre && (
-                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                  {errors.nombre.message}
+
+            <div className="flex justify-between items-center gap-3">
+              <div className="relative w-full">
+                <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
+                  { ...register("nombre") }
+                  error={Boolean(errors.nombre) }
+                  success={Boolean(!errors.nombre  && getValues('nombre')) }
+                  
+                />
+                {errors.nombre && (
+                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                    {errors.nombre.message}
+                  </div>
+                )}
                 </div>
-              )}
-            </div>
+                <div className="w-full p-2">
+                  <Select color="blue" 
+                    className="text-sm"  
+                    label="Departamento disponibles"
+                    onChange={(e) => handleDeptoChange(e)}
+                    error={Boolean(errors.departamentoId)}
+                    success={Boolean(!errors.departamentoId  && getValues('departamentoId'))}
+                  >
+                  { 
+                    deptoIdSelected  ? (
+                      deptoIdSelected.map((deptoData) => (
+                        <Option  key={deptoData.DEPARTAMENTO_ID} value={String(deptoData.DEPARTAMENTO_ID)}>{deptoData.NOMBRE}</Option>
+                      ))
+                    ) : (
+                      <Option value="0">No hay departamentos disponibles</Option>
+                    )
+                  }
+                  </Select>
+                </div>
+                </div>
             
 
             <div className="flex justify-between items-center gap-3 ">
@@ -186,7 +233,7 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
                 { ...register("costo") }
                 onChange={handleInputChangeCosto}
                 error={Boolean(errors.costo)}
-                success={!errors.costo  && getValues('costo') }
+                success={Boolean(!errors.costo  && getValues('costo'))}
                 type="text"
                 />
                 {errors.costo && (
@@ -200,7 +247,7 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
                 <Input color="blue" label="Porcentaje de multa" size="md" name="multa" step={0.01} min={0} max={1}
                 { ...register("multa") }
                 error={Boolean(errors.multa)}
-                success={!errors.multa  && getValues('multa') }
+                success={Boolean(!errors.multa  && getValues('multa')) }
                 type="number"
                 />
                 {errors.multa && (
@@ -216,7 +263,7 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
               max={250} min={10}
               type="text"
               error={Boolean(errors.descripcion)}
-              success={!errors.descripcion  && getValues('descripcion') }
+              success={Boolean(!errors.descripcion  && getValues('descripcion')) }
               />
               {errors.descripcion && (
                 <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -245,7 +292,6 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
       <button
             onClick={ () => {
-              reset(); 
               onClose();
             }}
           type="button"
@@ -258,7 +304,7 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
         type="submit"
         className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
         >
-        Actualizar Inventario
+        Actualizar productos
         </button>
       </DialogFooter>
       </form>
@@ -266,10 +312,10 @@ const ModalEditInventario = ({onClose,showModal,inventarioId}) => {
   );
 };
 
-ModalEditInventario.propTypes = {
+ModalEditProductos.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
-  inventarioId: PropTypes.number,
+  productosId: PropTypes.number,
 }
 
-export default ModalEditInventario;
+export default ModalEditProductos;

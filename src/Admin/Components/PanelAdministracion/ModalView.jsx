@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import formatNumberWithDollar from "../../Assets/js/funciones";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -11,7 +12,13 @@ const schema = yup.object({
   region: yup.string(),
   comuna: yup.string(),
   tipo: yup.string(),
-  tarifa: yup.number().typeError('Tarifa debe ser un número').required('Tarifa requerida').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(999999999, 'Demasiado alto'),
+  tarifa: yup.string()
+  .required('La tarifa es requerido')
+  .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de tarifa inválido')
+  .test('is-valid-number', 'La tarifa debe ser un número válido', value => {
+    const number = parseFloat(value.replace(/[^\d]/g, ''));
+    return !isNaN(number) && number > 0 && number <= 999999999;
+  }),
   direccion: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
   banos: yup.number().typeError('Baños debe ser un número').required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
@@ -52,7 +59,7 @@ const ModalView = ({onClose,showModal,deptoId}) => {
       setValue('nombre', deparmentsId?.NOMBRE);
       setValue('numero', deparmentsId?.NUMERO);
       setValue('region', deparmentsId?.NOMBRE_REGION);
-      setValue('tarifa', deparmentsId?.TARIFA_DIARIA);
+      setValue('tarifa', formatNumberWithDollar(deparmentsId?.TARIFA_DIARIA));
       setValue('comuna', deparmentsId?.NOMBRE_COMUNA);
       setValue('direccion', deparmentsId?.DIRECCION);
       setValue('descripcion', deparmentsId?.DESCRIPCION);
@@ -135,7 +142,7 @@ const ModalView = ({onClose,showModal,deptoId}) => {
           <div className="relative bg-gray-100">
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
             { ...register("tarifa") }
-            type="number"
+            type="text"
             readOnly
             />
           </div>

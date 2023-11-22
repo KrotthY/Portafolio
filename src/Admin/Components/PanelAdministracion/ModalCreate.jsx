@@ -6,16 +6,23 @@ import { useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
 import { CreateNewDpto } from "../../Api/Departamento/crearDpto";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import formatNumberWithDollar from "../../Assets/js/funciones";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
-  numero: yup.string().required('Número requerido').min(3, 'Mín. 3 dígitos').max(50, 'Máx. 50 dígitos'),
+  numeroDireccion: yup.number().required('Número requerido').min(3, 'Mín. 3 dígitos').max(9999999, 'Máx. dígitos'),
   region: yup.string(),
   comuna: yup.string(),
   tipo: yup.string(),
-  tarifa: yup.number().required('Tarifa requerida').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(999999999, 'Demasiado alto'),
-  calle: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  tarifa: yup.string()
+  .required('La tarifa es requerido')
+  .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de tarifa inválido')
+  .test('is-valid-number', 'La tarifa debe ser un número válido', value => {
+    const number = parseFloat(value.replace(/[^\d]/g, ''));
+    return !isNaN(number) && number > 0 && number <= 999999999;
+  }),
+  direccion: yup.string().required('direccion requerida').min(2, 'Mín. 3 letras').max(100, 'Máx. 100 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
   banos: yup.number().required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   habitaciones: yup.number().required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
@@ -29,7 +36,9 @@ const schema = yup.object({
 const ModalCreate = ({onClose,showModal}) => {
 
   const  { user }  = useSession();
-
+  const [tipo, setTipo] = useState('');
+  const [comuna, setComuna] = useState('');
+  const [region, setRegion] = useState([]);
   const {register ,handleSubmit, formState: { errors } , getValues,setValue,reset} = useForm({
     resolver: yupResolver(schema),
   });
@@ -40,19 +49,20 @@ const ModalCreate = ({onClose,showModal}) => {
       const crearDepartamento = {
         access_token: user.access_token,
         nombre: formData.nombre,
-        numero: formData.numero,
-        region: formData.region,
-        tarifa: formData.tarifa,
-        comuna: formData.comuna,
-        calle: formData.calle,
         descripcion: formData.descripcion,
         banos: formData.banos,
         habitaciones: formData.habitaciones,
         camas: formData.camas,
+        tipo: formData.tipo,
+        tarifa: parseInt(formData.tarifa.replace(/\$|\.|,/g, '')),
+        direccion: formData.direccion,
+        numeroDireccion: formData.numeroDireccion,
+        region: formData.region,
+        comuna: parseInt(formData.comuna),
         huespedes: formData.huespedes,
         active: formData.active,
-        tipo: formData.tipo,
       }
+      console.log(crearDepartamento)
       await CreateNewDpto(crearDepartamento);
       onClose();
       reset(); 
@@ -74,9 +84,48 @@ const ModalCreate = ({onClose,showModal}) => {
     }
   }
 
-  const [tipo, setTipo] = useState('');
-  const [comuna, setComuna] = useState('');
-  const [region, setRegion] = useState('');
+
+  const handleChangeFormatTarifa = (e) => {
+    const formatNumber = formatNumberWithDollar(e.target.value);
+    setValue('tarifa',formatNumber)
+  }
+
+  const URL_API_GET_REGION = 'https://fastapi-gv342xsbja-tl.a.run.app/regiones';
+  useEffect(() => {
+    const requestOptions = {
+      method: 'GET'
+    };
+
+    fetch(URL_API_GET_REGION,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setRegion(data)
+      })
+      .catch(error => console.log(error))
+  },[URL_API_GET_REGION]);
+
+  const getComunas = (idRegion) => {
+    const URL_API_GET_COMUNAS = `https://fastapi-gv342xsbja-tl.a.run.app/comunas/${idRegion}`;
+    const requestOptions = {
+      method: 'GET'
+    }
+    fetch(URL_API_GET_COMUNAS,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setComuna(data)
+      })
+      .catch(error => console.log(error))
+  }
+
+
+  const handleSelectedRegion = (e) => {
+    setValue('region',e)
+    getComunas(e);
+  }
+
+  const handleSelectedComuna = (e) => {
+    setValue('comuna',e)
+  }
 
   return (
     <Dialog open={showModal}  aria-labelledby="modalCrear" size="xl"
@@ -111,13 +160,11 @@ const ModalCreate = ({onClose,showModal}) => {
         <Typography>
           Datos de la propiedad
         </Typography>
-
-
-        <div className="grid grid-cols-2  gap-6 my-12 border-b-4 pb-12 border-b-blue-200">
+        <div className="grid grid-cols-2  gap-6 my-12 border-b-4 pb-6 border-b-blue-200">
           <div className="relative">
             <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
               { ...register("nombre") }
-              error={Boolean(errors.nombre)}
+              error={errors.nombre ? errors.nombre.message : undefined }
               success={!errors.nombre  && getValues('nombre') }
               max={50} min={3}
             />
@@ -131,16 +178,15 @@ const ModalCreate = ({onClose,showModal}) => {
 
           <div className="flex  justify-center items-center gap-11">
             <div className="relative w-full">
-              <Input color="blue" label="Número" name="numero" size="md" 
-              { ...register("numero") }
-              type="text"
-              max={50} min={3}
-              error={Boolean(errors.numero)}
-              success={!errors.numero  && getValues('numero') }
+              <Input color="blue" label="Enumeración" name="numeroDireccion" size="md" 
+              { ...register("numeroDireccion") }
+              type="number"
+              error={errors.numeroDireccion ? errors.numeroDireccion.message : undefined }
+              success={!errors.numeroDireccion  && getValues('numeroDireccion') }
               />
-              {errors.numero && (
+              {errors.numeroDireccion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.numero.message}
+                {errors.numeroDireccion.message}
               </div>
               )}
             </div>
@@ -151,7 +197,7 @@ const ModalCreate = ({onClose,showModal}) => {
                 setValue('tipo',e)
                 setTipo(e)
               }}
-              error={Boolean(errors.tipo)}
+              error={errors.tipo ? errors.tipo.message : undefined }
               success={!errors.tipo  && getValues('tipo') }
               
               >
@@ -167,17 +213,24 @@ const ModalCreate = ({onClose,showModal}) => {
           </div>
           <div className="relative">
             <Select color="blue" label="Región" size="md"
-            value={region}
-            error={Boolean(errors.region)}
-            success={!errors.region  && getValues('region') }
-            onChange={e =>{
-              setValue('region',e)
-              setRegion(e)
+            error={errors.region ? errors.region.message : undefined }
+            success={!errors.region  && getValues('region')}
+            onChange={ (e) =>{
+              handleSelectedRegion(e)
             }}
+            > 
 
-            >
-              <Option value="1">Region 1</Option>
-              <Option value="2">Material Tailwind React</Option>
+              {  
+                region ?
+              
+                region?.map((regionItem) => (
+                <Option key={regionItem.REGION_ID} value={String(regionItem.REGION_ID)}>{regionItem.NOMBRE_REGION}</Option>)
+                ): (
+                  <Option value="0">No hay región disponibles</Option>
+                )
+              
+              }
+
             </Select>
             {errors.region && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -188,9 +241,10 @@ const ModalCreate = ({onClose,showModal}) => {
           <div className="relative">
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
             { ...register("tarifa") }
-            error={Boolean(errors.tarifa)}
+            onChange={handleChangeFormatTarifa}
+            error={errors.tarifa ? errors.tarifa.message : undefined }
             success={!errors.tarifa  && getValues('tarifa') }
-            type="number"
+            type="text"
             />
             {errors.tarifa && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -200,18 +254,23 @@ const ModalCreate = ({onClose,showModal}) => {
           </div>
           <div className="relative">
             <Select color="blue" label="Comuna" size="md"
-            value={comuna}
-            error={Boolean(errors.comuna)}
+            error={errors.comuna ? errors.comuna.message : undefined }
             success={!errors.comuna  && getValues('comuna') }
-            onChange={e =>{ 
-              setValue('comuna',e)
-              setComuna(e) 
+            onChange={ (e) =>{
+              handleSelectedComuna(e)
             }}
-
             >
-              <Option value="1" >comuna 1</Option>
-              <Option value="2" >Material Tailwind React</Option>
-              <Option value="3" >Material Tailwind Vue</Option>
+
+            {
+            
+              comuna ?
+              comuna?.map((comunaItem) => (
+              <Option key={comunaItem.COMUNA_ID} value={String(comunaItem.COMUNA_ID)}>{comunaItem.NOMBRE_COMUNA}</Option>)
+              ): (
+                <Option value="0">No hay comunas disponibles</Option>
+              )
+            }
+
             </Select>
             {errors.comuna && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -220,16 +279,16 @@ const ModalCreate = ({onClose,showModal}) => {
               )}
           </div>
           <div className="relative">
-            <Input color="blue" label="Calle" size="md"  name="calle"
-            { ...register("calle") }
+            <Input color="blue" label="Dirección" size="md"  name="direccion"
+            { ...register("direccion") }
             type="text"
             max={50} min={3}
-            error={Boolean(errors.calle)}
-            success={!errors.calle  && getValues('calle') }
+            error={errors.direccion ? errors.direccion.message : undefined }
+            success={!errors.direccion  && getValues('direccion') }
             />
-            {errors.calle && (
+            {errors.direccion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
-                {errors.calle.message}
+                {errors.direccion.message}
               </div>
             )}
           </div>
@@ -238,7 +297,7 @@ const ModalCreate = ({onClose,showModal}) => {
             { ...register("descripcion") }
             max={250} min={10}
             type="text"
-            error={Boolean(errors.descripcion)}
+            error={errors.descripcion ? errors.descripcion.message : undefined }
             success={!errors.descripcion  && getValues('descripcion') }
             />
             {errors.descripcion && (
@@ -280,17 +339,17 @@ const ModalCreate = ({onClose,showModal}) => {
             </div>
           </div>
         </div>
-        <Typography>
-          Datos del Departamento
+        <Typography variant="h6">
+          Especificaciones del alojamiento
         </Typography>
-        <div className="grid grid-cols-4  gap-6">
+        <div className="grid grid-cols-4 my-2 gap-6">
           <div className="relative">
             <Input color="blue" label="Cantidad de Baños" size="md" 
               { ...register("banos") }
               type="number"
               name="banos"
               max={10} min={1}
-              error={Boolean(errors.message)}
+              error={errors.message ? errors.message.message : undefined }
               success={!errors.message  && getValues('message') }
             />
             {errors.banos && (
@@ -304,7 +363,7 @@ const ModalCreate = ({onClose,showModal}) => {
               { ...register("habitaciones") }
               type="number"
               max={10} min={1}
-              error={Boolean(errors.habitaciones)}
+              error={errors.habitaciones ? errors.habitaciones.message : undefined }
               success={!errors.habitaciones  && getValues('habitaciones') }
             />
             {errors.habitaciones && (
@@ -318,7 +377,7 @@ const ModalCreate = ({onClose,showModal}) => {
               { ...register("camas") }
               max={20} min={1}
               type="number"
-              error={Boolean(errors.camas)}
+              error={errors.camas ? errors.camas.message : undefined }
               success={!errors.camas  && getValues('camas') }
             />
             {errors.camas && (
@@ -332,7 +391,7 @@ const ModalCreate = ({onClose,showModal}) => {
               { ...register("huespedes") }
               type="number"
               name="huespedes"
-              error={Boolean(errors.huespedes)}
+              error={errors.huespedes ? errors.huespedes.message : undefined }
               success={!errors.huespedes  && getValues('huespedes') }
             />
             {errors.huespedes && (
@@ -349,7 +408,7 @@ const ModalCreate = ({onClose,showModal}) => {
             <Checkbox color="blue" defaultChecked size="sm"
             name="active"
             { ...register("active") }
-            error={Boolean(errors.active)}
+            error={errors.active ? errors.active.message : undefined }
             success={!errors.active  && getValues('active') }
 
             />

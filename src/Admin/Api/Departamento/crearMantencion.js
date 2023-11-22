@@ -11,7 +11,6 @@ export const CrearMatencion = async (asignarMantencion) => {
   
 
   const queryString = new URLSearchParams(queryParams).toString();
-  console.log(queryString)
   const urlWithParams = `${URL_API_CREATE_MAINTENCE}?${queryString}`;
   const requestOptions = {
     method: 'POST',

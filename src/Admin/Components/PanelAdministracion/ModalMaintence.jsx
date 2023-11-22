@@ -1,4 +1,4 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 const schema = yup.object({
   tipoMantencion: yup.string().required(),
   encargado: yup.string().required('Encargado requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
 });
 
 const ModalMaintence = ({onClose,showModal,deptoId}) => {
@@ -140,7 +141,7 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
           </Typography>
 
         </div>
-        <div className="flex items-center justify-between gap-6 my-12 ">
+        <div className="flex items-center justify-between gap-6 mt-12 mb-6 ">
           <div className="relative w-full">
 
             <Select color="blue" label="Tipo de Mantenimiento" size="md"
@@ -180,6 +181,20 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
               )}
           </div>
         </div>
+        <div className="relative">
+            <Textarea  color="blue" label="Descripción" size="md" name="descripcion"
+            { ...register("descripcion") }
+            max={250} min={10}
+            type="text"
+            error={errors.descripcion ? errors.descripcion.message : undefined }
+            success={!errors.descripcion  && getValues('descripcion') }
+            />
+            {errors.descripcion && (
+              <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                {errors.descripcion.message}
+              </div>
+            )}
+          </div>
         <div className="bg-blue-100/50 p-2 rounded-lg my-6 flex flex-col items-center w-80 mx-auto">
         <Typography className="my-2 font-medium" color="black">
             Fechas de Mantención

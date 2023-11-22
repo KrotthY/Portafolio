@@ -70,14 +70,14 @@ export function Sidebar() {
               Servicio de Turismo
             </ListItem>
           </Link>
-          <Link to="/admin/inventario" >
-            <ListItem onClick={ () => SetSelectedSideBar("Inventario") } 
+          <Link to="/admin/productos" >
+            <ListItem onClick={ () => SetSelectedSideBar("Productos") } 
               className={`  font-normal text-white  ${ SelectedSideBar === "Inventario" ? valueSelected : ''} `}
               >
               <ListItemPrefix>
                 <ArchiveBoxIcon className="h-6 w-6" />
               </ListItemPrefix>
-              Inventario
+              Productos
             </ListItem>
           </Link>
           <Link to="/admin/servicios" >

@@ -1,19 +1,19 @@
 
-import {  Chip, Tooltip, Typography } from "@material-tailwind/react";
+import { Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import useSession from "../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
-import ModalEditInventario from "../Components/Inventario/ModalEditInventario";
-import ModalCreateInventario from "../Components/Inventario/ModalCreateInventario";
-import { eliminarInventario } from "../Api/Inventario/eliminarInventario";
+import { eliminarProducto } from "../Api/Productos/eliminarProductos";
+import { ModalCreateProductos, ModalEditProductos } from "../Components";
+import formatNumberWithDollar from "../Assets/js/funciones";
 
-const URL_API_GET_INVENTARIO = 'https://fastapi-gv342xsbja-tl.a.run.app/inventario';
+const URL_API_GET_PRODUCTOS = 'https://fastapi-gv342xsbja-tl.a.run.app/productos';
 
 
-const Inventario = () => {
+const Productos = () => {
 
-  const [currentInventarioId, setCurrentInventarioId] = useState(null);
-  const [ inventario , setInventario ] = useState([]);
+  const [currentProductosId, setCurrentProductosId] = useState(null);
+  const [ producto , setInventario ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
   const { user } = useSession();
 
@@ -26,9 +26,10 @@ const Inventario = () => {
       },
     };
 
-    fetch(URL_API_GET_INVENTARIO,requestOptions)
+    fetch(URL_API_GET_PRODUCTOS,requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         setInventario(data)
       })
       .catch(error => console.log(error))
@@ -40,11 +41,11 @@ const Inventario = () => {
 
 
 
-  const evaluateStatusBtn = (idInventario) => {
+  const evaluateStatusBtn = (idProducto) => {
     return (
       <div className="font-extrabold flex items-center gap-x-6">
-        <Tooltip content="Editar inventario" placement="top">
-        <button onClick={(e)=>{handleOpenModalEdit(e,idInventario)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
+        <Tooltip content="Editar producto" placement="top">
+        <button onClick={(e)=>{handleOpenModalEdit(e,idProducto)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
           <span className="absolute right-0 h-full w-11 rounded-lg bg-blue-300 hover:bg-blue-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
           <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
             <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>
@@ -54,8 +55,8 @@ const Inventario = () => {
         </Tooltip>
 
 
-        <Tooltip content="Borrar inventario" placement="top">
-        <button onClick={(e)=>{handleDeptoDelete(e,idInventario)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
+        <Tooltip content="Borrar producto" placement="top">
+        <button onClick={(e)=>{handleDeptoDelete(e,idProducto)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
           <span className="absolute right-0 h-full w-11 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
           <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 448 512"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
           </span>
@@ -67,41 +68,6 @@ const Inventario = () => {
     
   };
 
-  const evaluateStatusInventario = (estadoDpto) => {
-    
-    switch (estadoDpto) {
-      case 1:
-        return (
-
-        <Chip
-        variant="ghost"
-        color="green"
-        size="sm"
-        value="Activo"
-        icon={
-          <span className="mx-auto mt-1 block h-2 w-2 rounded-full bg-green-900 content-['']" />
-        }
-      />
-        );
-      
-      case 2:
-        return (
-          <Chip
-          variant="ghost"
-          color="red"
-          size="sm"
-          value="Inactivo"
-          icon={
-            <span className="mx-auto mt-1 block h-2 w-2  bg-red-900 content-['']" />
-          }
-        />
-
-          
-        );
-    
-
-    }
-  };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -109,8 +75,8 @@ const Inventario = () => {
     }
   };
 
-  const filteredInventario = inventario.filter((inventarioItem) => {
-    return Object.values(inventarioItem).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredInventario = producto.filter((productosItem) => {
+    return Object.values(productosItem).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()));
   })
 
   const totalItems = filteredInventario.length;
@@ -140,9 +106,9 @@ const Inventario = () => {
 
   const [showModalEdit, setShowModalEdit] = useState(false);
 
-  const handleOpenModalEdit = (e,idInventario) => {
+  const handleOpenModalEdit = (e,idProducto) => {
     e.preventDefault();
-    setCurrentInventarioId(idInventario)
+    setCurrentProductosId(idProducto)
     setShowModalEdit(true);
   }
   
@@ -155,12 +121,12 @@ const Inventario = () => {
   
 
 
-  const handleDeptoDelete = (e,idInventario) => {
+  const handleDeptoDelete = (e,idProducto) => {
     e.preventDefault();
     try {
       const borrarInventario = {
         "access_token":user.access_token,
-        "inventarioId":idInventario
+        "inventarioId":idProducto
       }
 
       Swal.fire({
@@ -170,17 +136,17 @@ const Inventario = () => {
         showCancelButton: true,
         confirmButtonColor: '#4299e1',
         cancelButtonColor: '#EF4444',
-        confirmButtonText: 'Si, borrar inventario',
+        confirmButtonText: 'Si, borrar producto',
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
         
-          eliminarInventario(borrarInventario)
+          eliminarProducto(borrarInventario)
           cargarInventario()  
           Swal.fire({
             icon: 'success',
-            title: 'Inventario eliminado',
-            text: 'El inventario se ha eliminado correctamente',
+            title: 'Producto eliminado',
+            text: 'El producto se ha eliminado correctamente',
             confirmButtonText: 'Ok'
           })
         }
@@ -188,7 +154,7 @@ const Inventario = () => {
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Error al eliminar inventario',
+        title: 'Error al eliminar producto',
         text: error,
         confirmButtonText: 'Ok'
       });
@@ -196,27 +162,20 @@ const Inventario = () => {
   }
   
 
-  function formatNumberWithDollar(value) {
-    value = value.toString();
-    const numericValue = value.replace(/\$|\.|,/g, '');
-    const formattedValue = new Intl.NumberFormat().format(numericValue);
-    return `$${formattedValue}`;
-  }
-
 
   return (
     <>
       <div className="flex flex-col items-center ">
       <Typography variant="h3">
-        Administración de Inventario
+        Administración de productos
       </Typography>
       </div>        
       <div className="flex flex-col justify-start gap-2">
           <Typography variant="h5" color="blue-gray">
-            Lista de Inventario
+            Lista de productos
           </Typography>
           <Typography color="gray" className=" font-normal">
-          En esta Seccion podras gestionar los inventarios de los departamentos de tu edificio.
+          En esta Seccion podras gestionar los productos.
           </Typography>
       </div>
       <section className="my-3 w-full">
@@ -246,7 +205,7 @@ const Inventario = () => {
             <div>
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleOpenModalCreate}
-              > Crear Inventario </button>
+              > Crear producto </button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -255,28 +214,22 @@ const Inventario = () => {
                 <tr>
                   <th scope="col" className="px-4 py-3 w-auto">ID</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Nombre</th>
-                  <th scope="col" className="px-4 py-3 w-auto">Descripción</th>
-                  <th scope="col" className="px-4 py-3 w-auto">Estado</th>
                   <th scope="col" className="px-4 py-3 w-auto">Costo</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Porcentaje de Multa</th>
-                  <th scope="col" className="px-4 py-3 w-auto">Nombre de departamento</th>
                   <th scope="col" className="relative py-3.5 px-4 w-auto">Acciones</th> 
                 </tr>
               </thead>
               <tbody>
                 {filteredInventario
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                .map((inventarioItem) => (
-                  <tr key={inventarioItem.INVENTARIO_ID} className="hover:bg-gray-100 italic text-center">
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{inventarioItem.INVENTARIO_ID}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.NOMBRE}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{inventarioItem.DESCRIPCION}</td>
-                    <td className="px-4 py-4 ">{evaluateStatusInventario(1)}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{  formatNumberWithDollar(inventarioItem.VALOR) }</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.PORCENTAJE_MULTA}</td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{inventarioItem.NOMBRE_DPTO}</td>
+                .map((productosItem) => (
+                  <tr key={productosItem.INVENTARIO_ID} className="hover:bg-gray-100 italic text-center">
+                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{productosItem.INVENTARIO_ID}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{productosItem.NOMBRE}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{ formatNumberWithDollar(productosItem.VALOR) }</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{productosItem.PORCENTAJE_MULTA}</td>
                     <td className="px-4 py-4 text-sm flex items-center justify-center">
-                      {evaluateStatusBtn( inventarioItem.INVENTARIO_ID)}
+                      {evaluateStatusBtn( productosItem.INVENTARIO_ID)}
                     </td>
                   </tr>
                 ))}
@@ -325,12 +278,12 @@ const Inventario = () => {
           </div>
         </div>
       </div>
-     <ModalCreateInventario onClose={closeModalCreate} showModal={showModalCreate} /> 
-    <ModalEditInventario onClose={closeModalEdit} showModal={showModalEdit} inventarioId={currentInventarioId} /> 
+    <ModalCreateProductos onClose={closeModalCreate} showModal={showModalCreate} /> 
+    <ModalEditProductos onClose={closeModalEdit} showModal={showModalEdit} productosId={currentProductosId} /> 
 
   </section>
     </>
   );
 };
 
-export default Inventario;
+export default Productos;

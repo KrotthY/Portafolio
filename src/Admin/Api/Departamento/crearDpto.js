@@ -10,14 +10,14 @@ export const CreateNewDpto = async (crearDepartamento) => {
     beds: crearDepartamento.camas,
     dept_type: crearDepartamento.tipo,
     daily_rate: crearDepartamento.tarifa,
-    address: crearDepartamento.calle,
-    address_number: crearDepartamento.numero,
+    address: crearDepartamento.direccion,
+    address_number: crearDepartamento.numeroDireccion,
     active: crearDepartamento.active ? 'S': 'N',
     commune_id: crearDepartamento.comuna,
+    num_host: crearDepartamento.huespedes,
   }
-
+  //region: formData.region,
   const queryString = new URLSearchParams(queryParams).toString();
-  console.log(queryString)
   const urlWithParams = `${URL_API_CREATE_DPTO}?${queryString}`;
   const requestOptions = {
     method: 'POST',
@@ -29,7 +29,6 @@ export const CreateNewDpto = async (crearDepartamento) => {
 
   try {
     const response = await fetch(urlWithParams, requestOptions);
-    console.log(response)
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -41,3 +40,4 @@ export const CreateNewDpto = async (crearDepartamento) => {
     throw new Error('API Error: ' + error.message || 'Error al crear el departamento');
   }
 };
+

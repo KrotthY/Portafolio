@@ -20,7 +20,7 @@ const PanelAdministracion = () => {
   const [ searchTerm, setSearchTerm ] = useState("");
   const { user } = useSession();
 
-  useEffect(() => {
+  const cargarDepartamentos =  () => {
     const requestOptions = {
       method: 'GET',
       headers: {
@@ -32,11 +32,14 @@ const PanelAdministracion = () => {
     fetch(URL_API_GET_DEPTO,requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         setDepto(data)
       })
       .catch(error => console.log(error))
-  }, [user.access_token]);
+  }
+
+  useEffect(() => {
+    cargarDepartamentos();
+  }, []);
 
 
 
@@ -160,6 +163,7 @@ const PanelAdministracion = () => {
   }
 
   const closeModalCreate = () => {
+    cargarDepartamentos();
     setShowModalCreate(false);
   }
 
@@ -173,6 +177,7 @@ const PanelAdministracion = () => {
   }
   
   const closeModalEdit = () => {
+    cargarDepartamentos();
     setShowModalEdit(false);
   }
 
@@ -198,6 +203,7 @@ const PanelAdministracion = () => {
   }
   
   const closeModalMaintence= () => {
+    cargarDepartamentos();
     setShowModalMaintence(false);
   }
 
@@ -241,9 +247,6 @@ const PanelAdministracion = () => {
     }
   }
   
-
-
-
   return (
     <>
       <div className="flex flex-col items-center ">
@@ -259,6 +262,7 @@ const PanelAdministracion = () => {
           En esta Seccion podras gestionar los departamentos de tu edificio.
           </Typography>
       </div>
+
     <section className="my-3 w-full ">
     <div className="bg-gray-100 p-1">
       <div className="mx-auto">

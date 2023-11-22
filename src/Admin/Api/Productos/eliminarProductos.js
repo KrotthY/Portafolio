@@ -1,8 +1,8 @@
-const URL_API_DPTO_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_inventario`;
+const URL_API_DPTO_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_producto`;
 
-export const eliminarInventario = async (eliminarInventario) => {
+export const eliminarProducto = async (eliminarProductoForm) => {
   const queryParams = {
-    inventory_id : eliminarInventario.inventarioId,
+    inventory_id : eliminarProductoForm.inventarioId,
   }
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_DPTO_DELETE}?${queryString}`;
@@ -10,7 +10,7 @@ export const eliminarInventario = async (eliminarInventario) => {
     method: 'DELETE',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${eliminarInventario.access_token}`,
+      'Authorization': `Bearer ${eliminarProductoForm.access_token}`,
     },
   };
 

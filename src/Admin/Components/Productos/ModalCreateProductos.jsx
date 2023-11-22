@@ -1,11 +1,13 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea, Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
-import { crearNuevoInventario } from "../../Api/Inventario/crearInventario";
+import { crearNuevoProducto } from "../../Api/Productos/crearProductos";
 import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import formatNumberWithDollar from "../../Assets/js/funciones";
 
 const schema = yup.object({
   nombre: yup.string()
@@ -31,13 +33,15 @@ const schema = yup.object({
     .required('La descripción es requerida')
     .min(10,'La descripción debe tener al menos 10 caracteres')
     .max(250,'La descripción debe tener máximo 250 caracteres'),
+    departamentoId: yup.number().required('El departamento es requerido'),
+
 });
 
 
 
 
 
-const ModalCreateInventario = ({onClose,showModal}) => {
+const ModalCreateProductos = ({onClose,showModal}) => {
 
   const  { user }  = useSession();
 
@@ -47,14 +51,15 @@ const ModalCreateInventario = ({onClose,showModal}) => {
 
   const handleSubmitForm = async (formData) => {
     try {
-      const InventarioForm = {
+      const ProductosForm = {
         access_token: user.access_token,
+        departamentoId: parseInt(formData.departamentoId),
         nombre: formData.nombre,
         costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
         multa: formData.multa,
         descripcion: formData.descripcion,
       }
-      await crearNuevoInventario(InventarioForm);
+      await crearNuevoProducto(ProductosForm);
       onClose();
       reset(); 
       Swal.fire({
@@ -75,12 +80,7 @@ const ModalCreateInventario = ({onClose,showModal}) => {
     }
   }
 
-  function formatNumberWithDollar(value) {
-    value = value.toString();
-    const numericValue = value.replace(/\$|\.|,/g, '');
-    const formattedValue = new Intl.NumberFormat().format(numericValue);
-    return `$${formattedValue}`;
-  }
+
 
 
   const handleInputChangeCosto = (event) => {
@@ -88,7 +88,27 @@ const ModalCreateInventario = ({onClose,showModal}) => {
     setValue('costo', formattedValue);
   }
 
+  const URL_API_GET_DEPTO_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos`;
+  const [deptoIdSelected, setDeptoId] = useState(null);
+  useEffect(() => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+        },
+      };
+      
+      fetch(URL_API_GET_DEPTO_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeptoId(data);
+      })
+      .catch(error => console.log(error));
+  }, [user.access_token, URL_API_GET_DEPTO_ID])
 
+  const handleDeptoChange = (selectedValueDepto) => {
+    setValue('departamentoId', selectedValueDepto);
+  }
   return (
     <Dialog open={showModal}  aria-labelledby="modalCrear" size="lg"
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
@@ -122,31 +142,59 @@ const ModalCreateInventario = ({onClose,showModal}) => {
       </DialogHeader>
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-        <Typography>
-          <h6 className="text-gray-500 text-sm font-bold">Información del inventario</h6>
+        <Typography variant="h6">
+          Información del Productos
         </Typography>
         <div className="grid grid-cols-2  gap-6  my-12 ">
           <div className="space-y-8">
-            <div className="relative">
-              <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
-                { ...register("nombre") }
-                error={Boolean(errors.nombre)}
-                success={!errors.nombre  && getValues('nombre') }
-                max={50} min={3}
-              />
-              {errors.nombre && (
-                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                  {errors.nombre.message}
+
+            <div className="flex justify-between items-center gap-3">
+              <div className="relative w-full">
+                <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
+                  { ...register("nombre") }
+                  error={Boolean(errors.nombre) }
+                  success={Boolean(!errors.nombre  && getValues('nombre')) }
+                  
+                />
+                {errors.nombre && (
+                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                    {errors.nombre.message}
+                  </div>
+                )}
                 </div>
-              )}
+                <div className="relative w-full p-2">
+                  <Select color="blue" 
+                    className="text-sm"  
+                    label="Departamento disponibles"
+                    onChange={(e) => handleDeptoChange(e)}
+                    error={Boolean(errors.departamentoId) }
+                    success={Boolean(!errors.departamentoId  && getValues('departamentoId')) }
+                  >
+                  { 
+                    deptoIdSelected  ? (
+                      deptoIdSelected.map((deptoData) => (
+                        <Option  key={deptoData.DEPARTAMENTO_ID} value={String(deptoData.DEPARTAMENTO_ID)}>{deptoData.NOMBRE}</Option>
+                      ))
+                    ) : (
+                      <Option value="0">No hay departamentos disponibles</Option>
+                    )
+                  }
+                  </Select>
+                  {errors.departamentoId && (
+                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                    {errors.departamentoId.message}
+                  </div>
+                )}
+                </div>
             </div>
+
             <div className="flex justify-between items-center gap-3 ">
               <div className="relative w-full">
                 <Input color="blue" label="Costo del producto" size="md" name="costo"
                 { ...register("costo") }
                 onChange={handleInputChangeCosto}
                 error={Boolean(errors.costo)}
-                success={!errors.costo  && getValues('costo') }
+                success={Boolean(!errors.costo  && getValues('costo')) }
                 type="text"
                 />
                 {errors.costo && (
@@ -160,7 +208,7 @@ const ModalCreateInventario = ({onClose,showModal}) => {
                 <Input color="blue" label="Porcentaje de multa" size="md" name="multa" step={0.01} min={0} max={1}
                 { ...register("multa") }
                 error={Boolean(errors.multa)}
-                success={!errors.multa  && getValues('multa') }
+                success={Boolean(!errors.multa  && getValues('multa')) }
                 type="number"
                 />
                 {errors.multa && (
@@ -176,7 +224,7 @@ const ModalCreateInventario = ({onClose,showModal}) => {
               max={250} min={10}
               type="text"
               error={Boolean(errors.descripcion)}
-              success={!errors.descripcion  && getValues('descripcion') }
+              success={Boolean(!errors.descripcion  && getValues('descripcion')) }
               />
               {errors.descripcion && (
                 <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -226,10 +274,10 @@ const ModalCreateInventario = ({onClose,showModal}) => {
   );
 };
 
-ModalCreateInventario.propTypes = {
+ModalCreateProductos.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
   inventarioId: PropTypes.number,
 }
 
-export default ModalCreateInventario;
+export default ModalCreateProductos;
