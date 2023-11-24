@@ -36,7 +36,7 @@ const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS
       </CardHeader>
       <CardBody className="rounded-lg bg-gray-50 border-gray-900" >
         <Typography variant="h6" color="blue-gray" className="mb-4 text-center font-semibold">
-          Desde ${ VALOR_MINIMO.toLocaleString('de-DE') }  x persona
+          Desde ${ VALOR_MINIMO?.toLocaleString('de-DE') }  x persona
         </Typography>
           <div className="w-full p-2">
             <Select color="blue" 

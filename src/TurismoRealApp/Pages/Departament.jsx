@@ -27,7 +27,9 @@ const Departament = () => {
     <section id="main-content" className=" font-sans mx-auto w-full max-w-container px-4 sm:px-6 py-12  lg:px-8 bg-gray-50  ">
       <div className="mx-auto grid w-full justify-center  xl:grid-cols-6 lg:grid-cols-3 md:grid-cols-2 gap-y-16 ">
       {
-        deparments.map((apartment) => (
+        deparments
+        .filter((apartment) => apartment.ACTIVO === 'S')
+        .map((apartment) => (
           <DepartmentCard key={apartment.DEPARTAMENTO_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" 
             title={apartment.NOMBRE} description={ apartment.DESCRIPCION} location={apartment.DIRECCION} tipo={apartment.TIPO} 
             identificadorDpto={apartment.NUMERO_DPTO} qtyBathroom={apartment.BANOS} qtyBed={ apartment. CAMAS} 

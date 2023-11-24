@@ -1,13 +1,11 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography,  Textarea, Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
-import Datepicker from "react-tailwindcss-datepicker";
-import { useState } from "react";
-import formatNumberWithDollar from "../../Assets/js/funciones";
+import { useEffect, useState } from "react";
 import { CreateNewTour } from "../../Api";
 
 const schema = yup.object({
@@ -20,16 +18,7 @@ const schema = yup.object({
     .typeError('La duración debe ser un número entero'),
   descripcion: yup.string().required('Descripción requerida').min(10,'La descripción debe tener al menos 10 caracteres')
     .max(100,'La descripción debe tener máximo 100 caracteres'),
-  precio: yup.string()
-  .required('El costo es requerido')
-  .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de costo inválido')
-  .test('is-valid-number', 'El costo debe ser un número válido', value => {
-    const number = parseFloat(value.replace(/[^\d]/g, '')); // Eliminar todos los caracteres no numéricos para la validación
-    return !isNaN(number) && number > 0 && number <= 999999999;
-  }),
   capacidad: yup.number().required('Capacidad requerida').min(1,'La capacidad debe ser mayor a 0 personas').max(100,'La capacidad debe ser menor a 100 personas'),
-  hora: yup.string().required('Hora requerida').min(3,'La hora debe tener al menos 3 caracteres').max(5,'La hora debe tener máximo 5 caracteres'),
-  active: yup.boolean().required('Estado requerido'),
 });
 
 
@@ -48,14 +37,9 @@ const ModalCreateTour = ({onClose,showModal}) => {
         nombre: formData.nombre,
         duracion: formData.duracion * 60,
         descripcion: formData.descripcion,
-        precio: parseInt(formData.precio.replace(/\$|\.|,/g, '')),
-        hora: formData.hora,
         capacidad: formData.capacidad,
-        startDate: dateToday.startDate,
-        endDate: dateToday.endDate,
-        active: formData.active ? "S" : "N",
+        tour_comuna_id : formData.comuna,
       }
-      console.log(tourForm);
       await CreateNewTour(tourForm);
       
       onClose();
@@ -79,21 +63,44 @@ const ModalCreateTour = ({onClose,showModal}) => {
   }
 
 
-  const [dateToday, setDateToday] = useState({
-    startDate: null,
-    endDate: null
-  });
-  const handleValueChange = newDateSelected => {
-    setDateToday(newDateSelected);
-  };
-  
-  const today = new Date();
-  const oneYearLater = new Date();
-  oneYearLater.setFullYear(today.getFullYear() + 1);
+  const [comuna, setComuna] = useState('');
+  const [region, setRegion] = useState([]);
 
-  const handleInputChangeCosto = (event) => {
-    const formattedValue = formatNumberWithDollar(event.target.value);
-    setValue('precio', formattedValue);
+  const URL_API_GET_REGION = 'https://fastapi-gv342xsbja-tl.a.run.app/regiones';
+  useEffect(() => {
+    const requestOptions = {
+      method: 'GET'
+    };
+
+    fetch(URL_API_GET_REGION,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setRegion(data)
+      })
+      .catch(error => console.log(error))
+  },[URL_API_GET_REGION]);
+
+  const getComunas = (idRegion) => {
+    const URL_API_GET_COMUNAS = `https://fastapi-gv342xsbja-tl.a.run.app/comunas/${idRegion}`;
+    const requestOptions = {
+      method: 'GET'
+    }
+    fetch(URL_API_GET_COMUNAS,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setComuna(data)
+      })
+      .catch(error => console.log(error))
+  }
+
+
+  const handleSelectedRegion = (e) => {
+    setValue('region',e)
+    getComunas(e);
+  }
+
+  const handleSelectedComuna = (e) => {
+    setValue('comuna',e)
   }
 
 
@@ -102,7 +109,9 @@ const ModalCreateTour = ({onClose,showModal}) => {
     className="max-w-full max-h-screen py-2  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear nuevo servicio turismo </span>
+      <Typography variant="h4">
+      Crear tour
+        </Typography>
         <IconButton
         color="blue-gray"
         size="sm"
@@ -130,16 +139,15 @@ const ModalCreateTour = ({onClose,showModal}) => {
       </DialogHeader>
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-        <Typography>
-          <h6 className="text-gray-500 text-sm font-bold">Información del servicios</h6>
+        <Typography variant="h6">
+          Información del servicios
         </Typography>
-        <div className="grid grid-cols-2  gap-6 mt-12  mb-32">
+        <div className="grid grid-cols-2  gap-6 mt-6 ">
             <div className="relative">
               <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
                 { ...register("nombre") }
                 error={Boolean(errors.nombre)}
-                success={!errors.nombre  && getValues('nombre') }
-                max={50} min={3}
+                success={Boolean(!errors.nombre  && getValues('nombre')) }
               />
               {errors.nombre && (
                 <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
@@ -147,53 +155,63 @@ const ModalCreateTour = ({onClose,showModal}) => {
                 </div>
               )}
             </div>
-            <div className="flex justify-between items-center gap-6">
-              <div className="border-2 rounded-md border-gray-300 w-full">
-                <Datepicker
-                  i18n={"es"}
-                  startWeekOn="mon"
-                  primaryColor={"blue"}
-                  useRange={false} 
-                  value={dateToday} 
-                  readOnly={true} 
-                  onChange={handleValueChange} 
-                  minDate={today}
-                  maxDate={oneYearLater}
-                  placeholder={"Fecha de tour"} 
+
+            <div className="flex justify-center items-center gap-2">
+              <div className="relative w-full">
+                <Select color="blue" label="Región" size="md"
+                error={errors.region ? errors.region.message : undefined }
+                success={Boolean(!errors.region  && getValues('region'))}
+                onChange={ (e) =>{
+                  handleSelectedRegion(e)
+                }}
+                > 
+
+                  {  
+                    region ?
                   
-                />
+                    region?.map((regionItem) => (
+                    <Option key={regionItem.REGION_ID} value={String(regionItem.REGION_ID)}>{regionItem.NOMBRE_REGION}</Option>)
+                    ): (
+                      <Option value="0">No hay región disponibles</Option>
+                    )
+                  
+                  }
+
+                </Select>
+                {errors.region && (
+                  <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                    {errors.region.message}
+                  </div>
+                  )}
               </div>
               <div className="relative w-full">
-              <Input type="text" name="hora" color="blue" label="Hora" size="md"
-                { ...register("hora") }
-                error={Boolean(errors.hora)}
-                success={!errors.hora  && getValues('hora') }
-                max={50} min={3}
-              />
-              {errors.hora && (
-                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                  {errors.hora.message}
-                </div>
-              )}
-            </div>
+                <Select color="blue" label="Comuna" size="md"
+                error={errors.comuna ? errors.comuna.message : undefined }
+                success={!errors.comuna  && getValues('comuna') }
+                onChange={ (e) =>{
+                  handleSelectedComuna(e)
+                }}
+                >
 
-            </div>
-            <div className="relative">
-              <Input type="text" name="precio" color="blue" label="Precio" size="md"
-                { ...register("precio") }
-                onChange={handleInputChangeCosto}
-                error={Boolean(errors.precio)}
-                success={!errors.precio  && getValues('precio') }
-              />
-              {errors.precio && (
-                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                  {errors.precio.message}
-                </div>
-              )}
+                {
+                
+                  comuna ?
+                  comuna?.map((comunaItem) => (
+                  <Option key={comunaItem.COMUNA_ID} value={String(comunaItem.COMUNA_ID)}>{comunaItem.NOMBRE_COMUNA}</Option>)
+                  ): (
+                    <Option value="0">No hay comunas disponibles</Option>
+                  )
+                }
+
+                </Select>
+                {errors.comuna && (
+                  <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                    {errors.comuna.message}
+                  </div>
+                  )}
+              </div>
             </div>
               
-            <div className="flex justify-between items-center gap-6">
-
               <div className="relative w-full">
                 <Input type="number" name="duracion" color="blue" label="Duración" size="md"
                   { ...register("duracion") }
@@ -218,12 +236,9 @@ const ModalCreateTour = ({onClose,showModal}) => {
                 </div>
               )}
               </div>
-            </div>
-
             <div className="relative">
-              <Textarea  color="blue" label="Descripción" size="md" name="descripcion"
+              <Textarea className="min-h-[200px]" color="blue" label="Descripción" size="md" name="descripcion"
               { ...register("descripcion") }
-              max={250} min={10}
               type="text"
               error={Boolean(errors.descripcion)}
               success={!errors.descripcion  && getValues('descripcion') }
@@ -234,18 +249,22 @@ const ModalCreateTour = ({onClose,showModal}) => {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-center ">
-          <span className="flex items-center">
-            <Checkbox color="blue" defaultChecked size="sm"
-            name="active"
-            { ...register("active") }
-            error={Boolean(errors.active)}
-            success={!errors.active  && getValues('active') }
-
-            />
-            Habilitar Tour 
-          </span>
+            <div className="grid w-full grid-cols-2 gap-2">
+            <div className="flex justify-center w-full h-full">
+          <img
+            src="https://images.pexels.com/photos/161124/abbaye-de-senanque-monastery-abbey-notre-dame-de-senanque-161124.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            className="w-full  rounded-lg"
+            alt="prod5"
+          />
         </div>
+        <div className="flex justify-center w-full h-full">
+          <img
+            src="https://images.pexels.com/photos/7129137/pexels-photo-7129137.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            className="w-full  rounded-lg"
+            alt="prod5"
+          />
+        </div>
+      </div>
         </div>
 
 
@@ -266,7 +285,7 @@ const ModalCreateTour = ({onClose,showModal}) => {
         type="submit"
         className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
         >
-        Crear nuevo servicio de turismo
+        Crear tour
         </button>
       </DialogFooter>
       </form>

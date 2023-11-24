@@ -1,12 +1,14 @@
-const URL_API_CREATE_MAINTENCE = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_departamento`;
+const URL_API_CREATE_MAINTENCE = `https://fastapi-gv342xsbja-tl.a.run.app/crear_mantenimiento`;
 
 export const CrearMatencion = async (asignarMantencion) => {
 
   const queryParams = {
-      tipoMantencion: asignarMantencion.tipoMantencion,
-      encargado: asignarMantencion.encargado,
-      startDate: asignarMantencion.startDate,
-      endDate: asignarMantencion.endDate
+      maintenance_description: asignarMantencion.descripcion,
+      maintenance_extra_coments: asignarMantencion.tipoMantencion,
+      maintenance_manager: asignarMantencion.encargado,
+      department_id: asignarMantencion.department_id,
+      reservation_start_date : asignarMantencion.startDate,
+      reservation_end_date : asignarMantencion.endDate
     }
   
 

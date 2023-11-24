@@ -10,7 +10,7 @@ export const ActualizarDpto = async (actualizarDepartamento) => {
     rooms: actualizarDepartamento.habitaciones,
     beds: actualizarDepartamento.camas,
     daily_rate: actualizarDepartamento.tarifa,
-    active: actualizarDepartamento.active,
+    active: 'S',
     num_host: actualizarDepartamento.huespedes,
   }
 

@@ -1,36 +1,29 @@
-const URL_API_CREATE_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_departamento`;
+const URL_API_CREATE_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/modificar_tour`;
 
-export const ActualizarDpto = async (crearDepartamento) => {
+export const ActualizarDpto = async (actualizarTour) => {
 
   const queryParams = {
-    name: crearDepartamento.nombre,
-    description: crearDepartamento.descripcion,
-    baths: crearDepartamento.banos,
-    rooms: crearDepartamento.habitaciones,
-    beds: crearDepartamento.camas,
-    dept_type: crearDepartamento.tipo,
-    daily_rate: crearDepartamento.tarifa,
-    address: crearDepartamento.calle,
-    address_number: crearDepartamento.numero,
-    active: crearDepartamento.active ? 'S': 'N',
-    commune_id: crearDepartamento.comuna,
+    tour_id: actualizarTour.tour_id,
+    tour_name: actualizarTour.nombre,
+    tour_description: actualizarTour.descripcion,
+    tour_capacity: actualizarTour.capacidad,
+    tour_duration : actualizarTour.duracion,
+    
   }
 
   const queryString = new URLSearchParams(queryParams).toString();
-  console.log(queryString)
   const urlWithParams = `${URL_API_CREATE_DPTO}?${queryString}`;
   const requestOptions = {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${crearDepartamento.access_token}`,
+      'Authorization': `Bearer ${actualizarTour.access_token}`,
     },
   };
 
   try {
     const response = await fetch(urlWithParams, requestOptions);
     console.log(response)
-
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`API Error (${response.status}): ${errorText}`);

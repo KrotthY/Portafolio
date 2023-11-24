@@ -1,4 +1,4 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Select, Option, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,7 +7,7 @@ import useSession from "../../../Auth/Context/UseSession";
 import { CreateNewDpto } from "../../Api/Departamento/crearDpto";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import formatNumberWithDollar from "../../Assets/js/funciones";
+import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -28,7 +28,6 @@ const schema = yup.object({
   habitaciones: yup.number().required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   camas: yup.number().required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
   huespedes: yup.number().required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
-  active: yup.boolean().required('Estado requerido'),
 });
 
 
@@ -60,9 +59,7 @@ const ModalCreate = ({onClose,showModal}) => {
         region: formData.region,
         comuna: parseInt(formData.comuna),
         huespedes: formData.huespedes,
-        active: formData.active,
       }
-      console.log(crearDepartamento)
       await CreateNewDpto(crearDepartamento);
       onClose();
       reset(); 
@@ -157,7 +154,7 @@ const ModalCreate = ({onClose,showModal}) => {
       </DialogHeader>
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-        <Typography>
+        <Typography variant="h6">
           Datos de la propiedad
         </Typography>
         <div className="grid grid-cols-2  gap-6 my-12 border-b-4 pb-6 border-b-blue-200">
@@ -213,8 +210,8 @@ const ModalCreate = ({onClose,showModal}) => {
           </div>
           <div className="relative">
             <Select color="blue" label="Región" size="md"
-            error={errors.region ? errors.region.message : undefined }
-            success={!errors.region  && getValues('region')}
+            error={Boolean(errors.region) }
+            success={Boolean(!errors.region  && getValues('region'))}
             onChange={ (e) =>{
               handleSelectedRegion(e)
             }}
@@ -400,25 +397,10 @@ const ModalCreate = ({onClose,showModal}) => {
               </div>
             )}
           </div>
-    
-
+  
         </div>
-        <div className="flex items-center justify-center my-6 ">
-          <span className="flex items-center">
-            <Checkbox color="blue" defaultChecked size="sm"
-            name="active"
-            { ...register("active") }
-            error={errors.active ? errors.active.message : undefined }
-            success={!errors.active  && getValues('active') }
-
-            />
-            Habilitar departamento 
-          </span>
-
-        </div>
-
       </DialogBody>
-      <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
+      <DialogFooter className="p-2 mt-6 border-t-2 border-gray-100 gap-4">
         <button
         type="submit"
         className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"

@@ -4,6 +4,7 @@ import { lazy } from 'react';
 export const PanelAdministracion = lazy(() => import('./PanelAdministracion'));
 export const ServiciosTransportes = lazy(() => import('./ServiciosTransportes'));
 export const ServicioTurismo = lazy(() => import('./ServicioTurismo'));
+export const AgendarTurismo = lazy(() => import('./AgendarTurismo'));
 export const Productos = lazy(() => import('./Productos'));
 export const Reportes = lazy(() => import('./Reportes'));
 export const Servicios = lazy(() => import('./Servicios'));

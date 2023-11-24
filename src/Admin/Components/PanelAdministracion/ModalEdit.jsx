@@ -1,4 +1,4 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,7 +7,7 @@ import useSession from "../../../Auth/Context/UseSession";
 import { ActualizarDpto } from "../../Api/Departamento/actualizarDpto";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import formatNumberWithDollar from "../../Assets/js/funciones";
+import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -28,7 +28,6 @@ const schema = yup.object({
   habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   camas: yup.number().typeError('Camas debe ser un número').required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
   huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(30, 'Máx. 20'),
-  active: yup.boolean().required('Estado requerido'),
 });
 
 
@@ -53,7 +52,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
         habitaciones: formData.habitaciones,
         camas: formData.camas,
         tarifa: parseInt(formData.tarifa.replace(/\$|\.|,/g, '')),
-        active: formData.active ? 'S': 'N',
         huespedes: formData.huespedes,
       }
       await ActualizarDpto(actualizarDepartamento);
@@ -108,7 +106,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
       setValue('habitaciones', deparmentsId?.DORMITORIOS);
       setValue('camas', deparmentsId?.CAMAS);
       setValue('huespedes', deparmentsId?.MAX_HUESPEDES);
-      setValue('active', deparmentsId?.ACTIVO === 'S'? true : false);
       setValue('tipo', deparmentsId?.TIPO);
     }
   }, [deparmentsId,setValue])
@@ -130,7 +127,6 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
         size="sm"
         variant="text"
         onClick={ () => {
-          reset(); 
           onClose();
         }}
       >
@@ -160,7 +156,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
             <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
               { ...register("nombre") }
               error={Boolean(errors.nombre)}
-              success={!errors.nombre  && getValues('nombre') }
+              success={Boolean(!errors.nombre  && getValues('nombre')) }
             />
             {errors.nombre && (
               <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
@@ -196,7 +192,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
             { ...register("tarifa") }
             onChange={(e) => handleFormatNumber(e)}
             error={Boolean(errors.tarifa)}
-            success={!errors.tarifa  && getValues('tarifa') }
+            success={Boolean(!errors.tarifa  && getValues('tarifa')) }
             type="text"
             />
             {errors.tarifa && (
@@ -223,7 +219,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
             { ...register("descripcion") }
             type="text"
             error={Boolean(errors.descripcion)}
-            success={!errors.descripcion  && getValues('descripcion') }
+            success={Boolean(!errors.descripcion  && getValues('descripcion')) }
             />
             {errors.descripcion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -274,7 +270,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               type="number"
               name="banos"
               error={Boolean(errors.banos)}
-              success={!errors.banos  && getValues('banos') }
+              success={Boolean(!errors.banos  && getValues('banos')) }
             />
             {errors.banos && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -288,7 +284,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               { ...register("habitaciones") }
               type="number"
               error={Boolean(errors.habitaciones)}
-              success={!errors.habitaciones  && getValues('habitaciones') }
+              success={Boolean(!errors.habitaciones  && getValues('habitaciones')) }
             />
             {errors.habitaciones && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -301,7 +297,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               { ...register("camas") }
               type="number"
               error={Boolean(errors.camas)}
-              success={!errors.camas  && getValues('camas') }
+              success={Boolean(!errors.camas  && getValues('camas')) }
             />
             {errors.camas && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -315,7 +311,7 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
               type="number"
               name="huespedes"
               error={Boolean(errors.huespedes)}
-              success={!errors.huespedes  && getValues('huespedes') }
+              success={Boolean(!errors.huespedes  && getValues('huespedes')) }
             />
             {errors.huespedes && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -326,22 +322,10 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
     
 
         </div>
-        <div className="flex items-center justify-center my-6 ">
-          <span className="flex items-center">
-            <Checkbox color="blue"  size="sm"
-            name="active"
-            { ...register("active") }
-            />
-            Habilitar departamento 
-          </span>
-
-        </div>
-
       </DialogBody>
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
       <button
             onClick={ () => {
-              reset(); 
               onClose();
             }}
           type="button"

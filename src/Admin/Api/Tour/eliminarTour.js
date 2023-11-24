@@ -1,15 +1,16 @@
-const URL_API_TOUR_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_tour`;
+const URL_API_TOUR_DISABLED = `https://fastapi-gv342xsbja-tl.a.run.app/modificar_estado_tour`;
 
 export const eliminarTour = async (eliminarTurismo) => {
 
   const queryParams = {
-    name: eliminarTurismo.turismoId,
+    tour_id: eliminarTurismo.tourId,
+    tour_active: eliminarTurismo.estado,
   }
-
+  console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
-  const urlWithParams = `${URL_API_TOUR_DELETE}?${queryString}`;
+  const urlWithParams = `${URL_API_TOUR_DISABLED}?${queryString}`;
   const requestOptions = {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Accept': 'application/json',
       'Authorization': `Bearer ${eliminarTurismo.access_token}`,

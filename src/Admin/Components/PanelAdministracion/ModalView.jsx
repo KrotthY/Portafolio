@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import formatNumberWithDollar from "../../Assets/js/funciones";
+import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
@@ -25,7 +25,6 @@ const schema = yup.object({
   habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
   camas: yup.number().typeError('Camas debe ser un número').required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
   huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
-  active: yup.boolean().required('Estado requerido'),
 });
 
 
@@ -67,10 +66,7 @@ const ModalView = ({onClose,showModal,deptoId}) => {
       setValue('habitaciones', deparmentsId?.DORMITORIOS);
       setValue('camas', deparmentsId?.CAMAS);
       setValue('huespedes', deparmentsId?.MAX_HUESPEDES);
-      setValue('active', deparmentsId?.ACTIVO === 'S'? true : false);
       setValue('tipo', deparmentsId?.TIPO);
-
-
     }
 
   }, [deparmentsId,setValue])
@@ -237,24 +233,9 @@ const ModalView = ({onClose,showModal,deptoId}) => {
               readOnly
             />
           </div>
-    
-
         </div>
-        <div className="flex items-center justify-center my-6 ">
-          <span className="flex items-center">
-            <Checkbox color="blue"  size="sm"
-            name="active"
-            { ...register("active") }
-
-            disabled
-            />
-            Habilitar departamento 
-          </span>
-
-        </div>
-
       </DialogBody>
-      <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
+      <DialogFooter className="p-2 mt-6 border-t-2 border-gray-100 gap-4">
       <button
             onClick={ () => {
               onClose();

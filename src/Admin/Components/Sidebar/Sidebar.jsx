@@ -67,7 +67,17 @@ export function Sidebar() {
               <ListItemPrefix>
                 <GlobeAmericasIcon className="h-6 w-6" />
               </ListItemPrefix>
-              Servicio de Turismo
+              Crear tour
+            </ListItem>
+          </Link>
+          <Link to="/admin/agendar-tour" >
+            <ListItem onClick={ () => SetSelectedSideBar("Agendartour") } 
+              className={`  font-normal text-white  ${ SelectedSideBar === "Agendartour" ? valueSelected : ''} `}
+              >
+              <ListItemPrefix>
+                <GlobeAmericasIcon className="h-6 w-6" />
+              </ListItemPrefix>
+              Agendar tour
             </ListItem>
           </Link>
           <Link to="/admin/productos" >

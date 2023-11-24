@@ -1,24 +1,18 @@
-const URL_API_CREATE_TOUR = `https://fastapi-gv342xsbja-tl.a.run.app/crear_tour`;
+const URL_API_AGENDA_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_agenda_tour`;
 
-export const CreateNewTour = async (crearTourQuery) => {
+export const eliminarAgendaTour = async (eliminarAgenda) => {
 
   const queryParams = {
-    tour_name: crearTourQuery.nombre,
-    tour_duration : crearTourQuery.duracion,
-    tour_description: crearTourQuery.descripcion,
-    tour_capacity: crearTourQuery.capacidad,
-    tour_active: "S",
-    tour_comuna_id:crearTourQuery.tour_comuna_id
+    agenda_id: eliminarAgenda.idReservaAgenda,
   }
-
-
+  console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
-  const urlWithParams = `${URL_API_CREATE_TOUR}?${queryString}`;
+  const urlWithParams = `${URL_API_AGENDA_DELETE}?${queryString}`;
   const requestOptions = {
-    method: 'POST',
+    method: 'DELETE',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${crearTourQuery.access_token}`,
+      'Authorization': `Bearer ${eliminarAgenda.access_token}`,
     },
   };
   try {

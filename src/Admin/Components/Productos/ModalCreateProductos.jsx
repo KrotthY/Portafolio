@@ -7,7 +7,7 @@ import useSession from "../../../Auth/Context/UseSession";
 import { crearNuevoProducto } from "../../Api/Productos/crearProductos";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import formatNumberWithDollar from "../../Assets/js/funciones";
+import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
   nombre: yup.string()

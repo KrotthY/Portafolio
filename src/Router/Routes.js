@@ -24,6 +24,7 @@ export const PrivateRoutes = {
   PANEL_ADMIN: 'panel-administracion',
   SERVICIOS_TRANSPORTE: 'servicios-transporte',
   SERVICIOS_TURISMO: 'servicio-turismo',
+  AGENDAR_TURISMO: 'agendar-tour',
   PRODUCTOS: 'productos',
   SERVICIOS: 'servicios',
   USUARIOS: 'usuarios',

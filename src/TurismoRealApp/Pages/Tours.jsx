@@ -28,7 +28,9 @@ const Tours = () => {
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
           {
-            tours.map((tour) => (
+            tours
+            .filter((tour) => tour.ACTIVO === "S")
+            .map((tour) => (
               <TourOffer key={tour?.TOUR_ID} idTour={tour?.TOUR_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" qtyPerson={tour?.CAPACIDAD_PARTICIPANTES} description={tour.DESCRIPCION} title={tour.NOMBRE_TOUR} price={tour.VALOR_MINIMO}  status={tour.ACTIVO} />
             ))
           }

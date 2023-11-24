@@ -12,7 +12,7 @@ export const CreateNewDpto = async (crearDepartamento) => {
     daily_rate: crearDepartamento.tarifa,
     address: crearDepartamento.direccion,
     address_number: crearDepartamento.numeroDireccion,
-    active: crearDepartamento.active ? 'S': 'N',
+    active: 'S',
     commune_id: crearDepartamento.comuna,
     num_host: crearDepartamento.huespedes,
   }

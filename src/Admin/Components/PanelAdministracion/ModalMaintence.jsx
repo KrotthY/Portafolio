@@ -1,4 +1,4 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option, Textarea } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
@@ -10,14 +10,13 @@ import { CrearMatencion } from "../../Api/Departamento/crearMantencion";
 import Swal from "sweetalert2";
 
 const schema = yup.object({
-  tipoMantencion: yup.string().required(),
+  tipoMantencion: yup.string().required('Tipo de Mantención requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   encargado: yup.string().required('Encargado requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
 });
 
 const ModalMaintence = ({onClose,showModal,deptoId}) => {
   const { user } = useSession();
-  const [tipoMantencion, setTipoMantencion] = useState('');
   const [listaTransformada, setListaTransformada] = useState([]);
   const [dateToday, setDateToday] = useState({
     startDate: null,
@@ -28,27 +27,28 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
   const today = new Date();
   const oneYearLater = new Date();
   oneYearLater.setFullYear(today.getFullYear() + 1);
-  const { register, handleSubmit, formState: { errors } , setValue,getValues ,reset} = useForm({
+  const { register, handleSubmit, formState: { errors } ,getValues ,reset} = useForm({
     resolver: yupResolver(schema)
   });
 
   const handleSubmitForm = async (data) => {
     try{
       const asignarMantencion = {
+        "department_id": deptoId,
         "access_token": user.access_token,
         "tipoMantencion": data.tipoMantencion,
         "encargado": data.encargado,
+        "descripcion": data.descripcion,
         "startDate": dateToday.startDate,
         "endDate": dateToday.endDate
       }
-
       await CrearMatencion(asignarMantencion);
       reset(); 
       onClose();
       setDateToday(null)
       Swal.fire({
         icon: 'success',
-        title: 'Asignacion de Mantención',
+        title: 'Asignación de Mantención',
         text: 'La mantención se ha asignado correctamente',
         confirmButtonText: 'Ok'
       });
@@ -103,7 +103,7 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
 
 
   return (
-    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="xs">
+    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="md">
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
         <span className="text-2xl tracking-tight font-extrabold text-gray-900">Mantención de Propiedad</span>
         <IconButton
@@ -144,23 +144,12 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
         <div className="flex items-center justify-between gap-6 mt-12 mb-6 ">
           <div className="relative w-full">
 
-            <Select color="blue" label="Tipo de Mantenimiento" size="md"
-              value={tipoMantencion}
-              onChange={e =>{ 
-                setTipoMantencion(e) 
-                setValue("tipoMantencion", e);
-              }}
+          <Input color="blue" type="text"  label="Tipo de Mantención" size="md" 
+              {...register("tipoMantencion")}
+              max={50} min={3}
               error={Boolean(errors.tipoMantencion)}
               success={Boolean(!errors.tipoMantencion  && getValues('tipoMantencion')) }
-              >
-              <Option value="1" >Mantenimiento Preventivo</Option>
-              <Option value="2" >Mantenimiento Correctivo</Option>
-              <Option value="3" >Mantenimiento Cosmético</Option>
-              <Option value="4" >Mantenimiento Emergencia</Option>
-              <Option value="5" >Mantenimiento Temporada</Option>
-              <Option value="6" >Mantenimiento Seguridad</Option>
-              <Option value="7" >Mantenimiento Legal</Option>
-            </Select>
+            />
             {errors.tipoMantencion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
                 {errors.tipoMantencion.message}
@@ -187,7 +176,7 @@ const ModalMaintence = ({onClose,showModal,deptoId}) => {
             max={250} min={10}
             type="text"
             error={errors.descripcion ? errors.descripcion.message : undefined }
-            success={!errors.descripcion  && getValues('descripcion') }
+            success={Boolean(!errors.descripcion  && getValues('descripcion')) }
             />
             {errors.descripcion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">

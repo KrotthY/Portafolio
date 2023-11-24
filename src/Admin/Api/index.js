@@ -1,3 +1,5 @@
+export * from './AgendarTour/crearAgenda';
+export * from './AgendarTour/eliminarAgenda';
 export * from './Departamento/actualizarDpto';
 export * from './Departamento/crearDpto';
 export * from './Departamento/crearMantencion';
@@ -10,4 +12,5 @@ export * from './Tour/actualizarTour';
 export * from './Tour/crearTour';
 export * from './Tour/eliminarTour';
 export * from './Tour/obtenerTour';
+export * from './Usuarios';
 export * from './index';

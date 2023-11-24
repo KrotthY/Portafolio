@@ -5,7 +5,7 @@ import useSession from "../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
 import { eliminarProducto } from "../Api/Productos/eliminarProductos";
 import { ModalCreateProductos, ModalEditProductos } from "../Components";
-import formatNumberWithDollar from "../Assets/js/funciones";
+import formatNumberWithDollar from "../Assets/js/formatNumberDollar";
 
 const URL_API_GET_PRODUCTOS = 'https://fastapi-gv342xsbja-tl.a.run.app/productos';
 
@@ -29,7 +29,6 @@ const Productos = () => {
     fetch(URL_API_GET_PRODUCTOS,requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         setInventario(data)
       })
       .catch(error => console.log(error))
@@ -142,13 +141,13 @@ const Productos = () => {
         if (result.isConfirmed) {
         
           eliminarProducto(borrarInventario)
-          cargarInventario()  
           Swal.fire({
             icon: 'success',
             title: 'Producto eliminado',
             text: 'El producto se ha eliminado correctamente',
             confirmButtonText: 'Ok'
           })
+          cargarInventario()  
         }
       })
     } catch (error) {
