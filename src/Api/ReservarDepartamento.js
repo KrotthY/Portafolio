@@ -5,12 +5,9 @@ export const reservaDepartamento = async (datosDeReserva) => {
     start_date: datosDeReserva.start_date,
     end_date: datosDeReserva.end_date,
     reservation_value: datosDeReserva.reservation_value,
-    reservation_debt: datosDeReserva.reservation_debt,
-    reservation_total: datosDeReserva.reservation_total,
     department_id: datosDeReserva.department_id,
     num_hosts: datosDeReserva.num_hosts,
   };
-
 
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_POST_PURCHASE}?${queryString}`;

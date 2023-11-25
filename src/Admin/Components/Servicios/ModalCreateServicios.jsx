@@ -1,18 +1,19 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
-import { crearServicios } from "../../Api/Servicios";
+import { crearServicios } from "../../Api";
+import { useEffect, useState } from "react";
 
 const schema = yup.object({
   nombre: yup.string()
     .required('El nombre es requerido')
     .min(3,'El nombre debe tener al menos 3 caracteres')
     .max(50,'El nombre debe tener máximo 50 caracteres'),
-  active: yup.boolean().required('Estado requerido'),
+  departamentoId: yup.number().required('El departamento es requerido'),
 });
 
 
@@ -20,7 +21,7 @@ const ModalCreateServicios = ({onClose,showModal}) => {
 
   const  { user }  = useSession();
 
-  const {register ,handleSubmit, formState: { errors } , getValues,reset} = useForm({
+  const {register ,handleSubmit, formState: { errors } ,setValue, getValues,reset} = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -29,7 +30,7 @@ const ModalCreateServicios = ({onClose,showModal}) => {
       const ServicioForm = {
         access_token: user.access_token,
         nombre: formData.nombre,
-        active: formData.active ? "S" : "N",
+        departamentoId: formData.departamentoId,
       }
       await crearServicios(ServicioForm);
       onClose();
@@ -52,9 +53,29 @@ const ModalCreateServicios = ({onClose,showModal}) => {
     }
   }
 
+  const URL_API_GET_DEPTO_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos`;
+  const [deptoIdSelected, setDeptoId] = useState(null);
+  useEffect(() => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+        },
+      };
+      
+      fetch(URL_API_GET_DEPTO_ID, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setDeptoId(data);
+      })
+      .catch(error => console.log(error));
+  }, [user.access_token, URL_API_GET_DEPTO_ID])
+  const handleDeptoChange = (selectedValueDepto) => {
+    setValue('departamentoId', selectedValueDepto);
+  }
   return (
     <Dialog open={showModal}  aria-labelledby="modalCrear" size="md"
-    className="max-w-full max-h-screen py-2  overflow-y-scroll"
+    className="max-w-full max-h-screen py-2 "
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
         <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear nuevo servicio </span>
@@ -102,18 +123,25 @@ const ModalCreateServicios = ({onClose,showModal}) => {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-center ">
-              <span className="flex items-center">
-                <Checkbox color="blue" defaultChecked size="sm"
-                name="active"
-                { ...register("active") }
-                error={Boolean(errors.active)}
-                success={!errors.active  && getValues('active') }
-
-                />
-                Habilitar servicio 
-              </span>
-            </div>
+            <div className="w-full">
+                  <Select color="blue" 
+                    className="text-sm"  
+                    label="Departamento disponibles"
+                    onChange={(e) => handleDeptoChange(e)}
+                    error={Boolean(errors.departamentoId)}
+                    success={Boolean(!errors.departamentoId  && getValues('departamentoId'))}
+                  >
+                  { 
+                    deptoIdSelected  ? (
+                      deptoIdSelected.map((deptoData) => (
+                        <Option  key={deptoData.DEPARTAMENTO_ID} value={String(deptoData.DEPARTAMENTO_ID)}>{deptoData.NOMBRE}</Option>
+                      ))
+                    ) : (
+                      <Option value="0">No hay departamentos disponibles</Option>
+                    )
+                  }
+                  </Select>
+                </div>
               
         </div>
 

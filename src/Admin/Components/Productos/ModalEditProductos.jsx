@@ -53,6 +53,7 @@ const ModalEditProductos = ({onClose,showModal,productosId}) => {
         descripcion: formData.descripcion,
         costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
         multa: formData.multa,
+        departamentoId: parseInt(formData.departamentoId),
       }
       await ActualizarProducto(actualizarProductosData);
       onClose();

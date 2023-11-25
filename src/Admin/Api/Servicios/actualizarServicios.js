@@ -1,11 +1,10 @@
-const URL_API_UPDATE_SERVICES = `https://fastapi-gv342xsbja-tl.a.run.app/inventario`;
+const URL_API_UPDATE_SERVICES = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_estado_servicio`;
 
 export const actualizarServicios = async (actualizarServiciosForm) => {
 
   const queryParams = {
-    inventory_name: actualizarServiciosForm.nombre,
-    servicioId: actualizarServiciosForm.servicioId,
-    department_id:1
+    servicio_id: actualizarServiciosForm.servicioId,
+    active : actualizarServiciosForm.active ,
   }
 
   const queryString = new URLSearchParams(queryParams).toString();

@@ -1,11 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import { Navbar, Footer } from "../../Ui"
 import { PublicRoutes } from "../../Router/Routes"
-import { lazy } from "react"
+import { Departament, DepartmentDetails, Tours } from "../Pages"
 
-const Departament = lazy(() => import('../Pages/Departament'))
-const DepartmentDetails = lazy(() => import('../Pages/DepartmentDetails'))
-const Tours = lazy(() => import('../Pages/Tours'))
+
+
 
 
 const TurismoRealRoutes = () => {

@@ -33,7 +33,6 @@ const schema = yup.object({
 
 const ModalEditAgendarTour = ({onClose,showModal,tourId}) => {
   const  { user }  = useSession();
-
   const {register ,handleSubmit, formState: { errors } ,setValue, getValues,reset} = useForm({
     resolver: yupResolver(schema),
   });
@@ -139,12 +138,8 @@ const ModalEditAgendarTour = ({onClose,showModal,tourId}) => {
         "access_token":user.access_token,
         "idReservaAgenda":idReservaAgenda,
       }
-
-      //await eliminarAgendaTour(borrarAgenda)
-
+      await eliminarAgendaTour(borrarAgenda)
       cargarServicios();
-      
-      
     } catch (error) {
       onClose(); 
       Swal.fire({

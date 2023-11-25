@@ -3,9 +3,8 @@ const URL_API_CREATE_INVENTARIO = `https://fastapi-gv342xsbja-tl.a.run.app/crear
 export const crearServicios = async (crearServicio) => {
 
   const queryParams = {
-    department_id :1,
     name: crearServicio.nombre,
-    //active_value : crearServicio.active,
+    department_id: crearServicio.departamentoId
   }
 
   const queryString = new URLSearchParams(queryParams).toString();

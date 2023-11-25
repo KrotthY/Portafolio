@@ -1,5 +1,5 @@
 import {  Route, Routes } from "react-router-dom"
-import { PanelAdministracion, Reportes, ServicioTurismo, Servicios, ServiciosTransportes, Usuarios,Perfil, Productos, AgendarTurismo } from "../Pages"
+import { PanelAdministracion, Reportes, ServicioTurismo, Servicios, ServiciosTransportes, Usuarios,Perfil, Productos, AgendarTurismo, Inventario } from "../Pages"
 import { Sidebar } from "../Components/Sidebar/Sidebar"
 import { PrivateRoutes } from "../../Router"
 
@@ -18,6 +18,7 @@ const AdminRoutes = () => {
           <Route path={ PrivateRoutes.AGENDAR_TURISMO }   element={ <AgendarTurismo /> } />
           <Route path={ PrivateRoutes.PRODUCTOS }   element={ <Productos /> } />
           <Route path={ PrivateRoutes.SERVICIOS }  element={ <Servicios /> } />
+          <Route path={ PrivateRoutes.INVENTARIO }  element={ <Inventario /> } />
           <Route path={ PrivateRoutes.USUARIOS }  element={ <Usuarios /> } />
           <Route path={ PrivateRoutes.REPORTES }  element={ <Reportes /> } />
           <Route path={ PrivateRoutes.PERFIL_ADMIN }  element={ <Perfil /> } />

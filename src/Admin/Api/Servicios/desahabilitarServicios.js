@@ -1,16 +1,17 @@
-const URL_API_SERVICE_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_servicio`;
+const URL_API_SERVICE_DISABLED = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_estado_servicio`;
 
-export const eliminarServicios = async (eliminarServiciosForm) => {
+export const disabledServicios = async (disabledServiciosForm) => {
   const queryParams = {
-    service_id : eliminarServiciosForm.servicioId,
+    servicio_id: disabledServiciosForm.servicioId,
+    active : disabledServiciosForm.estado ,
   }
   const queryString = new URLSearchParams(queryParams).toString();
-  const urlWithParams = `${URL_API_SERVICE_DELETE}?${queryString}`;
+  const urlWithParams = `${URL_API_SERVICE_DISABLED}?${queryString}`;
   const requestOptions = {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${eliminarServiciosForm.access_token}`,
+      'Authorization': `Bearer ${disabledServiciosForm.access_token}`,
     },
   };
 

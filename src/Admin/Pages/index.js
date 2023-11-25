@@ -1,12 +1,10 @@
-
-import { lazy } from 'react';
-
-export const PanelAdministracion = lazy(() => import('./PanelAdministracion'));
-export const ServiciosTransportes = lazy(() => import('./ServiciosTransportes'));
-export const ServicioTurismo = lazy(() => import('./ServicioTurismo'));
-export const AgendarTurismo = lazy(() => import('./AgendarTurismo'));
-export const Productos = lazy(() => import('./Productos'));
-export const Reportes = lazy(() => import('./Reportes'));
-export const Servicios = lazy(() => import('./Servicios'));
-export const Usuarios = lazy(() => import('./Usuarios'));
-export const Perfil = lazy(() => import('./Perfil'));
+export { default as AgendarTurismo } from './AgendarTurismo';
+export { default as Inventario } from './Inventario';
+export { default as PanelAdministracion } from './PanelAdministracion';
+export { default as Perfil } from './Perfil';
+export { default as Productos } from './Productos';
+export { default as Reportes } from './Reportes';
+export { default as ServicioTurismo } from './ServicioTurismo';
+export { default as Servicios } from './Servicios';
+export { default as ServiciosTransportes } from './ServiciosTransportes';
+export { default as Usuarios } from './Usuarios';

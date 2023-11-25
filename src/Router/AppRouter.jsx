@@ -2,14 +2,10 @@ import { Route, Routes } from "react-router-dom"
 import FuncionarioRoutes from "../Funcionarios/Routes/FuncionarioRoutes"
 import { PrivateRoutes, PublicRoutes } from "./Routes"
 import { AuthGuard } from "../Auth/Guard/AuthGuard"
-import { lazy } from "react"
+import { CreateAccount, ForgotPassword, Login } from "../Auth/Pages"
+import { AdminRoutes } from "../Admin/Routes"
+import { TurismoRealRoutes } from "../TurismoRealApp/Routes"
 
-
-const Login = lazy(() => import('../Auth/Pages/Login'))
-const CreateAccount = lazy(() => import('../Auth/Pages/CreateAccount'))
-const ForgotPassword = lazy(() => import('../Auth/Pages/ForgotPassword'))
-const AdminRoutes = lazy(() => import('../Admin/Routes/AdminRoutes'))
-const TurismoRealRoutes = lazy(() => import('../TurismoRealApp/Routes/TurismoRealRoutes'))
 
 const AppRouter = () => {
   return (

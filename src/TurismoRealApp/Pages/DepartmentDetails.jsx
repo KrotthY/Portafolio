@@ -15,7 +15,7 @@ const DepartmentDetails = () => {
   const URL_API_GET_DEPARTMENTS_ID = `https://fastapi-gv342xsbja-tl.a.run.app/departamentos/${id}`;
   const [deparmentsId, setDeparmentsId] = useState(null);
 
-  useEffect(() => {
+  const cargarDptos = () => {
     const requestOptions = {
       method: 'GET',
     };
@@ -26,7 +26,11 @@ const DepartmentDetails = () => {
         setDeparmentsId(data);
       })
       .catch(error => console.log(error));
-  }, [id, URL_API_GET_DEPARTMENTS_ID]);
+  }
+
+  useEffect(() => {
+    cargarDptos();
+  }, []);
   
 
   const [showModal, setShowModal] = useState(false);
@@ -37,6 +41,7 @@ const DepartmentDetails = () => {
   }
   
   const closeModal = () => {
+    cargarDptos();
     setShowModal(false);
   }
 

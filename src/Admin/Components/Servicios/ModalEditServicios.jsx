@@ -1,4 +1,4 @@
-import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Textarea, Checkbox } from "@material-tailwind/react";
+import { Input,Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -6,7 +6,8 @@ import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import { actualizarServicios } from "../../Api/Servicios";
+import { actualizarServicios } from "../../Api";
+
 
 const schema = yup.object({
   nombre: yup.string()
@@ -139,18 +140,7 @@ const ModalEditServicios = ({onClose,showModal,servicioId}) => {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-center ">
-              <span className="flex items-center">
-                <Checkbox color="blue"  size="sm"
-                name="active"
-                { ...register("active") }
-                error={Boolean(errors.active)}
-                success={!errors.active  && getValues('active') }
 
-                />
-                Habilitar servicio 
-              </span>
-            </div>
               
         </div>
 

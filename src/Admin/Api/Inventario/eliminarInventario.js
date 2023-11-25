@@ -1,8 +1,8 @@
 const URL_API_DPTO_DELETE = `https://fastapi-gv342xsbja-tl.a.run.app/eliminar_producto`;
 
-export const eliminarProducto = async (eliminarProductoForm) => {
+export const eliminarInventario = async (eliminarProductoForm) => {
   const queryParams = {
-    inventory_id : eliminarProductoForm.inventarioId,
+    inventory_id : eliminarProductoForm.inventory_id,
   }
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_DPTO_DELETE}?${queryString}`;
@@ -22,6 +22,6 @@ export const eliminarProducto = async (eliminarProductoForm) => {
     }
     return await response.json();
   } catch (error) {
-    throw new Error('API Error: ' + error.message || 'Error al eliminar el producto');
+    throw new Error('API Error: ' + error.message || 'Error al eliminar el inventario');
   }
 };

@@ -50,8 +50,6 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
         endDate: end_date
       } = parentDateSelected;
       const reservation_value = parentTotalCost;
-      const reservation_debt = parentTotalCost; 
-      const reservation_total = parentTotalCost;
       const department_id = idDepartamento;
       const num_hosts = parentHuesped;
 
@@ -60,14 +58,11 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
         start_date,
         end_date,
         reservation_value,
-        reservation_debt,
-        reservation_total,
         department_id,
         num_hosts
       };
 
   
-
       await reservaDepartamento(datosDeReserva);
       
       onClose();
