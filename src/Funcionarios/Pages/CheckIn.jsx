@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 import ModalRegistroEntrada from "../Components/Modal/ModalCheckIn";
 import ModalRegistroSalida from "../Components/Modal/ModalCheckOut";
 
-const URL_API_GET_CHECK_IN = 'https://fastapi-gv342xsbja-tl.a.run.app/check-in';
 
 
 const CheckInFuncionario = () => {
@@ -43,7 +42,9 @@ const CheckInFuncionario = () => {
     });
   };
 
-  useEffect(() => {
+  const cargarCheckIn = () => {
+    const URL_API_GET_CHECK_IN = 'https://fastapi-gv342xsbja-tl.a.run.app/check-in';
+
     const requestOptions = {
       method: 'GET',
     };
@@ -51,9 +52,17 @@ const CheckInFuncionario = () => {
     fetch(URL_API_GET_CHECK_IN,requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         setCheckIn(data)
       })
       .catch(error => console.log(error))
+  }
+
+
+  useEffect(() => {
+
+    cargarCheckIn();
+
   }, []);
 
 
@@ -71,6 +80,18 @@ const CheckInFuncionario = () => {
           </div>
         );
       case "Apartamento":
+        return (
+          <div className="italic flex items-center gap-x-6">
+            <div className="cursor-pointer  inline-flex items-center px-3 py-1 text-brown-500 rounded-full gap-x-2 bg-brown-100/60">
+              <h2 className="cursor-pointer text-sm font-bold">Apartamento</h2>
+              <svg style={{fill:"#795548"}} className="cursor-pointer" width="18" height="18" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 384 512">
+                <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
+              </svg>
+            </div>
+          </div>
+        );
+
+      case "Departamento":
         return (
           <div className="italic flex items-center gap-x-6">
             <div className="cursor-pointer  inline-flex items-center px-3 py-1 text-brown-500 rounded-full gap-x-2 bg-brown-100/60">
@@ -187,7 +208,7 @@ const CheckInFuncionario = () => {
     <>
       <div className="flex flex-col items-center ">
       <Typography className="py-6" variant="h3">
-        Registro de Huespedes
+        Registro de Huespedes -  INCOMPLETO
       </Typography>
       </div>        
       <div className="mb-2 ml-6 flex flex-col justify-start gap-8">
@@ -257,8 +278,8 @@ const CheckInFuncionario = () => {
                       <div className="flex items-center gap-x-2">
                         <img className="object-cover w-8 h-8 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt=""/>
                         <div>
-                          <h2 className="text-sm font-bold text-gray-800">Carlos vidal curumilla</h2>
-                          <p className="text-xs font-normal text-gray-600">18.674.411-k</p>
+                          <h2 className="text-sm font-bold text-gray-800">{checkInItem.NOMBRE + ' ' + checkInItem.APELLIDO }</h2>
+                          <p className="text-xs font-normal text-gray-600">Falta rut</p>
                         </div>
                       </div>
                     </td>
