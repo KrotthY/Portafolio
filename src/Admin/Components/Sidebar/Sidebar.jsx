@@ -29,14 +29,21 @@ export function Sidebar() {
   const navigate = useNavigate ();
   const [ isDropdownOpen, setIsDropdownOpen ] = useState(false);
   const [ isDropdownOpenInv, setIsDropdownOpenInv ] = useState(false);
+  const [ isDropdownOpenCon, setIsDropdownOpenCon ] = useState(false);
 
   const handleDropdownClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleDropdownClickConductor = () => {
+    setIsDropdownOpenCon(!isDropdownOpenCon);
+  };
+
   const handleDropdownClickInv = () => {
     setIsDropdownOpenInv(!isDropdownOpenInv);
   };
+
+
 
   return (
     <Card className="h-[100vh] md:w-auto rounded-none w-full p-2 shadow-xl bg-blue-gray-900">
@@ -58,8 +65,9 @@ export function Sidebar() {
               </ListItem>
     
             </Link>
-            <Link to="/admin/servicios-transporte" >
-              <ListItem  
+            <Link>
+              <ListItem 
+                onClick={handleDropdownClickConductor} 
                 className="font-normal text-white"
               >
                 <ListItemPrefix>
@@ -68,16 +76,41 @@ export function Sidebar() {
                 Servicios de Transporte
               </ListItem>
             </Link>
-            <Link to="#" >
-                  <ListItem onClick={handleDropdownClick}  
+            {isDropdownOpenCon && (
+              <div className="ml-4">
+                <Link to="/admin/servicios-transporte" >
+                  <ListItem   
                     className="font-normal text-white" 
                     >
                     <ListItemPrefix>
-                      <GlobeAmericasIcon className="h-6 w-6" />
+                      <ChevronRightIcon className="h-6 w-6" />
                     </ListItemPrefix>
-                    Administración de Tours
+                    Traslados
                   </ListItem>
                 </Link>
+
+                <Link to="/admin/conductores" >
+                  <ListItem   
+                    className="font-normal text-white"
+                    >
+                    <ListItemPrefix>
+                      <ChevronRightIcon className="h-6 w-6" />
+                    </ListItemPrefix>
+                    Conductores
+                  </ListItem>
+                </Link>
+              </div>
+            )}
+            <Link to="#" >
+              <ListItem onClick={handleDropdownClick}  
+                className="font-normal text-white" 
+                >
+                <ListItemPrefix>
+                  <GlobeAmericasIcon className="h-6 w-6" />
+                </ListItemPrefix>
+                Administración de Tours
+              </ListItem>
+            </Link>
             {isDropdownOpen && (
               <div className="ml-4">
                 <Link to="/admin/servicio-turismo" >

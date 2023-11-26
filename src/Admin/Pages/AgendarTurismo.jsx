@@ -145,7 +145,7 @@ const AgendarTurismo = () => {
   return (
     <>
       <div className="flex flex-col items-center ">
-      <Typography variant="h3">
+      <Typography  className="py-6" variant="h3">
         Administración de Agenda de los Tours
       </Typography>
       </div>        

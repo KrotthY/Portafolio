@@ -37,7 +37,6 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     }
   }, [DIAS_RESERVADOS]); 
 
-
   const calculeDays = (startDate, endDate) => {
     const startDay = new Date(startDate);
     const endDay = new Date(endDate);
@@ -64,24 +63,24 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     }
 
     if (onTotalCostChange) {
-      const newTotalCost = TARIFA_DIARIA * days;
+      const newTotalCost = Math.round((TARIFA_DIARIA * 0.25) * days);
       onTotalCostChange(newTotalCost);
     }
   };
 
   const days = calculeDays(dateToday.startDate, dateToday.endDate)
-  const totalCost = TARIFA_DIARIA * days;
+  const totalCost = Math.round((TARIFA_DIARIA * 0.25) * days);
 
   const today = new Date();
   const oneYearLater = new Date();
   oneYearLater.setFullYear(today.getFullYear() + 1);
 
   const handleReservaClick = (e) => {
-    if (selectedPersons === 0) {
+    if (selectedPersons === 0 || dateToday.startDate === null || dateToday.endDate === null) {
       Swal.fire({
         icon: 'error',
         title: 'Uups...',
-        text: 'Debe seleccionar al menos 1 huésped para realizar la reserva!',
+        text: 'Debe seleccionar al menos 1 huésped y/o fecha  para realizar la reserva!',
       });
     } else {
       handleOpenModal(e);
@@ -96,7 +95,7 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     <Card className="mt-6 w-96">
       <CardBody className="rounded-t-lg bg-gray-50 border-gray-900" >
         <Typography variant="h5" color="blue-gray" className="mb-4 text-center">
-          $ { tarifaFormateada }  x Noche con IVa
+          $ { tarifaFormateada }  x Noche con IVA
         </Typography>
         <div className="bg-gray-200 p-2 rounded-lg my-6">
         <Datepicker 
@@ -124,8 +123,9 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
           }
           </Select>
         </div>
-        <div className="py-2 font-normal text-base text-center">
-          <span>Total $ { totalCost.toLocaleString('de-DE') } </span>
+        <div className="py-6 text-base flex flex-col justify-center items-center space-y-6">
+          <span className="text-xs">Para reservar debe cancelar el 25% del total x noche </span>
+          <span>25% del total ${totalCost.toLocaleString('de-DE') } </span>
         </div>
       </CardBody>
       <CardFooter className="pt-1 rounded-b-lg bg-gray-100">
@@ -134,7 +134,6 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
     </Card>
   );
 }
-
 
 CardReserva.propTypes = {
   MAX_HUESPEDES: PropTypes.number,

@@ -78,7 +78,9 @@ const ModalCreateServicios = ({onClose,showModal}) => {
     className="max-w-full max-h-screen py-2 "
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear nuevo servicio </span>
+      <Typography variant="h4">
+        Crear nuevo servicio
+      </Typography>
         <IconButton
         color="blue-gray"
         size="sm"
@@ -106,8 +108,8 @@ const ModalCreateServicios = ({onClose,showModal}) => {
       </DialogHeader>
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
-        <Typography>
-          <h6 className="text-gray-500 text-sm font-bold">Información del servicios</h6>
+        <Typography variant="h6">
+          Información del servicios
         </Typography>
         <div className="grid grid-cols-2  gap-6  my-12 ">
             <div className="relative">

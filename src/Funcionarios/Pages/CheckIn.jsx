@@ -65,48 +65,6 @@ const CheckInFuncionario = () => {
 
   }, []);
 
-
-  const tipoVivienda = (idTipo) => {
-    switch (idTipo) {
-      case "Casa":
-        return (
-          <div className="italic flex items-center gap-x-6">
-            <div className="cursor-pointer  inline-flex items-center px-3 py-1 text-orange-500 rounded-full gap-x-2 bg-orange-100/60">
-              <h2 className="cursor-pointer text-sm font-bold">Casa</h2>
-              <svg xmlns="http://www.w3.org/2000/svg" style={{fill:"#FF9800"}} className="cursor-pointer" width="18" height="18" viewBox="0 0 576 512">
-                <path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/>
-              </svg>
-            </div>
-          </div>
-        );
-      case "Apartamento":
-        return (
-          <div className="italic flex items-center gap-x-6">
-            <div className="cursor-pointer  inline-flex items-center px-3 py-1 text-brown-500 rounded-full gap-x-2 bg-brown-100/60">
-              <h2 className="cursor-pointer text-sm font-bold">Apartamento</h2>
-              <svg style={{fill:"#795548"}} className="cursor-pointer" width="18" height="18" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 384 512">
-                <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
-              </svg>
-            </div>
-          </div>
-        );
-
-      case "Departamento":
-        return (
-          <div className="italic flex items-center gap-x-6">
-            <div className="cursor-pointer  inline-flex items-center px-3 py-1 text-brown-500 rounded-full gap-x-2 bg-brown-100/60">
-              <h2 className="cursor-pointer text-sm font-bold">Apartamento</h2>
-              <svg style={{fill:"#795548"}} className="cursor-pointer" width="18" height="18" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 384 512">
-                <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
-              </svg>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
   const evaluateStatus = (estadoRespuesta) => { 
     
     switch (estadoRespuesta) {
@@ -211,7 +169,7 @@ const CheckInFuncionario = () => {
         Registro de Huespedes -  INCOMPLETO
       </Typography>
       </div>        
-      <div className="mb-2 ml-6 flex flex-col justify-start gap-8">
+      <div className="mb-2 ml-6 flex flex-col justify-start gap-2">
           <Typography variant="h5" color="blue-gray">
             Lista de Huespedes
           </Typography>
@@ -219,10 +177,10 @@ const CheckInFuncionario = () => {
           En esta Seccion podras realizar el Check-In de los huespedes que se encuentran en el Hotel
           </Typography>
       </div>
-      <section className="my-9 w-full">
-    <div className="bg-gray-100 p-3 sm:p-5">
-      <div className="mx-auto  px-1 lg:px-12">
-        <div className="bg-white  relative shadow-md sm:rounded-lg overflow-hidden">
+      <section className="my-3 w-full">
+    <div className="bg-gray-100 p-1">
+      <div className="mx-auto">
+        <div className="bg-white  relative shadow-2xl overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
 
@@ -250,10 +208,10 @@ const CheckInFuncionario = () => {
               <thead className="text-md text-gray-700 bg-blue-100  ">
                 <tr>
                   <th scope="col" className="px-4 py-3">ID Rerserva</th>
-                  <th scope="col" className="px-4 py-3">Fecha de Estadia</th>
+                  <th scope="col" className="px-4 py-3">Fecha de Reserva</th>
+
                   <th scope="col" className="px-4 py-3">Estado</th>
                   <th scope="col" className="px-4 py-3">Huesped</th>
-                  <th scope="col" className="px-4 py-3">Tipo de Vivienda</th>
                   <th scope="col" className="px-4 py-3">Cantidad de Huespedes</th>
                   <th scope="col" className="relative py-3.5 px-4">
                     <span className="sr-only">Acciones</span>
@@ -270,7 +228,18 @@ const CheckInFuncionario = () => {
                         <span> {checkInItem.RESERVA_ID}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{checkInItem.FECHA}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500">
+                      <div className="flex flex-col">
+                        <div>
+                          <span className="font-bold">Desde: </span>
+                          <span>{checkInItem.FECHA_INICIO}</span>
+                        </div>
+                        <div>
+                          <span className="font-bold">Hasta: </span>
+                          <span>{checkInItem.FECHA_TERMINO}</span>
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                       {evaluateStatus(2)}
                     </td>
@@ -283,9 +252,6 @@ const CheckInFuncionario = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      {tipoVivienda(checkInItem.TIPO)}
-                    </td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap text-center">{2}</td>
                     <td className="px-4 py-4 text-sm whitespace-nowrap text-center">
                       {evaluateStatusBtn(1)}
@@ -293,6 +259,7 @@ const CheckInFuncionario = () => {
                   </tr>
                 ))}
               </tbody>
+
 
               </table>
             </div>

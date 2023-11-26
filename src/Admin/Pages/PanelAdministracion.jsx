@@ -202,8 +202,8 @@ const PanelAdministracion = () => {
   }
   
   const closeModalEdit = () => {
-    cargarDepartamentos();
     setShowModalEdit(false);
+    cargarDepartamentos();
   }
 
 
@@ -216,8 +216,8 @@ const PanelAdministracion = () => {
   }
   
   const closeModalView = () => {
-    cargarDepartamentos();
     setShowModalView(false);
+    cargarDepartamentos();
   }
 
   const [showModalMaintence, setShowModalMaintence] = useState(false);

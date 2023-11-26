@@ -1,4 +1,5 @@
 export { default as AgendarTurismo } from './AgendarTurismo';
+export { default as Conductores } from './Conductores';
 export { default as Inventario } from './Inventario';
 export { default as PanelAdministracion } from './PanelAdministracion';
 export { default as Perfil } from './Perfil';
@@ -8,3 +9,4 @@ export { default as ServicioTurismo } from './ServicioTurismo';
 export { default as Servicios } from './Servicios';
 export { default as ServiciosTransportes } from './ServiciosTransportes';
 export { default as Usuarios } from './Usuarios';
+export * from './index';

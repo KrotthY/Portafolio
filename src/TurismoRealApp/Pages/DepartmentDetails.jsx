@@ -23,6 +23,7 @@ const DepartmentDetails = () => {
     fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         setDeparmentsId(data);
       })
       .catch(error => console.log(error));
@@ -116,8 +117,8 @@ const handleDateSelected = (dateSelected) => {
 
         <div className="grid grid-cols-2 mt-12">
           <div className="col-span-1 h-full w-full">
-            <p className="block antialiased  text-lg font-normal decoration-inherit mb-5 mt-3  leading-[27px]  pb-12">
-            Descripción: { deparmentsId?.DESCRIPCION}
+            <p className="block antialiased  text-base italic font-normal decoration-inherit mb-5 mt-3  leading-[27px]  pb-12">
+            { deparmentsId?.DESCRIPCION}
             </p>
             <article className="my-12">
               <ul className="flex items-center justify-between text-base font-light leading-relaxed text-gray-700 antialiased">

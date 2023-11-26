@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
-  nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
-  numero: yup.string().required('Número requerido').min(3, 'Mín. 3 dígitos').max(50, 'Máx. 50 dígitos'),
+  nombre: yup.string().required('Nombre requerido').min(1, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  numero: yup.string().required('Número requerido').min(1, 'Mín. 3 dígitos').max(50, 'Máx. 50 dígitos'),
   region: yup.string(),
   comuna: yup.string(),
   tipo: yup.string(),

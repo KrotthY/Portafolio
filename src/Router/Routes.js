@@ -23,6 +23,7 @@ export const PrivateRoutes = {
   ADMIN_ROLE: '/admin/panel-administracion',
   PANEL_ADMIN: 'panel-administracion',
   SERVICIOS_TRANSPORTE: 'servicios-transporte',
+  CONDUCTORES: 'conductores',
   SERVICIOS_TURISMO: 'servicio-turismo',
   INVENTARIO: 'inventario',
   AGENDAR_TURISMO: 'agendar-tour',
