@@ -5,12 +5,14 @@ import apiCheckInRegister from "../../Api/checkInHuesped";
 import Swal from "sweetalert2";
 import ModalRegistroEntrada from "../Components/Modal/ModalCheckIn";
 import ModalRegistroSalida from "../Components/Modal/ModalCheckOut";
+import useSession from "../../Auth/Context/UseSession";
 
 
 
 const CheckInFuncionario = () => {
 
-  
+  const { user } = useSession();
+
   const [ checkIn , setCheckIn ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
 
@@ -47,6 +49,10 @@ const CheckInFuncionario = () => {
 
     const requestOptions = {
       method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${user.access_token}`,
+      },
     };
 
     fetch(URL_API_GET_CHECK_IN,requestOptions)

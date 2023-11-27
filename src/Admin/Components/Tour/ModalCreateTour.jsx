@@ -17,7 +17,7 @@ const schema = yup.object({
     .max(10,'La duración debe ser menor a 10 Hrs')
     .typeError('La duración debe ser un número entero'),
   descripcion: yup.string().required('Descripción requerida').min(10,'La descripción debe tener al menos 10 caracteres')
-    .max(100,'La descripción debe tener máximo 100 caracteres'),
+    .max(250,'La descripción debe tener máximo 250 caracteres'),
   capacidad: yup.number().required('Capacidad requerida').min(1,'La capacidad debe ser mayor a 0 personas').max(100,'La capacidad debe ser menor a 100 personas'),
 });
 

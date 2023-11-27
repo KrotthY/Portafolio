@@ -1,4 +1,6 @@
 export { default as ModalEditAgendarTour } from './AgendarTour/ModalEditAgendarTour';
+export { default as ModalCreateConductores } from './Conductores/ModalCreateConductores';
+export { default as ModalEditConductores } from './Conductores/ModalEditConductores';
 export { default as ModalViewInventario } from './Inventario/ModalViewInventario';
 export { default as ModalCreate } from './PanelAdministracion/ModalCreate';
 export { default as ModalEdit } from './PanelAdministracion/ModalEdit';
@@ -11,3 +13,6 @@ export { default as ModalEditServicios } from './Servicios/ModalEditServicios';
 export * from './Sidebar/Sidebar';
 export { default as ModalCreateTour } from './Tour/ModalCreateTour';
 export { default as ModalEditTour } from './Tour/ModalEditTour';
+export { default as ModalCreateTraslado } from './Traslados/ModalCreateTraslado';
+export { default as ModalCreateUsuarios } from './Usuarios/ModalCreateUsuarios';
+export { default as ModalEditUsuarios } from './Usuarios/ModalEditUsuarios';

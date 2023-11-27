@@ -1,19 +1,19 @@
-const URL_API_TRASLADOS_DISABLED = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_estado_vehiculo`;
+const URL_API_CONDUCTOR_DISABLED = `https://fastapi-gv342xsbja-tl.a.run.app/modificar_estado_conductor`;
 
-export const desahabilitarTraslado = async (trasladosForm) => {
+export const desahabilitarConductor = async (conductorForm) => {
 
   const queryParams = {
-    car_id: trasladosForm.car_id,
-    active: trasladosForm.active,
+    driver_id : conductorForm.driver_id ,
+    active: conductorForm.active,
   }
   console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
-  const urlWithParams = `${URL_API_TRASLADOS_DISABLED}?${queryString}`;
+  const urlWithParams = `${URL_API_CONDUCTOR_DISABLED}?${queryString}`;
   const requestOptions = {
     method: 'PUT',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${trasladosForm.access_token}`,
+      'Authorization': `Bearer ${conductorForm.access_token}`,
     },
   };
   try {

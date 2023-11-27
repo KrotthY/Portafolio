@@ -8,10 +8,12 @@ export const CreateNewTraslado = async (crearTrasladoQuery) => {
     slots: crearTrasladoQuery.slots,
     brand: crearTrasladoQuery.brand,
     annio: crearTrasladoQuery.annio,
-    model:crearTrasladoQuery.model
+    model: crearTrasladoQuery.model,
+    driver_id: crearTrasladoQuery.driver_id,
+    department_id: crearTrasladoQuery.department_id,
   }
 
-
+  console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_CREATE_TRASLADO}?${queryString}`;
   const requestOptions = {

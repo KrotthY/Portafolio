@@ -5,6 +5,7 @@ import {
   DialogBody,
   DialogFooter,
   Typography,
+  Input,
 } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import logoTurismoReal from "../../../Assets/iconoTurismoReal_logo.png";
@@ -13,36 +14,47 @@ import Swal from "sweetalert2";
 import useSession from "../../../Auth/Context/UseSession";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import TourOfferCard from "../Tours/TourOfferCard";
 
 
-const schema = yup.object({
-  nombreCompleto: yup.string()
-                    .required('El nombre es obligatorio')
-                    .min(3, 'El nombre debe tener al menos 3 caracteres')
-                    .max(50, 'El nombre debe tener como máximo 50 caracteres'),
-  telefono: yup.number()
-              .typeError('El teléfono debe ser un número')
-              .required('El teléfono es obligatorio')
-              .positive('El número de teléfono debe ser positivo')
-              .integer('El número de teléfono no puede incluir un punto decimal')
-              .min(10000000, 'El teléfono debe tener al menos 8 dígitos')
-              .max(99999999999, 'El teléfono debe tener como máximo 11 dígitos')
+const guestSchema = yup.object().shape({
+nombre: yup.string()
+  .required('El nombre es obligatorio')
+  .min(3, 'El nombre debe tener al menos 3 caracteres')
+  .max(50, 'El nombre debe tener como máximo 50 caracteres'),
+apellido: yup.string()
+  .required('El apellido es obligatorio')
+  .min(3, 'El apellido debe tener al menos 3 caracteres')
+  .max(50, 'El apellido debe tener como máximo 50 caracteres'),
+telefono: yup.number()
+  .typeError('El teléfono debe ser un número')
+  .required('El teléfono es obligatorio')
+  .positive('El número de teléfono debe ser positivo')
+  .integer('El número de teléfono no puede incluir un punto decimal')
+  .min(10000000, 'El teléfono debe tener al menos 8 dígitos')
+  .max(99999999999, 'El teléfono debe tener como máximo 11 dígitos')
 });
+
+const schema = yup.object({
+  guests: yup.array().of(guestSchema)
+});
+
 
 
 const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_COMUNA,NOMBRE_REGION,onClose,showModal,parentHuesped,parentDateSelected}) => {
   const  { user }  = useSession();
 
 
-  const { register, handleSubmit, formState: { errors } , reset} = useForm({
+  const {  register, handleSubmit, formState: { errors }, reset,getValues } = useForm({
     resolver: yupResolver(schema),
   });
+  
+  
 
 
-  const handlePurchase = async () => {
+  const handlePurchase = async (formData) => {
     try {
       if(!user){
         throw new Error('Para continuar, debes iniciar sesión');
@@ -51,20 +63,33 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
         startDate: start_date,
         endDate: end_date
       } = parentDateSelected;
-      const reservation_value = parentTotalCost;
-      const department_id = idDepartamento;
-      const num_hosts = parentHuesped;
+
+    const nombres = formData.guests.map(guest => guest.nombre);
+    const apellidos = formData.guests.map(guest => guest.apellido);
+    const telefonos = formData.guests.map(guest => guest.telefono.toString()); 
+    const guestsData = [
+      {
+        "NOMBRE": nombres
+      },
+      {
+        "APELLIDO": apellidos
+      },
+      {
+        "TELEFONO": telefonos
+      }
+    ];
+
 
       const datosDeReserva = {
         access_token: user.access_token,
         start_date,
         end_date,
-        reservation_value,
-        department_id,
-        num_hosts
+        reservation_value: parentTotalCost,
+        department_id: idDepartamento,
+        num_hosts: parentHuesped,
+        guests: guestsData
       };
 
-  
       await reservaDepartamento(datosDeReserva);
       
       onClose();
@@ -78,7 +103,6 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       
     } catch (error) {
       onClose(); 
-      console.error(error);
       Swal.fire({
         icon: 'error',
         title: 'Error en el pago',
@@ -101,7 +125,6 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       .then(response => response.json())
       .then(data => {
         setTours(data);
-        console.log(data);
       })
       .catch(error => console.log(error))
   }, []);
@@ -154,18 +177,59 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
             
             {
               Array.from({ length: (parentHuesped) }).map((_, index) => (
-                <div key={index} className="grid md:grid-cols-2 grid-cols-1 gap-6 mt-6 mx-3">
+                <div key={index} className="grid md:grid-cols-3 grid-cols-1 gap-6 mt-6 mx-3">
+                  <div className="col-span-2 flex  justify-center items-center gap-2">
+
                   <div className="flex flex-col justify-center">
-                    <input type="text"  name="nombreCompleto" placeholder="Nombre Completo" 
-                      { ...register("nombreCompleto") }
-                      className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                    {errors.nombreCompleto && <p className="text-red-500">{errors.nombreCompleto.message}</p>}
+                    <div className="relative w-full">
+
+                    <Input type="text"  name={`guests[${index}].nombre`} color="blue" label="Nombre" size="md"
+                      {...register(`guests[${index}].nombre`)}
+                      error={Boolean(errors?.guests?.[index]?.nombre)}  
+                      success={Boolean(getValues(`guests[${index}].nombre`))}
+
+                      />
+                    {errors?.guests?.[index]?.nombre && (
+                          <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                            {errors.guests[index].nombre.message}
+                      </div>
+                    )}
+                    </div>
                   </div>
-                  <div className="flex flex-col justify-center items-center">
-                    <input type="number"  name="telefono" 
-                      { ...register("telefono") }
-                      placeholder="Telefono" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700"/>
-                  {errors.telefono && <p className="text-red-500">{errors.telefono.message}</p>}
+
+                  <div className="flex flex-col justify-center">
+                    <div className="relative w-full">
+
+                    <Input type="text"  name={`guests[${index}].apellido`} color="blue" label="Apellido"  size="md"
+                      {...register(`guests[${index}].apellido`)}
+                      error={Boolean(errors?.guests?.[index]?.apellido)}  
+                      success={Boolean(getValues(`guests[${index}].apellido`))}
+                      />
+                      {errors?.guests?.[index]?.apellido && (
+                          <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                            {errors.guests[index].apellido.message}
+                      </div>
+                    )}
+                    
+                    </div>
+                  </div>
+                  </div>
+
+                  <div className="col-span-1 flex flex-col justify-center items-center">
+                    <div className="relative w-full"> 
+                    <Input type="number"  name={`guests[${index}].telefono`} size="md" 
+                      color="blue" label="Telefono"
+                      {...register(`guests[${index}].telefono`)}
+                      error={Boolean(errors?.guests?.[index]?.telefono)}  
+                      success={Boolean(getValues(`guests[${index}].telefono`))}
+                      />
+
+                      {errors?.guests?.[index]?.telefono && (
+                        <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                            {errors.guests[index].telefono.message}
+                      </div>
+                    )}
+                    </div>
                   </div>
 
                 </div>

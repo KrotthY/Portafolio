@@ -23,7 +23,6 @@ const DepartmentDetails = () => {
     fetch(URL_API_GET_DEPARTMENTS_ID, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         setDeparmentsId(data);
       })
       .catch(error => console.log(error));
@@ -127,7 +126,6 @@ const handleDateSelected = (dateSelected) => {
                 <li>Habitaciones: { deparmentsId?.DORMITORIOS }</li>
               </ul>
             </article>
-
             <div className="mb-8 mt-3 flex flex-col items-start  gap-4">
               <span className="text-lg font-normal" >Servicios</span>
               {deparmentsId && <ListServices SERVICIOS={deparmentsId.SERVICIOS} />}

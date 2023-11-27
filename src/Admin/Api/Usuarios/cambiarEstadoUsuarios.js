@@ -1,13 +1,14 @@
-const URL_API_CHANGE_USUARIO = `https://fastapi-gv342xsbja-tl.a.run.app/modificar_estado_usuario`;
+const URL_API_CHANGE_USUARIO = `https://fastapi-gv342xsbja-tl.a.run.app/actualizar_estado_usuario`;
 
 export const cambiarEstadoUsuario = async (cambiarEstadoUsuarioForm) => {
   const queryParams = {
-    service_id : cambiarEstadoUsuarioForm.servicioId,
+    username_id: cambiarEstadoUsuarioForm.username_id ,
+    active: cambiarEstadoUsuarioForm.active  ,
   }
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_CHANGE_USUARIO}?${queryString}`;
   const requestOptions = {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Accept': 'application/json',
       'Authorization': `Bearer ${cambiarEstadoUsuarioForm.access_token}`,
@@ -22,6 +23,6 @@ export const cambiarEstadoUsuario = async (cambiarEstadoUsuarioForm) => {
     }
     return await response.json();
   } catch (error) {
-    throw new Error('API Error: ' + error.message || 'Error al eliminar el servicio');
+    throw new Error('API Error: ' + error.message || 'Error al desahabilitar el usuario');
   }
 };

@@ -7,7 +7,6 @@ export const eliminarDpto = async (eliminarDepartamento) => {
   }
 
   const queryString = new URLSearchParams(queryParams).toString();
-  console.log(queryString)
   const urlWithParams = `${URL_API_DPTO_DISABLED}?${queryString}`;
   const requestOptions = {
     method: 'PUT',
@@ -19,7 +18,6 @@ export const eliminarDpto = async (eliminarDepartamento) => {
 
   try {
     const response = await fetch(urlWithParams, requestOptions);
-    console.log(response)
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -50,7 +50,6 @@ const ModalEditAgendarTour = ({onClose,showModal,tourId}) => {
     fetch(URL_API_GET_TOUR_ID,requestOptions)
       .then(response => response.json())
       .then(data => {
-
         setTour(data)
       })
       .catch(error => console.log(error))

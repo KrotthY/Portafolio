@@ -26,6 +26,7 @@ const TourModal = ({ idTour, onClose,showModal}) => {
     fetch(URL_API_GET_TOUR_ID, requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         setToursId(data);
         
       })
@@ -39,6 +40,7 @@ const TourModal = ({ idTour, onClose,showModal}) => {
   };
 
 const [parentTotalCost, setParentTotalCost] = useState(0);
+const [parentTotalPeople, setParentTotalPeople] = useState(0);
 const showAlert = (icon, title, text) => {
   Swal.fire({
     icon,
@@ -56,6 +58,10 @@ const resetState = () => {
 
 const handleTotalCostChange = (cost) => {
     setParentTotalCost(cost);
+};
+
+const handleTotalPeopleChange = (cost) => {
+  setParentTotalPeople(cost);
 };
 
   const  { user }  = useSession();
@@ -79,8 +85,17 @@ const handleTotalCostChange = (cost) => {
     }
 
     try {
-      await purchaseTour(user.access_token, toursId.TOUR_ID);
+      const formTour = {
+        TOUR_ID: toursId.TOUR_ID,
+        access_token:user.access_token,
+        CANTIDAD: parentTotalPeople,
+        VALOR_TOTAL: parentTotalCost,
+      }
+
+      await purchaseTour(formTour);
+
       showAlert('success', 'Pago exitoso', '¡Tu pago se ha realizado con éxito!');
+
       resetState();
     } catch (error) {
       showAlert('error', 'Error en el pago', error.message || 'No se le realizaron cargos. Por favor, intente nuevamente.');
@@ -118,6 +133,7 @@ const handleTotalCostChange = (cost) => {
                 FECHAS={toursId?.FECHAS}
                 onDateChange={handleTourDateChange}
                 onTotalCostChange={handleTotalCostChange}
+                onTotalPersonChange={handleTotalPeopleChange}
               />
           </DialogBody>
         }

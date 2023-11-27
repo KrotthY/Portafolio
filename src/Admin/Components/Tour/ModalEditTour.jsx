@@ -168,7 +168,7 @@ const ModalEditTour = ({onClose,showModal,tourId}) => {
                 <Input type="number" name="duracion" color="blue" label="Duración" size="md"
                   { ...register("duracion") }
                   error={Boolean(errors.duracion)}
-                  success={!errors.duracion  && getValues('duracion') }
+                  success={Boolean(!errors.duracion  && getValues('duracion')) }
                 />
                 {errors.duracion && (
                   <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">

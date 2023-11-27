@@ -8,7 +8,7 @@ export const reservaDepartamento = async (datosDeReserva) => {
     department_id: datosDeReserva.department_id,
     num_hosts: datosDeReserva.num_hosts,
   };
-
+  console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_POST_PURCHASE}?${queryString}`;
 

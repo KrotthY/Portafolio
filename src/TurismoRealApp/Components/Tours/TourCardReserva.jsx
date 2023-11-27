@@ -9,7 +9,7 @@ import { Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types';
 
 
-const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS,onDateChange,onTotalCostChange}) =>{
+const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS,onDateChange,onTotalCostChange,onTotalPersonChange}) =>{
 
   const [selectedPersons, setSelectedPersons] = useState(1); 
 
@@ -18,6 +18,9 @@ const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS
     if (onTotalCostChange) {
       const newTotalCost = VALOR_MINIMO * selectedValue;
       onTotalCostChange(newTotalCost);
+    }
+    if (onTotalPersonChange) {
+      onTotalPersonChange(selectedValue);
     }
   };
 
@@ -81,12 +84,13 @@ const TourCardReserva = ({DURACION,CAPACIDAD_PARTICIPANTES, VALOR_MINIMO, FECHAS
 
 
 TourCardReserva.propTypes = {
-  DURACION : PropTypes.number.isRequired, //MINUTOS
+  DURACION : PropTypes.number.isRequired,
   CAPACIDAD_PARTICIPANTES : PropTypes.number.isRequired,
   VALOR_MINIMO : PropTypes.number,
   FECHAS : PropTypes.array.isRequired,
   onDateChange : PropTypes.func.isRequired,
   onTotalCostChange : PropTypes.func.isRequired,
+  onTotalPersonChange : PropTypes.func.isRequired,
 }
 
 export default TourCardReserva

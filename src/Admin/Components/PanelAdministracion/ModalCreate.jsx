@@ -161,9 +161,9 @@ const ModalCreate = ({onClose,showModal}) => {
           <div className="relative">
             <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
               { ...register("nombre") }
-              error={errors.nombre ? errors.nombre.message : undefined }
-              success={!errors.nombre  && getValues('nombre') }
-              max={50} min={3}
+              error={Boolean(errors.nombre)  }
+              success={Boolean(!errors.nombre  && getValues('nombre'))}
+              
             />
             {errors.nombre && (
               <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
@@ -178,8 +178,8 @@ const ModalCreate = ({onClose,showModal}) => {
               <Input color="blue" label="Enumeración" name="numeroDireccion" size="md" 
               { ...register("numeroDireccion") }
               type="number"
-              error={errors.numeroDireccion ? errors.numeroDireccion.message : undefined }
-              success={!errors.numeroDireccion  && getValues('numeroDireccion') }
+              error={Boolean(errors.numeroDireccion)  }
+              success={Boolean(!errors.numeroDireccion  && getValues('numeroDireccion')) }
               />
               {errors.numeroDireccion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -194,8 +194,8 @@ const ModalCreate = ({onClose,showModal}) => {
                 setValue('tipo',e)
                 setTipo(e)
               }}
-              error={errors.tipo ? errors.tipo.message : undefined }
-              success={!errors.tipo  && getValues('tipo') }
+              error={Boolean(errors.tipo ) }
+              success={Boolean(!errors.tipo  && getValues('tipo')) }
               
               >
                 <Option value="Departamento">Departamento</Option>
@@ -239,8 +239,8 @@ const ModalCreate = ({onClose,showModal}) => {
             <Input color="blue" label="Tarifa Diaria" size="md" name="tarifa"
             { ...register("tarifa") }
             onChange={handleChangeFormatTarifa}
-            error={errors.tarifa ? errors.tarifa.message : undefined }
-            success={!errors.tarifa  && getValues('tarifa') }
+            error={Boolean(errors.tarifa)  }
+            success={Boolean(!errors.tarifa  && getValues('tarifa')) }
             type="text"
             />
             {errors.tarifa && (
@@ -251,8 +251,8 @@ const ModalCreate = ({onClose,showModal}) => {
           </div>
           <div className="relative">
             <Select color="blue" label="Comuna" size="md"
-            error={errors.comuna ? errors.comuna.message : undefined }
-            success={!errors.comuna  && getValues('comuna') }
+            error={Boolean(errors.comuna)  }
+            success={Boolean(!errors.comuna  && getValues('comuna')) }
             onChange={ (e) =>{
               handleSelectedComuna(e)
             }}
@@ -279,9 +279,9 @@ const ModalCreate = ({onClose,showModal}) => {
             <Input color="blue" label="Dirección" size="md"  name="direccion"
             { ...register("direccion") }
             type="text"
-            max={50} min={3}
-            error={errors.direccion ? errors.direccion.message : undefined }
-            success={!errors.direccion  && getValues('direccion') }
+            
+            error={Boolean(errors.direccion) }
+            success={Boolean(!errors.direccion  && getValues('direccion')) }
             />
             {errors.direccion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -292,10 +292,10 @@ const ModalCreate = ({onClose,showModal}) => {
           <div className="relative">
             <Textarea  color="blue" label="Descripción" size="md" name="descripcion"
             { ...register("descripcion") }
-            max={250} min={10}
+           
             type="text"
-            error={errors.descripcion ? errors.descripcion.message : undefined }
-            success={!errors.descripcion  && getValues('descripcion') }
+            error={Boolean(errors.descripcion ) }
+            success={Boolean(!errors.descripcion  && getValues('descripcion')) }
             />
             {errors.descripcion && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -345,9 +345,8 @@ const ModalCreate = ({onClose,showModal}) => {
               { ...register("banos") }
               type="number"
               name="banos"
-              max={10} min={1}
-              error={errors.message ? errors.message.message : undefined }
-              success={!errors.message  && getValues('message') }
+              error={Boolean(errors.message)}
+              success={Boolean(!errors.message  && getValues('message')) }
             />
             {errors.banos && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -359,9 +358,9 @@ const ModalCreate = ({onClose,showModal}) => {
             <Input name="habitaciones" color="blue" label="Cantidad de Habitaciones" size="md"  
               { ...register("habitaciones") }
               type="number"
-              max={10} min={1}
-              error={errors.habitaciones ? errors.habitaciones.message : undefined }
-              success={!errors.habitaciones  && getValues('habitaciones') }
+             
+              error={Boolean(errors.habitaciones)}
+              success={Boolean(!errors.habitaciones  && getValues('habitaciones')) }
             />
             {errors.habitaciones && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -372,10 +371,10 @@ const ModalCreate = ({onClose,showModal}) => {
           <div>
             <Input name="camas" color="blue" label="Cantidad de Camas" size="md"  
               { ...register("camas") }
-              max={20} min={1}
+         
               type="number"
-              error={errors.camas ? errors.camas.message : undefined }
-              success={!errors.camas  && getValues('camas') }
+              error={Boolean(errors.camas) }
+              success={Boolean(!errors.camas  && getValues('camas')) }
             />
             {errors.camas && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -388,8 +387,8 @@ const ModalCreate = ({onClose,showModal}) => {
               { ...register("huespedes") }
               type="number"
               name="huespedes"
-              error={errors.huespedes ? errors.huespedes.message : undefined }
-              success={!errors.huespedes  && getValues('huespedes') }
+              error={Boolean(errors.huespedes) }
+              success={Boolean(!errors.huespedes  && getValues('huespedes')) }
             />
             {errors.huespedes && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
