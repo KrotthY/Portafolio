@@ -6,7 +6,6 @@ export const desahabilitarTraslado = async (trasladosForm) => {
     car_id: trasladosForm.car_id,
     active: trasladosForm.active,
   }
-  console.log(queryParams)
   const queryString = new URLSearchParams(queryParams).toString();
   const urlWithParams = `${URL_API_TRASLADOS_DISABLED}?${queryString}`;
   const requestOptions = {

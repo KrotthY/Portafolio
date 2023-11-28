@@ -178,38 +178,44 @@ const ModalCreateConductores = ({onClose,showModal}) => {
                 </div>
               )}
             </div>
-            <div className="flex justify-center items-center gap-4">
-              <Datepicker
-                i18n="es"
-                startWeekOn="mon"
-                primaryColor="blue"
-                useRange={false} 
-                asSingle={true} 
-                value={dateToday} 
-                onChange={handleValueChange} 
-                minDate={today}
-                maxDate={oneYearLater}
-                placeholder="Fecha vencimiento de licencia"
-                className="cursor-pointer outline-none border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-              />
-            </div>
 
-            <div className="flex justify-center items-center gap-4">
-            <Datepicker
-              i18n={"es"}
-              startWeekOn="mon"
-              primaryColor={"blue"}
-              useRange={false} 
-              asSingle={true} 
-              value={dateTodayInicio} 
-              onChange={handleValueChangeInicio} 
-              minDate={today}
-              placeholder={"Fecha de Ingreso"} 
-              className="bg-white w-full" 
-              
+        </div>
+        <div className="flex justify-center items-center text-center gap-2 py-4 my-4 bg-blue-50 rounded-lg">
+          <label htmlFor="" className="w-full font-semibold  ">Fecha de vencimiento licencia</label>
+          <div className="w-full mr-2">
+          <Datepicker
+            i18n="es"
+            startWeekOn="mon"
+            primaryColor="blue"
+            useRange={false} 
+            asSingle={true} 
+            value={dateToday} 
+            onChange={handleValueChange} 
+            minDate={today}
+            maxDate={oneYearLater}
+            placeholder="ingrese su fecha de vencimiento"
+            className="cursor-pointer outline-none border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             />
-            </div>
+          </div>
+        </div>
+        <div className="flex justify-center items-center text-center gap-2 py-4 my-4 bg-blue-50  rounded-lg">
+          <label htmlFor="" className="w-full font-semibold ">Fecha de  ingreso a la empresa</label>
+          <div className=" w-full mr-2">
 
+          <Datepicker
+            i18n={"es"}
+            startWeekOn="mon"
+            primaryColor={"blue"}
+            useRange={false} 
+            asSingle={true} 
+            value={dateTodayInicio} 
+            onChange={handleValueChangeInicio} 
+            minDate={today}
+            placeholder={"Ingrese la fecha de Ingreso"} 
+            className="bg-white w-full" 
+            
+            />
+          </div>
         </div>
 
 

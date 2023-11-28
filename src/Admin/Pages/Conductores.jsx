@@ -155,8 +155,8 @@ const Conductores = () => {
   }
 
   const closeModalCreate = () => {
-    cargarConductores();
     setShowModalCreate(false);
+    cargarConductores();
   }
 
 
@@ -170,6 +170,7 @@ const Conductores = () => {
   
   const closeModalEdit = () => {
     setShowModalEdit(false);
+    cargarConductores();
   }
 
   const handleTourDelete = async (e, conductorId,estado) => {

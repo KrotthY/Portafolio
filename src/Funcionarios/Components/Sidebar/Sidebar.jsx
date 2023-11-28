@@ -13,7 +13,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import useSession from "../../../Auth/Context/UseSession";
 import { PublicRoutes } from "../../../Router";
-import { IconoTurismoReal } from "../../../Assets";
+import { logoTurismoReal } from "../../../Assets";
 
 export function Sidebar() {
   const { logout } = useSession();
@@ -23,8 +23,8 @@ export function Sidebar() {
   return (
     <Card className="h-[100vh] md:w-auto rounded-none w-full p-2 shadow-xl bg-blue-gray-900">
     <div className=" flex flex-col h-full ">
-        <div className="mb-2 p-4">
-          <img src={IconoTurismoReal} className="w-40" alt="" />
+        <div className="mx-auto">
+          <img src={logoTurismoReal} className="w-32" alt="" />
         </div>
       <div className="flex-1 overflow-y-auto">
         <List>

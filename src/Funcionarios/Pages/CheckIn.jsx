@@ -1,12 +1,12 @@
 
 import {  Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import apiCheckInRegister from "../../Api/checkInHuesped";
 import Swal from "sweetalert2";
 import ModalRegistroEntrada from "../Components/Modal/ModalCheckIn";
 import ModalRegistroSalida from "../Components/Modal/ModalCheckOut";
 import useSession from "../../Auth/Context/UseSession";
-
+import formatNumberWithDollar from "../../Admin/Assets/js/formatNumberDollar";
+import {ArrowPathIcon} from "@heroicons/react/24/solid"
 
 
 const CheckInFuncionario = () => {
@@ -15,54 +15,35 @@ const CheckInFuncionario = () => {
 
   const [ checkIn , setCheckIn ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
-
-
-  const handleRegisterHuesped = (reservation_id, user_id,client_confirmation) => {
-
-    const client_confirmationSend = client_confirmation;
-    const reservation_idSend  = reservation_id;
-    const user_idSend  = user_id;
-
-    apiCheckInRegister(client_confirmationSend,reservation_idSend ,user_idSend)
-    .then(() => {
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Check In exitoso',
-        text: '¡Ingreso de huesped realizado con éxito!',
-        confirmButtonText: 'Ok'
-      });
-    })
-    .catch(() => {
-
-      Swal.fire({
-        icon: 'error',
-        title: 'Error en el Check In',
-        text: 'No se pudo realizar el Check In. Por favor, intente nuevamente.',
-        confirmButtonText: 'Entendido'
-      });
-    });
-  };
+  const [ idCurrentReservation, setIdCurrentReservation ] = useState("")
+  const [ idCurrentDpto, setIdCurrentDpto ] = useState("")
 
   const cargarCheckIn = () => {
-    const URL_API_GET_CHECK_IN = 'https://fastapi-gv342xsbja-tl.a.run.app/check-in';
-
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${user.access_token}`,
-      },
-    };
-
-    fetch(URL_API_GET_CHECK_IN,requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setCheckIn(data)
-      })
-      .catch(error => console.log(error))
-  }
+    return new Promise((resolve, reject) => {
+      const URL_API_GET_CHECK_IN = 'https://fastapi-gv342xsbja-tl.a.run.app/check-in';
+  
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${user.access_token}`,
+        },
+      };
+  
+      fetch(URL_API_GET_CHECK_IN, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          setCheckIn(data);
+          resolve(data);  
+        })
+        .catch(error => {
+          
+          reject(error);  
+        });
+    });
+  };
+  
 
 
   useEffect(() => {
@@ -72,8 +53,8 @@ const CheckInFuncionario = () => {
   }, []);
 
   const evaluateStatus = (estadoRespuesta) => { 
-    
-    switch (estadoRespuesta) {
+    const estadoValue = estadoRespuesta === 'Pendiente' ? 2 : 1;
+    switch (estadoValue) {
       case 2:
         return (
           <div className="italic inline-flex items-center px-3 py-1 text-yellow-900 rounded-full gap-x-2 bg-yellow-500/60 ">
@@ -99,27 +80,43 @@ const CheckInFuncionario = () => {
     }
   };
 
-  const evaluateStatusBtn = (estadoRespuesta) => {
-    
-    switch (estadoRespuesta) {
-      case 1:
+  const evaluateStatusBtn = (estadoRespuesta,idReserva,idDepto) => {
+    const estadoValue = estadoRespuesta === 'Pendiente' ? 2 : 1;
+    switch (estadoValue) {
+      case 2:
         return (
-          <div className="font-extrabold flex items-center gap-x-6">
-            <button onClick={handleOpenModalCheckIn} className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-green-500 bg-green-300 group  active:bg-green-500 active:border-green-500" href="{{ route('process.create') }}">
-              <span className="text-gray-200 font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Ingreso</span>
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-green-300 hover:bg-green-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
-              </span>
-            </button>
-            <button onClick={handleOpenModalCheckOut} className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
-              <span className="text-white font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Salida</span>
-              <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-                <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
-              </span>
-            </button>
-          </div>
-          
+            <div className="font-extrabold flex flex-col items-center gap-2 ">
+              <button onClick={(e)=>{handleOpenModalCheckIn(e,idReserva)}} className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-green-500 bg-green-300 group  active:bg-green-500 active:border-green-500" href="{{ route('process.create') }}">
+                <span className="text-gray-200 font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Ingreso</span>
+                <span className="absolute right-0 h-full w-10 rounded-lg bg-green-300 hover:bg-green-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+                  <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+                </span>
+              </button>
+              <button onClick={(e)=>{handleOpenModalCheckOut(e,idReserva,idDepto)}} className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
+                <span className="text-white font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Salida</span>
+                <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+                  <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
+                </span>
+              </button>
+            </div>
         );
+        case 1:
+          return (
+              <div className="font-extrabold flex flex-col items-center gap-2 ">
+                <button  className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-gray-500 bg-gray-300 group  active:bg-gray-500 active:border-gray-500" href="{{ route('process.create') }}">
+                  <span className="text-gray-900 font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Ingreso</span>
+                  <span className="absolute right-0 h-full w-10 rounded-lg bg-gray-300 hover:bg-gray-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+                    <svg style={{fill:"#000"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512"><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+                  </span>
+                </button>
+                <button onClick={(e)=>{handleOpenModalCheckOut(e,idReserva,idDepto)}} className="rounded-lg  relative w-40 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
+                  <span className="text-white font-bold ml-8 transform group-hover:translate-x-20 transition-all duration-300">Salida</span>
+                  <span className="absolute right-0 h-full w-10 rounded-lg bg-red-300 hover:bg-red-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
+                    <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 576 512"><path d="M432 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM347.7 200.5c1-.4 1.9-.8 2.9-1.2l-16.9 63.5c-5.6 21.1-.1 43.6 14.7 59.7l70.7 77.1 22 88.1c4.3 17.1 21.7 27.6 38.8 23.3s27.6-21.7 23.3-38.8l-23-92.1c-1.9-7.8-5.8-14.9-11.2-20.8l-49.5-54 19.3-65.5 9.6 23c4.4 10.6 12.5 19.3 22.8 24.5l26.7 13.3c15.8 7.9 35 1.5 42.9-14.3s1.5-35-14.3-42.9L505 232.7l-15.3-36.8C472.5 154.8 432.3 128 387.7 128c-22.8 0-45.3 4.8-66.1 14l-8 3.5c-32.9 14.6-58.1 42.4-69.4 76.5l-2.6 7.8c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l2.6-7.8c5.7-17.1 18.3-30.9 34.7-38.2l8-3.5zm-30 135.1l-25 62.4-59.4 59.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L340.3 441c4.6-4.6 8.2-10.1 10.6-16.1l14.5-36.2-40.7-44.4c-2.5-2.7-4.8-5.6-7-8.6zM256 274.1c-7.7-4.4-17.4-1.8-21.9 5.9l-32 55.4L147.7 304c-15.3-8.8-34.9-3.6-43.7 11.7L40 426.6c-8.8 15.3-3.6 34.9 11.7 43.7l55.4 32c15.3 8.8 34.9 3.6 43.7-11.7l64-110.9c1.5-2.6 2.6-5.2 3.3-8L261.9 296c4.4-7.7 1.8-17.4-5.9-21.9z"/></svg>
+                  </span>
+                </button>
+              </div>
+          );
     }
   };
 
@@ -148,25 +145,57 @@ const CheckInFuncionario = () => {
 
   const [showModalIn, setShowModalIn] = useState(false);
 
-  const handleOpenModalCheckIn = (e) => {
+  const handleOpenModalCheckIn = (e,idReserva) => {
     e.preventDefault();
+    
+    setIdCurrentReservation(parseInt(idReserva))
     setShowModalIn(true);
   }
   
   const closeModalIn = () => {
+    cargarCheckIn();
     setShowModalIn(false);
   }
 
   const [showModalOut, setShowModalOut] = useState(false);
 
-  const handleOpenModalCheckOut = (e) => {
+  const handleOpenModalCheckOut = (e,idReserva,idDepto) => {
     e.preventDefault();
+    setIdCurrentReservation(parseInt(idReserva))
+    setIdCurrentDpto(parseInt(idDepto))
     setShowModalOut(true);
   }
   
   const closeModalOut = () => {
+    cargarCheckIn();
     setShowModalOut(false);
   }
+
+  const handleUpdateHuesped = (e) => {
+    e.preventDefault();
+  
+    Swal.fire({
+      title: 'Cargando...',
+      text: 'Por favor, espera.',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      willOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  
+    cargarCheckIn()
+      .then(() => {
+        Swal.close();
+        Swal.fire('¡Actualizado!', 'Los datos del huésped han sido actualizados.', 'success');
+      })
+      .catch(error => {
+        Swal.close();
+        Swal.fire('Error', 'Hubo un problema al actualizar los datos del huésped.', 'error');
+      });
+  };
+  
+  
 
   return (
     <>
@@ -208,16 +237,20 @@ const CheckInFuncionario = () => {
               </form>
 
             </div>
+            <div>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex justify-center items-center gap-2"
+                onClick={handleUpdateHuesped}
+              > <ArrowPathIcon className="h-6 w-6" /> Actualizar Registros </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500  ">
+            <table className="w-full text-sm text-center text-gray-500  ">
               <thead className="text-md text-gray-700 bg-blue-100  ">
                 <tr>
-                  <th scope="col" className="px-4 py-3">ID Rerserva</th>
                   <th scope="col" className="px-4 py-3">Fecha de Reserva</th>
-
                   <th scope="col" className="px-4 py-3">Estado</th>
                   <th scope="col" className="px-4 py-3">Huesped</th>
+                  <th scope="col" className="px-4 py-3">Monto a cancelar</th>
                   <th scope="col" className="px-4 py-3">Cantidad de Huespedes</th>
                   <th scope="col" className="relative py-3.5 px-4">
                     <span className="sr-only">Acciones</span>
@@ -228,13 +261,9 @@ const CheckInFuncionario = () => {
                 {filteredCheckIn
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((checkInItem) => (
-                  <tr key={checkInItem.RESERVA_ID} className="hover:bg-gray-100 italic">
-                    <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                      <div className="inline-flex items-center gap-x-3">
-                        <span> {checkInItem.RESERVA_ID}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-gray-500">
+                  <tr key={checkInItem.RESERVA_ID} className="hover:bg-gray-100 italic border-b-4">
+      
+                    <td className="px-4 py-4 text-base text-gray-500">
                       <div className="flex flex-col">
                         <div>
                           <span className="font-bold">Desde: </span>
@@ -242,25 +271,27 @@ const CheckInFuncionario = () => {
                         </div>
                         <div>
                           <span className="font-bold">Hasta: </span>
-                          <span>{checkInItem.FECHA_TERMINO}</span>
+                          <span>{checkInItem.FECHA_FIN}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
-                      {evaluateStatus(2)}
+                      {evaluateStatus(checkInItem.ESTADO)}
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                       <div className="flex items-center gap-x-2">
                         <img className="object-cover w-8 h-8 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt=""/>
                         <div>
                           <h2 className="text-sm font-bold text-gray-800">{checkInItem.NOMBRE + ' ' + checkInItem.APELLIDO }</h2>
-                          <p className="text-xs font-normal text-gray-600">Falta rut</p>
+                          <p className="text-xs font-normal text-gray-600">{checkInItem.RUT_TITULAR }</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap text-center">{2}</td>
+                    <td className="px-4 py-4 text-base text-gray-500 whitespace-nowrap text-center">{formatNumberWithDollar(checkInItem.MONTO_RESTANTE)}</td>
+                    <td className="px-4 py-4 text-lg text-gray-500 whitespace-nowrap text-center">{checkInItem.NUM_ACOMPANANTES}</td>
+
                     <td className="px-4 py-4 text-sm whitespace-nowrap text-center">
-                      {evaluateStatusBtn(1)}
+                      {evaluateStatusBtn(checkInItem.ESTADO,checkInItem.RESERVA_ID,checkInItem.DEPARTAMENTO_ID)}
                     </td>
                   </tr>
                 ))}
@@ -310,8 +341,8 @@ const CheckInFuncionario = () => {
           </div>
         </div>
       </div>
-      <ModalRegistroEntrada showModal={showModalIn} onClose={closeModalIn} />
-      <ModalRegistroSalida showModal={showModalOut} onClose={closeModalOut} />
+      <ModalRegistroEntrada showModal={showModalIn} onClose={closeModalIn} idReserva={idCurrentReservation} />
+      <ModalRegistroSalida showModal={showModalOut} onClose={closeModalOut} idReserva={idCurrentReservation} idDepto={idCurrentDpto}/>
   </section>
     </>
   );

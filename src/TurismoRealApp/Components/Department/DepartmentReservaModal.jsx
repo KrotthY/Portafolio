@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import useSession from "../../../Auth/Context/UseSession";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useFieldArray, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import TourOfferCard from "../Tours/TourOfferCard";
 
@@ -281,7 +281,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                 .filter((tour) => tour.ACTIVO === "S")
                 .slice(0, 1)
                 .map((tour) => (
-                  <TourOfferCard key={tour?.TOUR_ID} idTour={tour?.TOUR_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" qtyPerson={tour?.NOMBRE_COMUNA} description={tour.DESCRIPCION} title={tour.NOMBRE_TOUR} price={tour.VALOR_MINIMO}  status={tour.ACTIVO} />
+                  <TourOfferCard key={tour?.TOUR_ID} idTour={tour?.TOUR_ID} imgSrc="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" qtyPerson={tour?.NOMBRE_COMUNA ?? 0} description={tour.DESCRIPCION} title={tour.NOMBRE_TOUR} price={tour.VALOR_MINIMO}  status={tour.ACTIVO} />
                 ))
               }
               </div>

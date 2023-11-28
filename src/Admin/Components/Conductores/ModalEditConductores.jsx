@@ -267,7 +267,7 @@ const ModalEditConductores = ({onClose,showModal,conductoresObject}) => {
 ModalEditConductores.propTypes = {
   onClose: PropTypes.func.isRequired,
   showModal: PropTypes.bool.isRequired,
-  conductoresObject: PropTypes.object.isRequired
+  conductoresObject: PropTypes.object
 }
 
 export default ModalEditConductores;

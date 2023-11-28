@@ -4,7 +4,7 @@ import departmentOne from './departmentOne.jpg';
 import carousel1 from './image1.jpg'
 import carousel2 from './image2.jpg'
 import carousel3 from './image3.jpg'
-
+import PerderTiempo from './PerderTiempo.png'
 
 import IconWifi from './icons/Wifi'
 import IconMoney from './icons/Money'
@@ -20,4 +20,4 @@ import IconGym from './icons/Gym'
 import IconPersonSwimming from  './icons/PersonSwimming'
 
 
-export {IconPersonSwimming,IconGym,IconGaming,IconCar,IconBed, IconBath,IconoTurismoReal,departmentOne,logoTurismoReal, IconWifi, IconMoney,IconBedroom, IconTv, IconStar, IconStarHalf,carousel1 ,carousel2,carousel3};
+export {PerderTiempo,IconPersonSwimming,IconGym,IconGaming,IconCar,IconBed, IconBath,IconoTurismoReal,departmentOne,logoTurismoReal, IconWifi, IconMoney,IconBedroom, IconTv, IconStar, IconStarHalf,carousel1 ,carousel2,carousel3};
