@@ -11,12 +11,13 @@ import PropTypes from 'prop-types'
 import logoTurismoReal from "../../../Assets/iconoTurismoReal_logo.png";
 import { reservaDepartamento } from "../../../Api/ReservarDepartamento";
 import Swal from "sweetalert2";
-import useSession from "../../../Auth/Context/UseSession";
+
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {  useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import TourOfferCard from "../Tours/TourOfferCard";
+import useSession from "../../../Auth/Context/UseSession";
 
 
 const guestSchema = yup.object().shape({
@@ -144,10 +145,10 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
   }, []);
 
   useEffect(() => {
-    if(idDepartamento){
+    if(user && idDepartamento){
       CargarVehiculos();
     }
-  }, [idDepartamento]);
+  }, [user,idDepartamento]);
 
   return (
     <>
@@ -309,18 +310,69 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
           </div>
           <div className="col-span-1">
             <div className="flex flex-col justify-center items-center">
-              <Typography variant="h6">
-                Agregar Trasalados
-              </Typography>
-              <Typography className="text-xs" variant="paragraph">
-                Puede agregar un trasalado a su reserva desde/hacia su hospadaje, pero tambien puede solicitarlo en la seccion de su perfil.
-              </Typography>
               
               {
                 traslados && traslados.length > 0 ? (
 
-                  <div className="mt-3 w-full">
-                    {traslados}
+                  <div className="flex flex-wrap -mx-3 mb-5">
+                    <div className="w-full max-w-full px-3 mb-6  mx-auto">
+                      <div className="relative flex-[1_auto] flex flex-col break-words min-w-0 bg-clip-border  bg-white ">
+                        <div className="relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30">
+                          <div className="px-9 pt-5 flex justify-between items-stretch flex-wrap min-h-full pb-0 bg-transparent">
+                            <h6 className="flex flex-col items-start justify-center m-2 ml-0 text-sm text-dark">
+                              <span className="mr-3 font-semibold text-dark">Agregar Trasalados</span>
+                              <span className="mt-1 font-medium text-secondary-dark text-sm">
+                              Puede agregar un trasalado a su reserva desde/hacia su hospadaje, pero tambien puede solicitarlo en la seccion de su perfil.
+                              </span>
+                            </h6>
+                          </div>
+                          <div className="flex-auto block py-8 pt-6 px-9">
+                            <div className="overflow-y-auto">
+                              <table className="w-full my-0 align-middle text-dark border-neutral-200">
+                                <thead className="align-bottom">
+                                  <tr className="font-semibold text-sm text-secondary-dark">
+                                    <th className="text-start">Conductor</th>
+                                    <th className="text-end ">Nombre</th>
+                                    <th className="pr-12 text-end ">Estado</th>
+                                    <th className="pr-12 text-end ">Fecha</th>
+                                    <th className="text-end "></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr className="border-b border-dashed last:border-b-0">
+                                    <td className="p-3 pl-0">
+                                      <div className="flex items-center">
+                                        <div className="relative inline-block shrink-0 rounded-2xl me-3">
+                                          <img src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/riva-dashboard-tailwind/img/img-48-new.jpg" className="w-[50px] h-[50px] inline-block shrink-0 rounded-2xl" alt=""/>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="p-3 pr-0 text-end">
+                                      <span className="font-semibold text-light-inverse text-xs">Michael Kenny</span>
+                                    </td>
+                                    <td className="p-3 pr-0 text-end">
+                                      <span className="font-semibold text-light-inverse text-xs">Activo</span>
+                                    </td>
+                                    <td className="pr-0 text-start">
+                                      <span className="font-semibold text-light-inverse text-xs">2023-05-15</span>
+                                    </td>
+                                    <td className="p-3 pr-0 text-end">
+                                      <button className="ml-auto relative text-secondary-dark bg-light-dark hover:text-primary flex items-center h-[25px] w-[25px] text-base font-medium leading-normal text-center align-middle cursor-pointer rounded-2xl transition-colors duration-200 ease-in-out shadow-none border-0 justify-center">
+                                        <span className="flex items-center justify-center p-0 m-0 leading-none shrink-0 ">
+                                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                          </svg>
+                                        </span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                 ) : (

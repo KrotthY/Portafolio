@@ -10,11 +10,12 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { Select, Option } from "@material-tailwind/react";
 import PropTypes from 'prop-types';
 import Swal from "sweetalert2";
+import useSession from "../../../Auth/Context/UseSession";
 
 
 
 const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_RESERVADOS,onTotalCostChange,onTotalPersonChange,onDateSelected}) =>{
-  
+  const { user } = useSession();
   const [selectedPersons, setSelectedPersons] = useState(0); 
   const handlePersonsChange = (selectedValue) => {
     selectedValue = parseInt(selectedValue);
@@ -76,7 +77,14 @@ const CardReserva = ({handleOpenModal, MAX_HUESPEDES  = 0,  TARIFA_DIARIA, DIAS_
   oneYearLater.setFullYear(today.getFullYear() + 1);
 
   const handleReservaClick = (e) => {
-    if (selectedPersons === 0 || dateToday.startDate === null || dateToday.endDate === null) {
+    if(!user) return Swal.fire({
+      icon: 'error',
+      title: 'Uups...',
+      text: 'Debe iniciar sesión para realizar una reserva!',
+    });
+
+
+    if (selectedPersons === 0 || dateToday.startDate === null || dateToday.endDate === null ) {
       Swal.fire({
         icon: 'error',
         title: 'Uups...',
