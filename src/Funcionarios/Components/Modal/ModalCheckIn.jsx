@@ -28,6 +28,7 @@ const schema = yup.object({
 
 
 const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
+
   const { user } = useSession();
   const {  register, formState: { errors }, reset,getValues } = useForm({
     resolver: yupResolver(schema),

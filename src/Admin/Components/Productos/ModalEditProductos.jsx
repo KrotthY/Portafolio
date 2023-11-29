@@ -218,6 +218,7 @@ const ModalEditProductos = ({onClose,showModal,productosId}) => {
                     onChange={(e) => handleDeptoChange(e)}
                     error={Boolean(errors.departamentoId)}
                     success={Boolean(!errors.departamentoId  && getValues('departamentoId'))}
+                    value={getValues('departamentoId')}
                   >
                   { 
                     deptoIdSelected  ? (

@@ -20,7 +20,6 @@ export const purchaseTour = async (formTours) => {
 
   try {
     const response = await fetch(urlWithParams, requestOptions);
-    console.log(response)
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -1,13 +1,65 @@
-import { Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Card, List, ListItem, ListItemPrefix, Input } from "@material-tailwind/react";
+import { Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Card, Input } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import useSession from "../../../Auth/Context/UseSession";
 import { useEffect, useState } from "react";
 import formatNumberWithDollar from "../../../Admin/Assets/js/formatNumberDollar";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+import { realizarCheckOut } from "../../Api/realizarCheckOut";
 
-const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto}) => {
+
+const guestSchema = yup.object().shape({
+  inventario_id: yup.number()
+    .required('El ID del inventario es requerido')
+    .positive('El ID del inventario debe ser un número positivo')
+    .integer('El ID del inventario debe ser un número entero'),
+
+  multa: yup.number()
+    .required('La multa es requerida')
+    .min(0, 'La multa no puede ser menor que 0')
+    .max(1, 'La multa no puede ser mayor que 1 (100%)'),
+
+  costo: yup.number()
+    .required('El costo es requerido')
+    .positive('El costo debe ser un número positivo')
+    .max(1000000, 'El costo no puede exceder 1,000,000'), // Suponiendo un límite máximo
+
+  cantidad: yup.number()
+    .required('La cantidad es requerida')
+    .min(0, 'La cantidad no puede ser menor que 0')
+    .integer('La cantidad debe ser un número entero'),
+
+    cantidadDanados: yup.number()
+    .required('La cantidad dañada es requerida')
+    .min(0, 'La cantidad de productos dañados debe ser mayor o igual a 0')
+    .test(
+      'maxCantidadDanados',
+      'La cantidad de productos dañados debe ser menor o igual a la cantidad de productos',
+      function(value) {
+        const { cantidad } = this.parent;
+        return typeof value === 'number' && typeof cantidad === 'number' && value <= cantidad;
+      }
+    )
+    .integer('La cantidad dañada debe ser un número entero'),
+  
+});
+
+
+
+const schema = yup.object({
+  outForm: yup.array().of(guestSchema),
+});
+
+const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) => {
   const { user } = useSession();
   const [ checkIn , setCheckIn ] = useState([]);
   const [ productos , setProductos ] = useState([]);
+  const {  register, formState: { errors }, reset,getValues } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const cargarCheckIn = () => {
     const URL_API_GET_CHECK_IN = `https://fastapi-gv342xsbja-tl.a.run.app/check-in/${idReserva}`;
 
@@ -52,19 +104,90 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto}) => {
       .catch(error => console.log(error))
   }
 
-
   const TABLE_HEAD = ["RUT","Nombre","Apellido","Teléfono"];
-  const TABLE_HEAD_INVENTARIO = ["Nombre","Multa","Costo","Cantidad","Cantidad dañados",""];
-
+  const TABLE_HEAD_INVENTARIO = ["Nombre","Multa","Costo","Cantidad","Cantidad dañados"];
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
-const handleCheckboxChange = (e) => {
-  if(idDepto){
-    cargarProductos(idDepto);
-  }
-  setIsCheckboxChecked(e.target.checked);
-};
+  const handleCheckboxChange = (e) => {
+    if(idDepto){
+      cargarProductos(idDepto);
+    }
+    setIsCheckboxChecked(e.target.checked);
+  };
 
+  const handleSubmitFormErrors = async  () => {
+    try {
+      const formData = getValues();
+      const evaluarCantidad = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => guest.cantidadDanados);
+
+      if(evaluarCantidad.length === 0){
+        onClose();
+        reset();
+        Swal.fire({
+          icon: 'info',
+          title: 'Registro de salida',
+          text: 'Debe ingresar al menos un producto dañado',
+          confirmButtonText: 'Ok'
+        });
+        return;
+      }
+
+      const inventarioId = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => guest.inventario_id);
+      const cantidadDanados = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => guest.cantidadDanados);
+      const total = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => (guest.cantidadDanados * guest.costo) * (guest.multa + 1));
+      const guestsData = [
+        {
+          "INVENTARIO_ID": inventarioId
+        },
+        {
+          "CANTIDAD": cantidadDanados
+        },
+      ];
+  
+
+      const checkOutForm = {
+        access_token: user.access_token,
+        reservation_id: idReserva,
+        usuario_id: idUsuario,
+        total : total[0],
+        guestsData: guestsData
+      }
+
+      await realizarCheckOut(checkOutForm);
+
+      onClose();
+      reset(); 
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro de salida',
+        text: 'Se ha registrado la salida del huesped',
+        confirmButtonText: 'Ok'
+      });
+    } catch (error) {
+      onClose(); 
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al registrar la salida',
+        text: error,
+        confirmButtonText: 'Ok'
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (productos && productos.length > 0) {
+      const outFormData = productos.map((guest) => ({
+        inventario_id: guest.INVENTARIO_ID,
+        multa: guest.PORCENTAJE_MULTA,
+        costo: guest.VALOR,
+        cantidad: guest.CANTIDAD,
+       
+        cantidadDanados: 0
+      }));
+  
+      reset({ outForm: outFormData});
+    }
+  },[productos, reset]);
 
 
   return (
@@ -225,11 +348,12 @@ const handleCheckboxChange = (e) => {
                       
                       productos  && productos.length > 0  ? (
                       
-                        productos.map((item, index) => {
+                      productos.map((item, index) => {
                       const isLast = index === productos.length - 1;
                       const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
                       return (
                         <tr key={item?.INVENTARIO_ID}>
+                          <td  {...register(`outForm[${index}].inventario_id`)} hidden></td>
                           <td className={classes}>
                             <Typography
                               variant="small"
@@ -244,6 +368,7 @@ const handleCheckboxChange = (e) => {
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
+                              {...register(`outForm[${index}].multa`)}
                             >
                               {(item?.PORCENTAJE_MULTA * 100)}%
                             </Typography>
@@ -253,6 +378,7 @@ const handleCheckboxChange = (e) => {
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
+                              {...register(`outForm[${index}].costo`)}
                             >
                               {formatNumberWithDollar(item?.VALOR)}
                             </Typography>
@@ -262,45 +388,28 @@ const handleCheckboxChange = (e) => {
                               variant="small"
                               color="blue-gray"
                               className="font-normal"
+                              {...register(`outForm[${index}].cantidad`)}
                             >
                               {item?.CANTIDAD}
                             </Typography>
                           </td>
                           <td className={classes}>
+                            <Input className="w-5" min={0} max={item?.CANTIDAD}
+                            label="Cantidad dañado" color="blue" type="number" 
+                            name={`outForm[${index}].cantidadDanados`} size="md" 
+                            {...register(`outForm[${index}].cantidadDanados`, {
+                              setValueAs: value => value === "" ? null : Number(value),
+                            })}
                             
-                            <Input className="w-5" label="Cantidad dañado" color="blue" type="number" name="cantidadDanados" size="md" />
-
+                            error={Boolean(errors?.outForm?.[index]?.cantidadDanados)} 
+                            success={Boolean(getValues(`outForm[${index}].cantidadDanados`))}
+                            />
+                            {errors?.outForm?.[index]?.cantidadDanados && (
+                              <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                                {errors.outForm[index].cantidadDanados.message}
+                              </div>
+                            )}
                           </td>
-                          <td className={classes}>
-                          <Card className="p-1">
-                            <List className="m-0"> 
-                              <ListItem className="p-1"> 
-                                <label
-                                  htmlFor={`vertical-list-svelte${index}`}
-                                  className="flex w-full cursor-pointer items-center"
-                                >
-                                  <ListItemPrefix className="p-0"> 
-                                    <Checkbox
-                                      id={`vertical-list-svelte${index}`}
-                                      ripple={false}
-                                      className="hover:before:opacity-0"
-                                      containerProps={{
-                                        className: "p-0",
-                                      }}
-                                    />
-                                  </ListItemPrefix>
-                                  <Typography color="blue-gray" className="font-medium select-none text-sm"> 
-                                    ¿Dañado?
-                                  </Typography>
-                                </label>
-                              </ListItem>
-                            </List>
-</Card>
-
-                          </td>
-          
-                        
-      
                         </tr>
                       );
                     })
@@ -358,6 +467,7 @@ const handleCheckboxChange = (e) => {
 
             <div className="flex items-center justify-around">
               <button
+                onClick={handleSubmitFormErrors}
                 className="text-white   bg-red-500 hover:bg-red-100 focus:ring-4 focus:ring-red-300 rounded-lg border border-red-200 text-sm font-semibold px-5 py-2.5 hover:text-red-900 focus:outline-none focus:z-10"
               >
                 Generar Multa y Registrar Salida
@@ -378,6 +488,7 @@ ModalRegistroSalida.propTypes = {
   showModal: PropTypes.bool.isRequired,
   idReserva: PropTypes.number.isRequired,
   idDepto: PropTypes.number.isRequired,
+  idUsuario: PropTypes.number.isRequired,
 }
 
 export default ModalRegistroSalida;

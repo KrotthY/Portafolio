@@ -44,7 +44,6 @@ const ModalCreateConductores = ({onClose,showModal}) => {
         fechaVencimientoLicencia: dateToday.startDate,
         fechaIngreso: dateTodayInicio.startDate
       }
-     
       await CreateNewConductor(conductoresForm);
       
       onClose();
