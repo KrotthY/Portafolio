@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { realizarCheckOut } from "../../Api/realizarCheckOut";
+import { realizarCheckOutCorrecto } from "../../Api/realizarCheckOutCorrecto";
 
 
 const guestSchema = yup.object().shape({
@@ -106,7 +107,7 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
 
   const TABLE_HEAD = ["RUT","Nombre","Apellido","Teléfono"];
   const TABLE_HEAD_INVENTARIO = ["Nombre","Multa","Costo","Cantidad","Cantidad dañados"];
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(true);
 
   const handleCheckboxChange = (e) => {
     if(idDepto){
@@ -114,6 +115,35 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
     }
     setIsCheckboxChecked(e.target.checked);
   };
+
+
+  const handleSubmitForm = async  () => {
+    try {
+      const checkOutForm = {
+        access_token: user.access_token,
+        reservation_id: idReserva,
+        usuario_id: idUsuario,
+      }
+      console.log(checkOutForm)
+      await realizarCheckOutCorrecto(checkOutForm);
+      onClose();
+      reset(); 
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro de salida',
+        text: 'Se ha registrado la salida del huesped',
+        confirmButtonText: 'Ok'
+      });
+    } catch (error) {
+      onClose(); 
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al registrar la salida',
+        text: error,
+        confirmButtonText: 'Ok'
+      });
+    }
+  }
 
   const handleSubmitFormErrors = async  () => {
     try {
@@ -439,7 +469,7 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
           }      
 
         <div className="flex items-center justify-center mt-6">
-          <Checkbox color="blue" defaultChecked onChange={handleCheckboxChange} />
+          <Checkbox color="blue" defaultChecked  onChange={handleCheckboxChange} />
           <span className="text-xs">Todo se encuentra en orden dentro del inmueble al momento de la recepción</span>
         </div>
       </DialogBody>
@@ -453,7 +483,7 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
       {
           isCheckboxChecked && (
             <div className="flex items-center justify-around">
-              <button
+              <button onClick={handleSubmitForm}
                 className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
               >
                 Registrar Salida

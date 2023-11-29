@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
 import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
-  nombre: yup.string().required('Nombre requerido').min(1, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
-  numero: yup.string().required('Número requerido').min(1, 'Mín. 3 dígitos').max(50, 'Máx. 50 dígitos'),
+  nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  numeroDireccion: yup.number().required('Número requerido').min(3, 'Mín. 3 dígitos').max(9999999, 'Máx. dígitos').positive('Debe ser positivo').integer('Debe ser entero').typeError('Debe ser un número'),
   region: yup.string(),
   comuna: yup.string(),
-  tipo: yup.string(),
+  tipo: yup.string().required('Tipo requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   tarifa: yup.string()
   .required('La tarifa es requerido')
   .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de tarifa inválido')
@@ -22,12 +22,12 @@ const schema = yup.object({
     const number = parseFloat(value.replace(/[^\d]/g, ''));
     return !isNaN(number) && number > 0 && number <= 999999999;
   }),
-  direccion: yup.string().required('Calle requerida').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
+  direccion: yup.string().required('direccion requerida').min(2, 'Mín. 3 letras').max(100, 'Máx. 100 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
-  banos: yup.number().typeError('Baños debe ser un número').required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
-  habitaciones: yup.number().typeError('Habitaciones debe ser un número').required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
-  camas: yup.number().typeError('Camas debe ser un número').required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
-  huespedes: yup.number().typeError('Huespedes debe ser un número').required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(30, 'Máx. 20'),
+  banos: yup.number().required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10').typeError('Debe ser un número'),
+  habitaciones: yup.number().required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10').typeError('Debe ser un número'),
+  camas: yup.number().required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20').typeError('Debe ser un número'),
+  huespedes: yup.number().required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20').typeError('Debe ser un número'),
 });
 
 
@@ -109,6 +109,8 @@ const ModalEdit = ({onClose,showModal,deptoId}) => {
       setValue('tipo', deparmentsId?.TIPO);
     }
   }, [deparmentsId,setValue])
+
+  console.log(deparmentsId)
 
   const handleFormatNumber = (e) => {
     console.log(e.target.value)

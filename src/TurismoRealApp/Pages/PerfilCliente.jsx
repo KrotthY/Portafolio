@@ -1,13 +1,13 @@
-import { Tab, TabPanel, Tabs, TabsBody, TabsHeader } from "@material-tailwind/react";
+import { Tab, TabPanel, Tabs, TabsBody, TabsHeader, Typography } from "@material-tailwind/react";
 import useSession from "../../Auth/Context/UseSession";
 import { createElement, useEffect, useState } from "react";
 import {
   UserCircleIcon,
   BuildingOffice2Icon,
-  GlobeAmericasIcon,
   
 } from "@heroicons/react/24/solid";
 import { carousel3 } from "../../Assets";
+import formatNumberWithDollar from "../../Admin/Assets/js/formatNumberDollar";
 
 const PerfilCliente = () => {
 
@@ -48,24 +48,18 @@ const PerfilCliente = () => {
       value: "reservas",
       icon: BuildingOffice2Icon,
     },
-    {
-      label: "Historial",
-      value: "historial",
-      icon: GlobeAmericasIcon,
-    },
   ];
   const [activeTab, setActiveTab] = useState(false);
 
   const handleTabs = () => {
     setActiveTab(true)
   }
-  console.log(activeTab)
   console.log(reservaUsuario)
   return (
     <div className="  bg-gray-200 p-12">
 
       <Tabs>
-        <TabsHeader className="bg-blue-gray-200">
+        <TabsHeader className="bg-blue-gray-200 z-0">
         {data.map(({ label, value, icon }) => (
           <Tab onClick={handleTabs}  key={value} value={value}>
             <div className="flex items-center gap-2">
@@ -123,76 +117,46 @@ const PerfilCliente = () => {
           </div>
             </TabPanel>
             <TabPanel key="reservas" value="reservas">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80" alt="photo"/>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {
+              reservaUsuario && reservaUsuario.length > 0 && reservaUsuario.map((reserva) => (
+
+              <div key={reserva.RESERVA_ID} className="w-full bg-white rounded-lg py-6 flex flex-col justify-center items-center">
+                  <div className="flex flex-col space-y-1 items-center">
+                      <div className="text-sm text-gray-700 font-extralight ">
+                        <p>Inicio: { reserva.FECHA_INICIO }</p>
+                      </div>
+                      <div className="text-sm text-gray-700 pb-1 font-extralight ">
+                        <p>Fin: { reserva.FECHA_FIN }</p>
+                      </div>
+                  </div>
+                  <div className="mb-2">
+                      <img className="object-center object-cover rounded-full h-36 w-36" src="https://cdn.getyourguide.com/img/location/59525c8179704.jpeg/62.jpg" alt="photo"/>
+                  </div>
+                  <div>
+                    <span className="text-base text-gray-700 font-bold">
+                    { reserva.NOMBRE_DPTO +' '+ reserva.NUMERO }
+                    </span>
+                  </div>
+                  <div className="text-center">
+                      <p className="text-base text-gray-400 font-normal">{ formatNumberWithDollar(reserva.MONTO_TOTAL) }</p>
+                      <p className="text-sm text-gray-700 font-extralight ">{ reserva.NOMBRE_COMUNA }</p>
+                  </div>
+              </div>
+              ))
+            }
             </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Dany Bailey</p>
-                <p className="text-base text-gray-400 font-normal">Software Engineer</p>
-            </div>
-        </div>
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80" alt="photo"/>
-            </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Lucy Carter</p>
-                <p className="text-base text-gray-400 font-normal">Graphic Designer</p>
-            </div>
-        </div>
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1176&q=80" alt="photo"/>
-            </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Jade Bradley</p>
-                <p className="text-base text-gray-400 font-normal">Dev Ops</p>
-            </div>
-        </div>
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80" alt="photo"/>
-            </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Dany Bailey</p>
-                <p className="text-base text-gray-400 font-normal">Software Engineer</p>
-            </div>
-        </div>
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1170&q=80" alt="photo"/>
-            </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Lucy Carter</p>
-                <p className="text-base text-gray-400 font-normal">Graphic Designer</p>
-            </div>
-        </div>
-        <div className="w-full bg-white rounded-lg p-12 flex flex-col justify-center items-center">
-            <div className="mb-8">
-                <img className="object-center object-cover rounded-full h-36 w-36" src="https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1176&q=80" alt="photo"/>
-            </div>
-            <div className="text-center">
-                <p className="text-xl text-gray-700 font-bold mb-2">Jade Bradley</p>
-                <p className="text-base text-gray-400 font-normal">Dev Ops</p>
-            </div>
-        </div>
-    </div>
             </TabPanel>
-            <TabPanel key="historial" value="historial">
-              <div>hola3</div>
-            </TabPanel>
+    
         </TabsBody>
       </Tabs>
       {
         !activeTab && (
 
-        <div className="w-full px-4 my-12">
-            <p className="font-light leading-relaxed text-slate-600 mb-4">
-            Como un apasionado explorador, he decidido emprender un viaje por Chile, un país de contrastes asombrosos y rica cultura. Mi mochila está preparada con lo esencial: ropa adecuada para todo tipo de clima, una cámara para capturar la belleza del paisaje y un diario para anotar cada detalle de mi aventura.
-            </p>
-            <img src={carousel3} className="w-64 " alt="" />
+        <div className="w-full flex flex-col justify-center items-center">
+          <Typography className="my-32 " variant="h5">
+            Selecciona una opción para ver tu perfil  
+          </Typography>
         </div>
 
         )

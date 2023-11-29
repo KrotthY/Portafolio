@@ -204,7 +204,7 @@ const CheckInFuncionario = () => {
     <>
       <div className="flex flex-col items-center ">
       <Typography className="py-6" variant="h3">
-        Registro de Huespedes -  INCOMPLETO
+        Registro de Huespedes
       </Typography>
       </div>        
       <div className="mb-2 ml-6 flex flex-col justify-start gap-2">

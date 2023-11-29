@@ -234,7 +234,7 @@ const PanelAdministracion = () => {
   }
 
 
-  const handleDeptoDelete = (e,idPropiedad,changeEstado) => {
+  const handleDeptoDelete =  (e,idPropiedad,changeEstado) => {
     try {
       const borrarDepartamento = {
         "access_token":user.access_token,
@@ -255,7 +255,6 @@ const PanelAdministracion = () => {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-        
           eliminarDpto(borrarDepartamento)
           Swal.fire({
             icon: 'success',

@@ -45,14 +45,32 @@ const schema = yup.object({
 
 const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_COMUNA,NOMBRE_REGION,onClose,showModal,parentHuesped,parentDateSelected}) => {
   const  { user }  = useSession();
-
+  const [ tours , setTours ] = useState([]);
+  const [ traslados , setTraslados ] = useState([]);
 
   const {  register, handleSubmit, formState: { errors }, reset,getValues } = useForm({
     resolver: yupResolver(schema),
   });
   
+  const URL_API_GET_TOUR = 'https://fastapi-gv342xsbja-tl.a.run.app/tours';
   
+  const CargarVehiculos = () => {
+    const URL_API_GET_VEHICULOS_DPTO = `https://fastapi-gv342xsbja-tl.a.run.app/vehiculos_por_dpto/${idDepartamento}`;
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${user.access_token}`,
+      },
+    };
 
+    fetch(URL_API_GET_VEHICULOS_DPTO,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setTraslados(data);
+      })
+      .catch(error => console.log(error))
+  }
 
   const handlePurchase = async (formData) => {
     try {
@@ -112,10 +130,6 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
     }
   };
 
-  const URL_API_GET_TOUR = 'https://fastapi-gv342xsbja-tl.a.run.app/tours';
-
-  const [ tours , setTours ] = useState([]);
-
   useEffect(() => {
     const requestOptions = {
       method: 'GET',
@@ -128,6 +142,12 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       })
       .catch(error => console.log(error))
   }, []);
+
+  useEffect(() => {
+    if(idDepartamento){
+      CargarVehiculos();
+    }
+  }, [idDepartamento]);
 
   return (
     <>
@@ -295,6 +315,23 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
               <Typography className="text-xs" variant="paragraph">
                 Puede agregar un trasalado a su reserva desde/hacia su hospadaje, pero tambien puede solicitarlo en la seccion de su perfil.
               </Typography>
+              
+              {
+                traslados && traslados.length > 0 ? (
+
+                  <div className="mt-3 w-full">
+                    {traslados}
+                  </div>
+
+                ) : (
+                  <div className="flex flex-col items-center mt-20">
+                    <Typography variant="paragraph">
+                      No hay traslados disponibles
+                    </Typography>
+                  </div>
+                )
+              }
+
             </div>
           </div>
         </div>

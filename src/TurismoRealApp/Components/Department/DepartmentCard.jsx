@@ -7,7 +7,7 @@ import { Chip } from '@material-tailwind/react';
 const DepartmentCard = ({imgSrc, title,description, location,tipo, identificadorDpto ,qtyBathroom, qtyBed,qtyRoom, price, idApartment }) => {
 
   const [dptoStatus, setStatus ] = useState("Casa")
-
+  
   const isAvailable = dptoStatus === tipo;
   const chipColor = isAvailable ? 'brown' : 'orange';
 

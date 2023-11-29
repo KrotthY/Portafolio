@@ -11,10 +11,10 @@ import formatNumberWithDollar from "../../Assets/js/formatNumberDollar";
 
 const schema = yup.object({
   nombre: yup.string().required('Nombre requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
-  numeroDireccion: yup.number().required('Número requerido').min(3, 'Mín. 3 dígitos').max(9999999, 'Máx. dígitos'),
+  numeroDireccion: yup.number().required('Número requerido').min(3, 'Mín. 3 dígitos').max(9999999, 'Máx. dígitos').positive('Debe ser positivo').integer('Debe ser entero').typeError('Debe ser un número'),
   region: yup.string(),
   comuna: yup.string(),
-  tipo: yup.string(),
+  tipo: yup.string().required('Tipo requerido').min(3, 'Mín. 3 letras').max(50, 'Máx. 50 letras'),
   tarifa: yup.string()
   .required('La tarifa es requerido')
   .matches(/^\$\d{1,3}(\.\d{3})*$/, 'Formato de tarifa inválido')
@@ -24,10 +24,10 @@ const schema = yup.object({
   }),
   direccion: yup.string().required('direccion requerida').min(2, 'Mín. 3 letras').max(100, 'Máx. 100 letras'),
   descripcion: yup.string().required('Descripción requerida').min(10, 'Mín. 10 letras').max(250, 'Máx. 250 letras'),
-  banos: yup.number().required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
-  habitaciones: yup.number().required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10'),
-  camas: yup.number().required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
-  huespedes: yup.number().required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20'),
+  banos: yup.number().required('Baños requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10').typeError('Debe ser un número'),
+  habitaciones: yup.number().required('Habitaciones requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(10, 'Máx. 10').typeError('Debe ser un número'),
+  camas: yup.number().required('Camas requeridas').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20').typeError('Debe ser un número'),
+  huespedes: yup.number().required('Huéspedes requeridos').positive('Debe ser positivo').integer('Debe ser entero').min(1, 'Mín. 1').max(20, 'Máx. 20').typeError('Debe ser un número'),
 });
 
 
@@ -61,6 +61,7 @@ const ModalCreate = ({onClose,showModal}) => {
         huespedes: formData.huespedes,
       }
       await CreateNewDpto(crearDepartamento);
+      
       onClose();
       reset(); 
       Swal.fire({
@@ -171,7 +172,6 @@ const ModalCreate = ({onClose,showModal}) => {
               </div>
             )}
           </div>
-
 
           <div className="flex  justify-center items-center gap-11">
             <div className="relative w-full">
@@ -346,7 +346,7 @@ const ModalCreate = ({onClose,showModal}) => {
               type="number"
               name="banos"
               error={Boolean(errors.message)}
-              success={Boolean(!errors.message  && getValues('message')) }
+              success={Boolean(!errors.message  && getValues('banos')) }
             />
             {errors.banos && (
               <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
@@ -358,7 +358,6 @@ const ModalCreate = ({onClose,showModal}) => {
             <Input name="habitaciones" color="blue" label="Cantidad de Habitaciones" size="md"  
               { ...register("habitaciones") }
               type="number"
-             
               error={Boolean(errors.habitaciones)}
               success={Boolean(!errors.habitaciones  && getValues('habitaciones')) }
             />
@@ -368,7 +367,7 @@ const ModalCreate = ({onClose,showModal}) => {
               </div>
             )}
           </div>
-          <div>
+          <div className="relative">
             <Input name="camas" color="blue" label="Cantidad de Camas" size="md"  
               { ...register("camas") }
          

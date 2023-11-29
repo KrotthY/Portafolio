@@ -37,9 +37,11 @@ function ProfileMenu() {
       {menuOpen && (
         <ul
           role="menu"
-          className="absolute z-10 flex min-w-[180px] flex-col gap-2 overflow-auto rounded-md border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500 shadow-lg shadow-blue-gray-500/10 focus:outline-none"
+          className="absolute z-20 flex min-w-[180px] flex-col gap-2 overflow-auto rounded-md border border-blue-gray-50 bg-white p-3 font-sans text-sm font-normal text-blue-gray-500 shadow-lg shadow-blue-gray-500/10 focus:outline-none"
         >
-
+          <NavLink 
+          to={ PublicRoutes.PERFIL_CLIENTE }
+          className="block font-sans text-sm font-normal leading-normal text-inherit antialiased">
         <button
           tabIndex="-1"
           role="menuitem"
@@ -60,14 +62,15 @@ function ProfileMenu() {
               d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
             ></path>
           </svg>
-          <NavLink 
-          to={ PublicRoutes.PERFIL_CLIENTE }
-          className="block font-sans text-sm font-normal leading-normal text-inherit antialiased">
+        
             Mi Perfil
-          </NavLink>
         </button>
+          </NavLink>
 
         <hr className="my-2 border-blue-gray-50" tabIndex="-1" role="menuitem" />
+        <NavLink 
+          to={ PublicRoutes.HOME }
+          className="block font-sans text-sm font-normal leading-normal text-inherit antialiased">
         <button
           tabIndex="-1"
           role="menuitem"
@@ -93,6 +96,8 @@ function ProfileMenu() {
             Cerrar Sesión
           </p>
         </button>
+        </NavLink>
+
       
         </ul>
       )}

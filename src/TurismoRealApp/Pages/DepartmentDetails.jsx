@@ -147,7 +147,6 @@ const handleDateSelected = (dateSelected) => {
             />
         </div>
         <div className="mt-36">
-          
         <DepartmentAccordion/>
         </div>
     </section>
