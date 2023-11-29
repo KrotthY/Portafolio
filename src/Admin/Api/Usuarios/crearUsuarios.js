@@ -1,11 +1,16 @@
-const URL_API_CREATE_USUARIOS = `https://fastapi-gv342xsbja-tl.a.run.app/crear_servicio`;
+const URL_API_CREATE_USUARIOS = `https://fastapi-gv342xsbja-tl.a.run.app/crear_administrativo`;
 
-export const crearUsuarios = async (crearServicio) => {
+export const crearNuevoUsuario = async (crearUsuario) => {
 
   const queryParams = {
-    department_id :crearServicio.department_id,
-    name: crearServicio.nombre,
-    //active_value : crearServicio.active,
+    user_type : crearUsuario.tipoStaffId,
+    name : crearUsuario.nombre,
+    last_name : crearUsuario.apellido,
+    username : crearUsuario.usuario,
+    rut: crearUsuario.rut,
+    email: crearUsuario.correo,
+    phone: crearUsuario.telefono,
+    password : crearUsuario.contrasena,
   }
 
   const queryString = new URLSearchParams(queryParams).toString();
@@ -14,7 +19,8 @@ export const crearUsuarios = async (crearServicio) => {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      'Authorization': `Bearer ${crearServicio.access_token}`,
+      'Authorization': `Bearer ${crearUsuario.access_token}`,
+      'Content-Type': 'application/json',
     },
   };
 

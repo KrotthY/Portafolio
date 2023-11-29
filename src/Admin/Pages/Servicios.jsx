@@ -274,7 +274,6 @@ const Servicios = () => {
             <table className="w-full text-sm text-left text-gray-500  ">
               <thead className="text-md text-gray-700 bg-blue-100  text-center">
                 <tr>
-                  <th scope="col" className="px-4 py-3 w-auto">ID</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Nombre</th>
                   <th scope="col" className="px-4 py-3 w-auto">Estado</th>
                   <th scope="col" className="relative py-3.5 px-4 w-auto">Acciones</th> 
@@ -284,8 +283,7 @@ const Servicios = () => {
                 {filteredServicios
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((serviciosItem) => (
-                  <tr key={serviciosItem.SERVICIO_ID} className="hover:bg-gray-100 italic text-center">
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{serviciosItem.SERVICIO_ID}</td>
+                  <tr key={serviciosItem.SERVICIO_ID} className="hover:bg-gray-100 italic text-center  border-b-4">
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{serviciosItem.NOMBRE}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(serviciosItem.ACTIVO)}</td>
 

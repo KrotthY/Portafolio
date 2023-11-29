@@ -10,7 +10,7 @@ import { PublicRoutes } from '../../../Router'
 const Navbar = () => {
   const {user} = useSession();
 
-  const [ activeLink, setActiveLink  ] = useState('Inicio')
+  const [ activeLink, setActiveLink  ] = useState('')
 
 
   return (
@@ -18,7 +18,7 @@ const Navbar = () => {
     <div className="flex flex-col items-center justify-center mt-24">
       <div className="flex flex-col">
         <div className="fixed inset-x-0 top-0 z-50 h-0.5 mt-0.5 bg-blue-500"></div>
-          <nav className="flex justify-around py-4  bg-white/80 backdrop-blur-xl shadow-lg w-full fixed top-0 left-0 right-0 z-10">
+          <nav className="flex justify-around py-4  bg-white backdrop-blur-xl shadow-lg w-full fixed top-0 left-0 right-0 z-10">
             <div className="flex items-center">
               <Link to={ PublicRoutes.HOME } className="cursor-pointer"
               

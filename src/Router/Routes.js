@@ -12,6 +12,7 @@ export const PublicRoutes = {
   HOME_ALL: '/*',
 
   DEPARTAMENTOS: 'departamentos',
+  PERFIL_CLIENTE:'perfil-cliente',
   DEPARTAMENTOS_ID: 'departamentos/:id',
 
   TOURS: 'tours',

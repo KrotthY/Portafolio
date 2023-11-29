@@ -34,6 +34,8 @@ const schema = yup.object({
     .min(10,'La descripción debe tener al menos 10 caracteres')
     .max(250,'La descripción debe tener máximo 250 caracteres'),
     departamentoId: yup.number().required('El departamento es requerido'),
+    cantidad: yup.number().min(0,'La cantidad debe ser mayor o igual a 0').required('La cantidad es requerida')
+    .max(100,'La cantidad debe ser menor o igual a 100'),
 
 });
 
@@ -58,6 +60,7 @@ const ModalCreateProductos = ({onClose,showModal}) => {
         costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
         multa: formData.multa,
         descripcion: formData.descripcion,
+        cantidad:formData.cantidad,
       }
       await crearNuevoProducto(ProductosForm);
       onClose();
@@ -203,7 +206,6 @@ const ModalCreateProductos = ({onClose,showModal}) => {
                   </div>
                   )}
               </div>
-
               <div className="relative w-full">
                 <Input color="blue" label="Porcentaje de multa" size="md" name="multa" step={0.01} min={0} max={1}
                 { ...register("multa") }
@@ -218,6 +220,19 @@ const ModalCreateProductos = ({onClose,showModal}) => {
                   )}
               </div>
             </div>
+            <div className="relative w-full">
+                <Input  color="blue" label="Cantidad de productos" size="md" name="cantidad" step={1}
+                { ...register("cantidad") }
+                error={Boolean(errors.cantidad)}
+                success={Boolean(!errors.cantidad  && getValues('cantidad')) }
+                type="number"
+                />
+                {errors.cantidad && (
+                  <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                    {errors.cantidad.message}
+                  </div>
+                  )}
+              </div>
             <div className="relative w-full">
               <Textarea   color="blue" label="Descripción" size="lg" name="descripcion"
               { ...register("descripcion") }

@@ -33,6 +33,8 @@ const schema = yup.object({
     .min(10,'La descripción debe tener al menos 10 caracteres')
     .max(250,'La descripción debe tener máximo 250 caracteres'),
     departamentoId: yup.number().required('El departamento es requerido'),
+    cantidad: yup.number().min(0,'La cantidad debe ser mayor o igual a 0').required('La cantidad es requerida')
+    .max(100,'La cantidad debe ser menor o igual a 100'),
 });
 
 
@@ -54,6 +56,7 @@ const ModalEditProductos = ({onClose,showModal,productosId}) => {
         costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
         multa: formData.multa,
         departamentoId: parseInt(formData.departamentoId),
+        cantidad:formData.cantidad,
       }
       await ActualizarProducto(actualizarProductosData);
       onClose();
@@ -112,6 +115,8 @@ const ModalEditProductos = ({onClose,showModal,productosId}) => {
       const formattedCost = formatNumberWithDollar(productosIdSelected[0]?.VALOR);
       setValue('costo', formattedCost);
       setValue('descripcion', productosIdSelected[0]?.DESCRIPCION)
+      setValue('cantidad', productosIdSelected[0]?.CANTIDAD)
+      setValue('departamentoId', String(productosIdSelected[0]?.DEPARTAMENTO_ID));
     }
   }, [productosIdSelected,setValue])
 
@@ -258,6 +263,19 @@ const ModalEditProductos = ({onClose,showModal,productosId}) => {
                   )}
               </div>
             </div>
+            <div className="relative w-full">
+                <Input color="blue" label="Cantidad" size="md" name="multa" step={1}
+                { ...register("cantidad") }
+                error={Boolean(errors.cantidad)}
+                success={Boolean(!errors.cantidad  && getValues('cantidad')) }
+                type="number"
+                />
+                {errors.cantidad && (
+                  <div className="absolute left-0  bg-red-500 text-white text-xs mt-1 rounded-lg px-2">
+                    {errors.cantidad.message}
+                  </div>
+                  )}
+              </div>
             <div className="relative w-full">
               <Textarea   color="blue" label="Descripción" size="lg" name="descripcion"
               { ...register("descripcion") }

@@ -22,4 +22,4 @@ export * from './Traslados/crearTraslado';
 export * from './Traslados/desahabilitarTraslado';
 export * from './Usuarios/cambiarEstadoUsuarios';
 export * from './Usuarios/crearUsuarios';
-export * from './Usuarios/editarUsuarios';
+export * from './index';

@@ -9,6 +9,7 @@ export const ActualizarProducto = async (actualizarProductosForm) => {
     inventory_value: actualizarProductosForm.costo,
     inventory_penalty: actualizarProductosForm.multa,
     department_id: actualizarProductosForm.departamentoId,
+    inventory_quantity: actualizarProductosForm.cantidad,
   }
 
   const queryString = new URLSearchParams(queryParams).toString();

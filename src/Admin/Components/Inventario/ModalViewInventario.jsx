@@ -38,7 +38,6 @@ const ModalEditView = ({onClose,showModal,deptoId}) => {
 
     })
     .catch(error => {
-      console.log(error)
       setIsLoading(false);
     });
   }

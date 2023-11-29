@@ -170,7 +170,6 @@ const Inventario = () => {
             <table className="w-full text-sm text-left text-gray-500  ">
               <thead className="text-md text-gray-700 bg-blue-100  text-center">
                 <tr>
-                <th scope="col" className="px-4 py-3 w-auto">#</th>
 
                   <th scope="col" className="px-4 py-3 w-auto">Nombre</th>
                   <th scope="col" className="px-4 py-3 w-auto">Estado </th> 
@@ -183,8 +182,7 @@ const Inventario = () => {
                 {filteredInventario
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((inventarioItem) => (
-                  <tr key={inventarioItem.DEPARTAMENTO_ID} className="hover:bg-gray-100 italic ">
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{inventarioItem.DEPARTAMENTO_ID}</td>
+                  <tr key={inventarioItem.DEPARTAMENTO_ID} className="hover:bg-gray-100 italic  text-center  border-b-4 shadow-md">
 
                     <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{inventarioItem.NOMBRE}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap text-center">{evaluateStatusDepto(inventarioItem.ACTIVO)}</td>

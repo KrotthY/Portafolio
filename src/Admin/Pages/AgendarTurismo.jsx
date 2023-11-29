@@ -197,7 +197,7 @@ const AgendarTurismo = () => {
                 {filteredTurismo
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((tourItem) => (
-                  <tr key={tourItem.TOUR_ID} className="hover:bg-gray-100 italic text-center">
+                  <tr key={tourItem.TOUR_ID} className="hover:bg-gray-100 italic  text-center  border-b-4 ">
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{tourItem.NOMBRE_TOUR}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(tourItem.ACTIVO)}</td>
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{formatNumberWithDollar(tourItem.VALOR_MINIMO)}</td>

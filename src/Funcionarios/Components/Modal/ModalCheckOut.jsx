@@ -47,7 +47,6 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto}) => {
     fetch(URL_API_GET_PRODUCTOS,requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         setProductos(data)
       })
       .catch(error => console.log(error))

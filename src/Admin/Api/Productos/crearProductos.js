@@ -8,6 +8,7 @@ export const crearNuevoProducto = async (crearProductoForm) => {
     inventory_value : crearProductoForm.costo,
     inventory_penalty : crearProductoForm.multa,
     department_id :crearProductoForm.departamentoId,
+    inventory_quantity: crearProductoForm.cantidad,
   }
 
   const queryString = new URLSearchParams(queryParams).toString();

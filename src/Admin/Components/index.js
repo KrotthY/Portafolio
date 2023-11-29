@@ -15,4 +15,4 @@ export { default as ModalCreateTour } from './Tour/ModalCreateTour';
 export { default as ModalEditTour } from './Tour/ModalEditTour';
 export { default as ModalCreateTraslado } from './Traslados/ModalCreateTraslado';
 export { default as ModalCreateUsuarios } from './Usuarios/ModalCreateUsuarios';
-export { default as ModalEditUsuarios } from './Usuarios/ModalEditUsuarios';
+export * from './index';

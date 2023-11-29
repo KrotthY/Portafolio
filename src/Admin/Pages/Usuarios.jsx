@@ -3,7 +3,7 @@ import {  Chip, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import useSession from "../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
-import { ModalCreateUsuarios, ModalEditUsuarios } from "../Components";
+import { ModalCreateUsuarios } from "../Components";
 import { cambiarEstadoUsuario } from "../Api";
 
 
@@ -11,7 +11,6 @@ import { cambiarEstadoUsuario } from "../Api";
 const URL_API_GET_USUARIOS = 'https://fastapi-gv342xsbja-tl.a.run.app/obtener_usuarios';
 const Usuarios = () => {
 
-  const [currenUsuarioId, setCurrentServicioId] = useState(null);
   const [ usuarios , setUsuarios ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState("");
   const { user } = useSession();
@@ -47,16 +46,6 @@ const Usuarios = () => {
 
       tipoEstado === 1 ? (
       <div className="font-extrabold flex items-center gap-x-6">
-        <Tooltip content="Editar usuario" placement="top">
-        <button onClick={(e)=>{handleOpenModalEdit(e,idUsuario)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group  active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
-          <span className="absolute right-0 h-full w-11 rounded-lg bg-blue-300 hover:bg-blue-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-          <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
-            <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>
-          </svg>
-          </span>
-        </button>
-        </Tooltip>
-
 
         <Tooltip content="Desahabilitar usuario" placement="top">
         <button onClick={(e)=>{handleUsuarioDisabled(e,idUsuario,changeStatus)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-red-500 bg-red-300 group active:bg-red-500 active:border-red-500" href="{{ route('process.create') }}">
@@ -68,16 +57,6 @@ const Usuarios = () => {
       </div>
       ) : (
         <div className="font-extrabold flex items-center gap-x-6">
-        <Tooltip content="Editar usuario" placement="top">
-        <button className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-gray-500 bg-gray-300 group  active:bg-gray-500 active:border-gray-500" href="{{ route('process.create') }}">
-          <span className="absolute right-0 h-full w-11 rounded-lg bg-gray-300 hover:bg-gray-500 flex items-center justify-center transform group-hover:translate-x-0 group-hover:w-full transition-all duration-300">
-          <svg style={{fill:"#fff"}} xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 512 512">
-            <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>
-          </svg>
-          </span>
-        </button>
-        </Tooltip>
-
 
         <Tooltip content="Habilitar usuario" placement="top">
         <button onClick={(e)=>{handleUsuarioDisabled(e,idUsuario,changeStatus)}} className="rounded-lg  relative w-12 h-10 overflow-x-hidden cursor-pointer flex items-center border border-blue-500 bg-blue-300 group active:bg-blue-500 active:border-blue-500" href="{{ route('process.create') }}">
@@ -138,7 +117,7 @@ const Usuarios = () => {
     }
   };
 
-  const filteredUsuarios = usuarios.filter((usuariosItem) => {
+  const filteredUsuarios = usuarios?.filter((usuariosItem) => {
     return Object.values(usuariosItem).some(value => value.toString().toLowerCase().includes(searchTerm.toLowerCase()));
   })
 
@@ -162,26 +141,10 @@ const Usuarios = () => {
   }
 
   const closeModalCreate = () => {
-    cargarUsuarios();
     setShowModalCreate(false);
-  }
-
-
-  const [showModalEdit, setShowModalEdit] = useState(false);
-
-  const handleOpenModalEdit = (e,idServicios) => {
-    e.preventDefault();
-    setCurrentServicioId(idServicios)
-    setShowModalEdit(true);
-  }
-  
-  const closeModalEdit = () => {
     cargarUsuarios();
-    setShowModalEdit(false);
   }
 
-
-  
 
 
   const handleUsuarioDisabled = async (e, usuarioId, estado) => {
@@ -275,7 +238,6 @@ const Usuarios = () => {
             <table className="w-full text-sm text-left text-gray-500  ">
               <thead className="text-md text-gray-700 bg-blue-100  text-center">
                 <tr>
-                  <th scope="col" className="px-4 py-3 w-auto">ID</th> 
                   <th scope="col" className="px-4 py-3 w-auto">Nombre Completo</th>
                   <th scope="col" className="px-4 py-3 w-auto">Estado</th>
                   <th scope="col" className="px-4 py-3 w-auto">Tipo</th>
@@ -288,8 +250,7 @@ const Usuarios = () => {
                 {filteredUsuarios
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((usuariosItem) => (
-                  <tr key={usuariosItem.USUARIO_ID} className="hover:bg-gray-100 italic text-center">
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{usuariosItem.USUARIO_ID}</td>
+                  <tr key={usuariosItem.USUARIO_ID} className="hover:bg-gray-100 italic text-center border-b-4">
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">{usuariosItem.NOMBRE + ' ' + usuariosItem.APELLIDO}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(usuariosItem.ACTIVO)}</td>
                     <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">{usuariosItem.TIPO}</td>
@@ -347,7 +308,6 @@ const Usuarios = () => {
         </div>
       </div>
     <ModalCreateUsuarios onClose={closeModalCreate} showModal={showModalCreate} /> 
-    <ModalEditUsuarios onClose={closeModalEdit} showModal={showModalEdit} usuarioId={currenUsuarioId} /> 
 
   </section>
     </>

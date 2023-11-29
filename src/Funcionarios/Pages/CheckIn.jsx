@@ -153,8 +153,8 @@ const CheckInFuncionario = () => {
   }
   
   const closeModalIn = () => {
-    cargarCheckIn();
     setShowModalIn(false);
+    cargarCheckIn();
   }
 
   const [showModalOut, setShowModalOut] = useState(false);
@@ -167,8 +167,8 @@ const CheckInFuncionario = () => {
   }
   
   const closeModalOut = () => {
-    cargarCheckIn();
     setShowModalOut(false);
+    cargarCheckIn();
   }
 
   const handleUpdateHuesped = (e) => {

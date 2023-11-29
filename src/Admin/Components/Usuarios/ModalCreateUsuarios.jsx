@@ -6,6 +6,8 @@ import {  useForm } from "react-hook-form";
 import useSession from "../../../Auth/Context/UseSession";
 import Swal from "sweetalert2";
 import { useState } from "react";
+import { crearNuevoUsuario } from "../../Api";
+
 
 const schema = yup.object({
   nombre: yup.string()
@@ -26,7 +28,21 @@ const schema = yup.object({
     .required('El correo es requerido')
     .email('Debe ser un correo electrónico válido')
     .max(50, 'El correo debe tener un máximo de 50 caracteres'),
+  telefono: yup.string()
+    .required('El teléfono es requerido')
+    .matches(/^\d{9}$/, 'El teléfono debe tener exactamente 9 dígitos'),
+
+    rut: yup.string()
+    .required('El RUT es requerido')
+    .matches(/^(\d{1,3}(?:\.\d{1,3}){2}-[\dkK])$/, 'Debe ser un RUT válido con puntos y guión')
+  . min(12, 'El RUT debe tener al menos 12 caracteres').max(12, 'El RUT debe tener un máximo de 12 caracteres'),
+
+  contrasena: yup.string()
+    .required('La contraseña es requerida')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .max(20, 'La contraseña debe tener un máximo de 20 caracteres'),
 });
+
 
 
 const ModalCreateUsuarios = ({onClose,showModal}) => {
@@ -34,7 +50,7 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
   const  { user }  = useSession();
   const [usuarioIdSelected, setUsuarioIdSelected] = useState([
     {idTipo: 1, nombre: 'Administrador'},
-    {idTipo: 2, nombre: 'Funcionario'},
+    {idTipo: 0, nombre: 'Funcionario'},
   ]);
 
   const {register ,handleSubmit, formState: { errors } , getValues,setValue,reset} = useForm({
@@ -45,21 +61,25 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
     try {
       const UsuariosForm = {
         access_token: user.access_token,
-        departamentoId: parseInt(formData.departamentoId),
+        rut: formData.rut,
+        usuario: formData.usuario,
         nombre: formData.nombre,
-        costo: parseInt(formData.costo.replace(/\$|\.|,/g, '')),
-        multa: formData.multa,
-        descripcion: formData.descripcion,
+        apellido: formData.apellido,
+        telefono: formData.telefono,
+        correo: formData.correo,
+        tipoStaffId: formData.tipoStaffId,
+        contrasena: formData.contrasena,
       }
+
       await crearNuevoUsuario(UsuariosForm);
-      onClose();
-      reset(); 
       Swal.fire({
         icon: 'success',
         title: 'Crear Usuario',
         text: 'El Usuario se ha creado correctamente',
         confirmButtonText: 'Ok'
       });
+      reset(); 
+      onClose();
       
     } catch (error) {
       onClose(); 
@@ -79,10 +99,10 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
 
   return (
     <Dialog open={showModal}  aria-labelledby="modalCrear" size="md"
-    className="max-w-full max-h-screen py-2  overflow-y-scroll"
+    className="max-w-full max-h-screen py-2 "
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
-        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear nuevo inventario </span>
+        <span className="text-2xl tracking-tight font-extrabold text-gray-900">Crear nuevo Usuario </span>
         <IconButton
         color="blue-gray"
         size="sm"
@@ -111,9 +131,36 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
       <form onSubmit={handleSubmit(handleSubmitForm)}>
       <DialogBody>
         <Typography variant="h6">
-          Información del Productos
+          Información del usuario
         </Typography>
         <div className="grid grid-cols-2 md:grid-cols-1 gap-6  my-12 ">
+        <div className="flex justify-between items-center gap-3">
+            <div className="relative w-full">
+              <Input type="text" name="rut" color="blue" label="RUT" size="md"
+                { ...register("rut") }
+                error={Boolean(errors.rut) }
+                success={Boolean(!errors.rut  && getValues('rut')) }
+              />
+              {errors.rut && (
+                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                  {errors.rut.message}
+                </div>
+              )}
+              </div>
+              <div className="relative w-full">
+              <Input type="text" name="usuario" color="blue" label="Usuario" size="md"
+                { ...register("usuario") }
+                error={Boolean(errors.usuario) }
+                success={Boolean(!errors.usuario  && getValues('usuario')) }
+                
+              />
+              {errors.usuario && (
+                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                  {errors.usuario.message}
+                </div>
+              )}
+              </div>
+          </div>
           <div className="flex justify-between items-center gap-3">
             <div className="relative w-full">
               <Input type="text" name="nombre" color="blue" label="Nombre" size="md"
@@ -142,7 +189,34 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
               )}
               </div>
           </div>
-
+          <div className="flex justify-between items-center gap-3">
+              <div className="relative w-full">
+                <Input type="number" name="telefono" color="blue" label="Teléfono" size="md"
+                  { ...register("telefono") }
+                  error={Boolean(errors.telefono) }
+                  success={Boolean(!errors.telefono  && getValues('telefono')) }
+                  
+                />
+                {errors.telefono && (
+                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                    {errors.telefono.message}
+                  </div>
+                )}
+                </div>
+                <div className="relative w-full">
+                <Input type="text" name="correo" color="blue" label="Correo" size="md"
+                  { ...register("correo") }
+                  error={Boolean(errors.correo) }
+                  success={Boolean(!errors.correo  && getValues('correo')) }
+                  
+                />
+                {errors.correo && (
+                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                    {errors.correo.message}
+                  </div>
+                )}
+                </div>
+          </div>
           <div className="relative">
             <Select color="blue" 
               className="text-sm"  
@@ -164,33 +238,21 @@ const ModalCreateUsuarios = ({onClose,showModal}) => {
           )}
           </div>
           <div className="flex justify-between items-center gap-3">
-              <div className="relative w-full">
-                <Input type="text" name="usuario" color="blue" label="Usuario" size="md"
-                  { ...register("usuario") }
-                  error={Boolean(errors.usuario) }
-                  success={Boolean(!errors.usuario  && getValues('usuario')) }
-                  
-                />
-                {errors.usuario && (
-                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                    {errors.usuario.message}
-                  </div>
-                )}
+            <div className="relative w-full">
+              <Input type="password" name="contrasena" color="blue" label="Contraseña" size="md"
+                { ...register("contrasena") }
+                error={Boolean(errors.contrasena) }
+                success={Boolean(!errors.contrasena  && getValues('contrasena')) }
+                
+              />
+              {errors.contrasena && (
+                <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
+                  {errors.contrasena.message}
                 </div>
-                <div className="relative w-full">
-                <Input type="text" name="correo" color="blue" label="Correo" size="md"
-                  { ...register("correo") }
-                  error={Boolean(errors.correo) }
-                  success={Boolean(!errors.correo  && getValues('correo')) }
-                  
-                />
-                {errors.correo && (
-                  <div className="absolute left-0   bg-red-500 text-white text-xs mt-1 rounded-lg  px-2">
-                    {errors.correo.message}
-                  </div>
-                )}
-                </div>
-            </div>
+              )}
+              </div>
+          </div>
+ 
         </div>
       </DialogBody>
       <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">

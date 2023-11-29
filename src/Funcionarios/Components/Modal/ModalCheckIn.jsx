@@ -124,8 +124,8 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
         onClose();
       })
       .catch(error => {
-        onClose();
         Swal.fire('Error', 'Hubo un problema al realizar el check-in.', 'error');
+        onClose();
       });
   };
   
