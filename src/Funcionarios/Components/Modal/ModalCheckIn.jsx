@@ -114,6 +114,11 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
       return Array.from(newSelected); 
     });
   };
+  const [selectedCheckboxPayment, setSelectedCheckboxPayment] = useState(false);
+
+  const handleAvalityBtn = (e) => {
+    setSelectedCheckboxPayment(e.target.checked);
+  }
   
   const handleSubmitCheckIn = () => {
     
@@ -185,7 +190,7 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
       }}  
       aria-labelledby="modalRegistro" 
       size="xl" 
-      className="max-w-full max-h-screen py-2  overflow-scroll"
+      className="max-w-full max-h-screen py-4  overflow-y-scroll"
     >
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
         <span className="text-2xl tracking-tight font-extrabold text-gray-900">Proceso de Registro</span>
@@ -196,6 +201,7 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
         onClick={()=> {
           onClose();
           setSelectedCheckboxes([]);
+          setSelectedCheckboxPayment(false)
         }}
       >
         <svg
@@ -524,7 +530,7 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
                       </td>
                       <td className={classes}>
                         <Typography
-                          variant="small"
+                          variant="h6"
                           color="blue-gray"
                           className="font-normal"
                         >
@@ -559,21 +565,60 @@ const ModalRegistroEntrada = ({showModal,onClose,idReserva}) => {
         
 
       </DialogBody>
-      <DialogFooter className="p-2 border-t-2 border-gray-100 gap-4">
-        <button
-          onClick={()=> {
-            onClose();
-            setSelectedCheckboxes([]);
-          }}
-          className="text-gray-500 bg-white hover:bg-red-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
-        >
-          Cancelar
-        </button>
-        <button onClick={handleSubmitCheckIn}
-          className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
-        >
-          Pagar  Total
-        </button>
+      <DialogFooter className="flex justify-between p-4 border-t-2 border-gray-100 gap-4">
+        <div>
+          <Card className="bg-green-50/50 drop-shadow">
+            <List>
+              <ListItem className="p-2">
+                <label
+                  htmlFor={`vertical-list-svelte`}
+                  className="flex w-full cursor-pointer items-center "
+                >
+                  <ListItemPrefix>
+                    <Checkbox
+                      color="green"
+                      id={`vertical-list-svelte`}
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      onChange={handleAvalityBtn}
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      
+                      
+                    />
+                  </ListItemPrefix>
+                  <Typography color="green" className="font-bold">
+                    Huesped confirma pago
+                  </Typography>
+                </label>
+              </ListItem>
+            </List>
+          </Card>
+        </div>
+        <div>
+          <button
+            onClick={()=> {
+              onClose();
+              setSelectedCheckboxes([]);
+          setSelectedCheckboxPayment(false)
+
+            }}
+            className="text-gray-500 bg-white hover:bg-red-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
+          >
+            Cancelar
+          </button>
+          {
+            selectedCheckboxPayment && (
+              <button  onClick={handleSubmitCheckIn}
+              className="ml-2 text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
+              >
+                Pagar  Total
+              </button>
+              )
+  
+            }
+        </div>
       </DialogFooter>
     </Dialog>
   );

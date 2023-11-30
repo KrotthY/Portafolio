@@ -1,4 +1,4 @@
-import { Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Card, Input } from "@material-tailwind/react";
+import { Dialog,DialogBody,DialogFooter,DialogHeader, IconButton, Typography, Checkbox, Card, Input, List, ListItem, ListItemPrefix } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import useSession from "../../../Auth/Context/UseSession";
 import { useEffect, useState } from "react";
@@ -57,7 +57,7 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
   const { user } = useSession();
   const [ checkIn , setCheckIn ] = useState([]);
   const [ productos , setProductos ] = useState([]);
-  const {  register, formState: { errors }, reset,getValues } = useForm({
+  const {  register, formState: { errors }, reset,getValues ,watch } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -124,7 +124,6 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
         reservation_id: idReserva,
         usuario_id: idUsuario,
       }
-      console.log(checkOutForm)
       await realizarCheckOutCorrecto(checkOutForm);
       onClose();
       reset(); 
@@ -145,6 +144,19 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
     }
   }
 
+  const [ isTotalDeuda, setIsTotalDeuda ] = useState(0);
+  const totalDinamico = watch({['cantidadDanados'] : true});
+
+  useEffect(() => {
+    if(totalDinamico.outForm){
+      const formData = getValues();
+      const totales = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => (guest.cantidadDanados * guest.costo) * (guest.multa + 1));
+      const sumaTotal = totales.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
+
+      setIsTotalDeuda(sumaTotal)
+    }
+  },[totalDinamico])
+
   const handleSubmitFormErrors = async  () => {
     try {
       const formData = getValues();
@@ -164,7 +176,8 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
 
       const inventarioId = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => guest.inventario_id);
       const cantidadDanados = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => guest.cantidadDanados);
-      const total = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => (guest.cantidadDanados * guest.costo) * (guest.multa + 1));
+      const totales = formData.outForm.filter((id)=> id.cantidadDanados !== '0' && id.cantidadDanados !== 0).map((guest) => (guest.cantidadDanados * guest.costo) * (guest.multa + 1));
+      const sumaTotal = totales.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
       const guestsData = [
         {
           "INVENTARIO_ID": inventarioId
@@ -174,12 +187,11 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
         },
       ];
   
-
       const checkOutForm = {
         access_token: user.access_token,
         reservation_id: idReserva,
         usuario_id: idUsuario,
-        total : total[0],
+        total : sumaTotal,
         guestsData: guestsData
       }
 
@@ -219,16 +231,26 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
     }
   },[productos, reset]);
 
+  const [selectedCheckboxPayment, setSelectedCheckboxPayment] = useState(false);
 
+  const handleAvalityBtn = (e) => {
+    setSelectedCheckboxPayment(e.target.checked);
+  }
   return (
-    <Dialog open={showModal}  aria-labelledby="modalRegistro" size="xl">
+    <Dialog open={showModal} className="max-w-full max-h-screen py-2   overflow-y-scroll"  aria-labelledby="modalRegistro" size="xl">
       <DialogHeader className="border-b-2 border-gray-300 flex justify-between items-start p-5">
         <span className="text-2xl tracking-tight font-extrabold text-gray-900">Proceso de Salida </span>
         <IconButton
         color="blue-gray"
-        size="sm"
+        size="md"
         variant="text"
-        onClick={onClose}
+        onClick={ ()=>{
+
+            onClose();
+            setIsCheckboxChecked(true);
+          }
+
+        }
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -246,7 +268,7 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
         </svg>
       </IconButton>
       </DialogHeader>
-      <DialogBody>
+      <DialogBody >
           <Typography className="my-2 " variant="h5">
             Huesped titular
           </Typography>
@@ -468,45 +490,104 @@ const ModalRegistroSalida = ({onClose,showModal,idReserva,idDepto,idUsuario}) =>
             )
           }      
 
-        <div className="flex items-center justify-center mt-6">
+        <div className="flex items-center justify-center ">
           <Checkbox color="blue" defaultChecked  onChange={handleCheckboxChange} />
           <span className="text-xs">Todo se encuentra en orden dentro del inmueble al momento de la recepción</span>
         </div>
-      </DialogBody>
-      <DialogFooter className="p-2 my-4 border-t-2 border-gray-100 gap-4">
-      <button
-          onClick={onClose}
-          className="text-gray-500 bg-white hover:bg-red-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
-        >
-          Cancelar
-        </button>
-      {
-          isCheckboxChecked && (
-            <div className="flex items-center justify-around">
-              <button onClick={handleSubmitForm}
-                className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
-              >
-                Registrar Salida
-              </button>
-            </div>
-          )
-        }
-
         {
           !isCheckboxChecked && (
 
-            <div className="flex items-center justify-around">
-              <button
-                onClick={handleSubmitFormErrors}
-                className="text-white   bg-red-500 hover:bg-red-100 focus:ring-4 focus:ring-red-300 rounded-lg border border-red-200 text-sm font-semibold px-5 py-2.5 hover:text-red-900 focus:outline-none focus:z-10"
-              >
-                Generar Multa y Registrar Salida
-              </button>
+            <div className="flex items-center justify-center mt-2">
+              <div className="border-2 p-6 rounded-lg italic bg-red-50/80">
+              <span className="text-base">El monto a cancelar despues de aplicar la multa es de: </span>
+              <span className="text-lg">{ formatNumberWithDollar(isTotalDeuda) }</span>
+              </div>
             </div>
 
+
+          )  
+        }
+        
+
+
+      </DialogBody>
+      <DialogFooter className="flex justify-between p-4 border-t-2 border-gray-100 gap-4">
+      <div>
+        {
+
+          !isCheckboxChecked && (
+            <Card className="bg-red-50/50 drop-shadow">
+            <List>
+              <ListItem className="p-2">
+                <label
+                  htmlFor={`vertical-list-svelte`}
+                  className="flex w-full cursor-pointer items-center "
+                >
+                  <ListItemPrefix>
+                    <Checkbox
+                      color="red"
+                      id={`vertical-list-svelte`}
+                      ripple={false}
+                      className="hover:before:opacity-0"
+                      onChange={handleAvalityBtn}
+                      
+                      containerProps={{
+                        className: "p-0",
+                      }}
+                      
+                      
+                    />
+                  </ListItemPrefix>
+                  <Typography color="red" className="font-bold">
+                    Huesped confirma pago
+                  </Typography>
+                </label>
+              </ListItem>
+            </List>
+          </Card>
           )
         }
 
+        </div>
+        <div className="flex justify-center items-center gap-4">
+        <button
+            onClick={()=>{
+
+              onClose();
+              setIsCheckboxChecked(true);
+            }}
+            className="text-gray-500 bg-white hover:bg-red-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-semibold px-5 py-2.5 hover:text-gray-900 focus:outline-none focus:z-10"
+          >
+            Cancelar
+        </button>
+        {
+            isCheckboxChecked && (
+              <div className="flex items-center justify-around">
+                <button onClick={handleSubmitForm}
+                  className="text-white   bg-blue-500 hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-blue-200 text-sm font-semibold px-5 py-2.5 hover:text-blue-900 focus:outline-none focus:z-10"
+                >
+                  Registrar Salida
+                </button>
+              </div>
+            )
+          }
+
+          {
+            !isCheckboxChecked && (
+
+              selectedCheckboxPayment && (
+              <div className="flex items-center justify-around">
+                <button
+                  onClick={handleSubmitFormErrors}
+                  className="text-white   bg-red-500 hover:bg-red-100 focus:ring-4 focus:ring-red-300 rounded-lg border border-red-200 text-sm font-semibold px-5 py-2.5 hover:text-red-900 focus:outline-none focus:z-10"
+                >
+                  Generar Multa y Registrar Salida
+                </button>
+              </div>
+              )
+            )
+          }
+        </div>
 
       </DialogFooter>
     </Dialog>

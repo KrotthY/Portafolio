@@ -6,6 +6,7 @@ import {
   DialogFooter,
   Typography,
   Input,
+  Checkbox,
 } from "@material-tailwind/react";
 import PropTypes from 'prop-types'
 import logoTurismoReal from "../../../Assets/iconoTurismoReal_logo.png";
@@ -18,6 +19,7 @@ import {  useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import TourOfferCard from "../Tours/TourOfferCard";
 import useSession from "../../../Auth/Context/UseSession";
+import { agendarTraslado } from "../../../Api/agendarTraslado";
 
 
 const guestSchema = yup.object().shape({
@@ -68,6 +70,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
     fetch(URL_API_GET_VEHICULOS_DPTO,requestOptions)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         setTraslados(data);
       })
       .catch(error => console.log(error))
@@ -98,6 +101,8 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       }
     ];
 
+      const vehiculoId = traslados.map(traslado => traslado.VEHICULO_ID);
+      const conductorId = traslados.map(traslado => traslado.CONDUCTOR_ID);
 
       const datosDeReserva = {
         access_token: user.access_token,
@@ -109,8 +114,21 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
         guests: guestsData
       };
 
-      await reservaDepartamento(datosDeReserva);
-      
+      const idReserva  =   await reservaDepartamento(datosDeReserva);
+      if(tipoTraslado !== ''){
+
+        const trasladoForm = {
+          access_token: user.access_token,
+          tipoDeTraslado: tipoTraslado,
+          totalAPagar :20000,
+          reservacionId: idReserva.RESERVA_ID,
+          carId:conductorId[0],
+          driverId:vehiculoId[0] , 
+        }
+        console.log(trasladoForm)
+        await agendarTraslado(trasladoForm);
+      }
+        
       onClose();
       reset(); 
       Swal.fire({
@@ -149,6 +167,14 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       CargarVehiculos();
     }
   }, [user,idDepartamento]);
+
+  const [tipoTraslado, setTipoTraslado] = useState('');
+
+  const manejarCambioTipoTraslado = (event) => {
+    setTipoTraslado(event.target.value);
+  };
+
+
 
   return (
     <>
@@ -195,13 +221,12 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                 Lista de Huespedes 
               </h5>
             </div>
-            
+
             {
               Array.from({ length: (parentHuesped) }).map((_, index) => (
-                <div key={index} className="grid md:grid-cols-3 grid-cols-1 gap-6 mt-6 mx-3">
+                <div key={index} className="grid md:grid-cols-3 grid-cols-1  gap-6 mt-6 mx-auto ">
                   <div className="col-span-2 flex  justify-center items-center gap-2">
-
-                  <div className="flex flex-col justify-center">
+                  <div className="flex flex-col justify-center w-full">
                     <div className="relative w-full">
 
                     <Input type="text"  name={`guests[${index}].nombre`} color="blue" label="Nombre" size="md"
@@ -218,7 +243,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                     </div>
                   </div>
 
-                  <div className="flex flex-col justify-center">
+                  <div className="flex flex-col justify-center w-full">
                     <div className="relative w-full">
 
                     <Input type="text"  name={`guests[${index}].apellido`} color="blue" label="Apellido"  size="md"
@@ -235,8 +260,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                     </div>
                   </div>
                   </div>
-
-                  <div className="col-span-1 flex flex-col justify-center items-center">
+                  <div className="col-span-1 flex flex-col justify-center items-center ">
                     <div className="relative w-full"> 
                     <Input type="number"  name={`guests[${index}].telefono`} size="md" 
                       color="blue" label="Telefono"
@@ -252,31 +276,16 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
                     )}
                     </div>
                   </div>
-
                 </div>
               ))
             }
+
           </div>
           <div className="col-span-1 border-l-4 border-blue-50">
-            <div className="text-base flex flex-col ml-2">
-              <h5 className="italic py-6">
-                Datos de pago
-              </h5>
-              <div className="flex flex-col justify-end">
-                <input type="text" placeholder="Nombre Completo del Titular" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                <div className="py-5">
-                  <input type="text" placeholder="Numero de Tarjeta" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                  <div className="py-5">
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="col-span-2">
-                        <input type="text" placeholder="Fecha de Vencimiento" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                      </div>
-                      <div className="col-span-1">
-                        <input type="text" placeholder="CVV" className="w-full border border-gray-500 rounded-md py-2 px-3 focus:outline-none focus:border-blue-700 "/>
-                      </div>
-                      </div>
-                  </div>
-                </div>
+            <div className="flex flex-col align-middle py-auto">
+              <div className="italic py-6 text-sm text-center">
+
+                Recuerda ingresar los datos de tu tarjeta en tu perfil para poder realizar la reserva, posteriormente te enviaremos un correo con los datos de tu reserva.
               </div>
             </div>
           </div>
@@ -310,64 +319,75 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
           </div>
           <div className="col-span-1">
             <div className="flex flex-col justify-center items-center">
+            <Typography variant="h6">
+              Agregar Trasalados
+              </Typography>
+              <Typography className="text-xs" variant="paragraph">
+              Puede agregar un trasalado a su reserva desde/hacia su hospadaje, pero tambien puede solicitarlo en la seccion de su perfil.
+              </Typography>
               
               {
                 traslados && traslados.length > 0 ? (
 
-                  <div className="flex flex-wrap -mx-3 mb-5">
-                    <div className="w-full max-w-full px-3 mb-6  mx-auto">
-                      <div className="relative flex-[1_auto] flex flex-col break-words min-w-0 bg-clip-border  bg-white ">
-                        <div className="relative flex flex-col min-w-0 break-words border border-dashed bg-clip-border rounded-2xl border-stone-200 bg-light/30">
-                          <div className="px-9 pt-5 flex justify-between items-stretch flex-wrap min-h-full pb-0 bg-transparent">
-                            <h6 className="flex flex-col items-start justify-center m-2 ml-0 text-sm text-dark">
-                              <span className="mr-3 font-semibold text-dark">Agregar Trasalados</span>
-                              <span className="mt-1 font-medium text-secondary-dark text-sm">
-                              Puede agregar un trasalado a su reserva desde/hacia su hospadaje, pero tambien puede solicitarlo en la seccion de su perfil.
-                              </span>
-                            </h6>
-                          </div>
-                          <div className="flex-auto block py-8 pt-6 px-9">
+                  <div className="flex flex-wrap mt-6">
+                    <div className="w-full max-w-full  mx-auto">
+                      <div className="relative flex-[1_auto] flex flex-col min-w-0 bg-clip-border  bg-white ">
+                        <div className="relative flex flex-col min-w-0 border-4 border-dashed bg-clip-border rounded-2xl border-stone-200 bg-gray-100/50">
+                          <div className="flex-auto block py-6  px-9">
                             <div className="overflow-y-auto">
                               <table className="w-full my-0 align-middle text-dark border-neutral-200">
                                 <thead className="align-bottom">
                                   <tr className="font-semibold text-sm text-secondary-dark">
                                     <th className="text-start">Conductor</th>
-                                    <th className="text-end ">Nombre</th>
+                                    <th>Nombre</th>
                                     <th className="pr-12 text-end ">Estado</th>
-                                    <th className="pr-12 text-end ">Fecha</th>
-                                    <th className="text-end "></th>
+                                    <th className="pr-12 text-end ">Tipo</th>
+                                    <th className=" ">Tipo de Traslado</th>
                                   </tr>
                                 </thead>
+
                                 <tbody>
-                                  <tr className="border-b border-dashed last:border-b-0">
-                                    <td className="p-3 pl-0">
-                                      <div className="flex items-center">
-                                        <div className="relative inline-block shrink-0 rounded-2xl me-3">
-                                          <img src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/riva-dashboard-tailwind/img/img-48-new.jpg" className="w-[50px] h-[50px] inline-block shrink-0 rounded-2xl" alt=""/>
+                                  {
+                                    traslados.map((traslado) => (
+
+                                    <tr key={traslado.VEHICULO_ID} className="border-b-4 border-dashed last:border-b-0">
+                                      <td className="p-3 ">
+                                        <div className="flex items-center">
+                                          <div className="relative inline-block shrink-0 rounded-2xl me-3">
+                                            <img src="https://raw.githubusercontent.com/Loopple/loopple-public-assets/main/riva-dashboard-tailwind/img/img-48-new.jpg" className="w-[50px] h-[50px] inline-block shrink-0 rounded-2xl" alt=""/>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </td>
-                                    <td className="p-3 pr-0 text-end">
-                                      <span className="font-semibold text-light-inverse text-xs">Michael Kenny</span>
-                                    </td>
-                                    <td className="p-3 pr-0 text-end">
-                                      <span className="font-semibold text-light-inverse text-xs">Activo</span>
-                                    </td>
-                                    <td className="pr-0 text-start">
-                                      <span className="font-semibold text-light-inverse text-xs">2023-05-15</span>
-                                    </td>
-                                    <td className="p-3 pr-0 text-end">
-                                      <button className="ml-auto relative text-secondary-dark bg-light-dark hover:text-primary flex items-center h-[25px] w-[25px] text-base font-medium leading-normal text-center align-middle cursor-pointer rounded-2xl transition-colors duration-200 ease-in-out shadow-none border-0 justify-center">
-                                        <span className="flex items-center justify-center p-0 m-0 leading-none shrink-0 ">
-                                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                          </svg>
-                                        </span>
-                                      </button>
-                                    </td>
-                                  </tr>
+                                      </td>
+                                      <td className="p-3 text-end">
+                                        <span className="font-semibold text-light-inverse text-xs">{ traslado.NOMBRE_COMPLETO }</span>
+                                      </td>
+                                      <td className="p-3 ">
+                                        <span className="font-semibold text-light-inverse text-xs">{ traslado.TELEFONO }</span>
+                                      </td>
+                                      <td className=" text-start">
+                                        <span className="font-semibold text-light-inverse text-xs">{ traslado.TIPO }</span>
+                                      </td>
+                                      <td className=" text-end">
+                                      <select 
+                                        name="tipoTraslado" 
+                                        className="rounded-md text-xs bg-blue-50 p-3"
+                                        value={tipoTraslado}
+                                        onChange={manejarCambioTipoTraslado}
+                                      >
+                                        <option value="">Ninguno</option>
+                                        <option value="0">Ida</option>
+                                        <option value="1">Ida y Vuelta</option>
+                                      </select>
+
+                                      </td>
+                                    </tr>
+
+                                    ))
+                                  }
                                 </tbody>
+
                               </table>
+                              <span>El costo del trasalado es de $20.000</span>
                             </div>
                           </div>
                         </div>
@@ -377,7 +397,7 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
 
                 ) : (
                   <div className="flex flex-col items-center mt-20">
-                    <Typography variant="paragraph">
+                    <Typography variant="h4">
                       No hay traslados disponibles
                     </Typography>
                   </div>

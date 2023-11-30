@@ -177,7 +177,6 @@ const ModalCreateConductores = ({onClose,showModal}) => {
                 </div>
               )}
             </div>
-
         </div>
         <div className="flex justify-center items-center text-center gap-2 py-4 my-4 bg-blue-50 rounded-lg">
           <label htmlFor="" className="w-full font-semibold  ">Fecha de vencimiento licencia</label>

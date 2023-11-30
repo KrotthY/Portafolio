@@ -23,8 +23,8 @@ const Departament = () => {
   return (
     <>
     <HeroDepartment />
-    <Filter />
-    <section id="main-content" className=" font-sans mx-auto w-full max-w-container px-4 sm:px-6 py-12  lg:px-8 bg-gray-50  ">
+    
+    <section id="main-content" className=" font-sans mx-auto w-full max-w-container px-4 sm:px-6 py-12  lg:px-8 bg-gray-200  ">
       <div className="mx-auto grid w-full justify-center  xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-y-16 ">
       {
         deparments

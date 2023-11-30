@@ -6,6 +6,7 @@ import withReactContent from 'sweetalert2-react-content'
 import { logoTurismoReal } from "../../Assets"
 import {  NavLink, useNavigate } from 'react-router-dom';
 import { PublicRoutes } from '../../Router';
+import { Input } from '@material-tailwind/react';
 
 const BASE_CREATE_USER = 'https://fastapi-gv342xsbja-tl.a.run.app/crear_cliente';
 
@@ -14,7 +15,12 @@ const schema = yup.object({
   lastName: yup.string().required('El apellido es obligatorio').min(3, 'El apellido debe tener al menos 3 caracteres').max(20, 'El apellido debe tener como máximo 20 caracteres'),
   username: yup.string().required('El usuario es obligatorio').min(3, 'El usuario debe tener al menos 3 caracteres').max(20, 'El usuario debe tener como máximo 20 caracteres'),
   email: yup.string().email('El correo no es válido').required('El correo es obligatorio').min(8, 'El correo debe tener al menos 8 caracteres').max(50, 'El correo debe tener como máximo 50 caracteres'),
-  password: yup.string().required('La contraseña es obligatoria').min(8, 'La contraseña debe tener al menos 8 caracteres').max(20, 'La contraseña debe tener como máximo 20 caracteres')
+  password: yup.string().required('La contraseña es obligatoria').min(8, 'La contraseña debe tener al menos 8 caracteres').max(20, 'La contraseña debe tener como máximo 20 caracteres'),
+  rut: yup.string()
+  .required('El RUT es requerido')
+  .matches(/^(\d{1,3}(?:\.\d{1,3}){2}-[\dkK])$/, 'Debe ser un RUT válido con puntos y guión')
+  . min(12, 'El RUT debe tener al menos 12 caracteres').max(12, 'El RUT debe tener un máximo de 12 caracteres'),
+  phone:yup.number().required('El teléfono es obligatorio').min(100000000, 'El teléfono debe tener al menos 9 caracteres').max(999999999, 'El teléfono debe tener como máximo 9 caracteres').typeError('El teléfono debe ser un número'),
 });
 
 const CreateAccount = () => {
@@ -39,8 +45,9 @@ const CreateAccount = () => {
         "name": formData.firstName,
         "last_name":formData.lastName ,
         "username": formData.username,
-        "rut":"",
+        "rut":formData.rut,
         "email": formData.email,
+        "phone":formData.phone,
         "password": formData.password,
       }
 
@@ -90,10 +97,9 @@ const CreateAccount = () => {
 
   return (
     <>
-    <div className="flex flex-col lg:flex-row min-h-screen justify-center bg-gray-100">
-      
-    <div className="w-3/5  flex items-center justify-center  select-none">
-      <div className="bg-white p-4 sm:p-10 py-6 sm:py-20 rounded-3xl border-1 border-white shadow-lg w-full sm:w-3/4">
+<div className="flex flex-col lg:flex-row min-h-screen justify-center bg-gray-200">
+  <div className="w-full lg:w-3/5 flex items-center justify-center select-none px-4 lg:px-0">
+    <div className="bg-white p-4 sm:p-10 py-6 sm:py-20 rounded-3xl border-1 border-white shadow-lg w-full sm:w-3/4 max-w-2xl">
         <div className="flex flex-col items-center justify-center">
           <img className="w-24 h-24 rounded-full shadow-md" src={ logoTurismoReal } alt="Avatar" />
           <h1 className="text-4xl font-semibold py-10 text-gray-900">Portal de Turismo Real</h1>
@@ -101,26 +107,42 @@ const CreateAccount = () => {
         </div>
 
         <form onSubmit={ handleSubmit(handleFormSubmit ) }>
-        <div className="mt-8">
+        <div className="mt-8 space-y-4">
           <div className="flex justify-around  items-center">
             <div className="py-2 w-full mr-1">
-              <label className="text-lg font-medium">Nombre</label>
-              <input className="w-full border rounded-xl p-4 mt-1"
+              <Input color='blue' label='RUT' size='lg' 
+                type="text" name="rut" 
+                { ...register("rut") }  
+                autoComplete='rut'
+              />
+              {errors.rut && <p className="text-xs text-red-500">{errors.rut.message}</p>}
+            </div>
+            <div className="py-2 w-full mr-1">
+              
+              <Input color='blue' size='lg' label="Usuario"  
+                type="text" name="username" 
+                { ...register("username") }  
+                autoComplete='username'
+              />
+              {errors.username && <p className="text-xs text-red-500">{errors.username.message}</p>}
+            </div>
+          </div>
+          <div className="flex justify-around  items-center">
+            <div className="py-2 w-full mr-1">
+              <Input color='blue' size="lg" label="Nombre"
                 type="text" 
                 name="firstName" 
                 { ...register("firstName")} 
-                placeholder="Ingresa tu nombre"
                 autoComplete='firstName'
               />
               {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
             </div>
 
             <div className="py-2 w-full ml-1">
-                <label className="text-lg font-medium">Apellido</label>
-                <input className="w-full border rounded-xl p-4 mt-1" 
+                
+                <Input color='blue' label='Apellido' size='lg' 
                   type="text" name="lastName" 
                   { ...register("lastName") }   
-                  placeholder="Ingresa tu apellido" 
                   autoComplete='lastName'
                 />
                 {errors.lastName && <p className="text-xs text-red-500">{errors.lastName.message}</p>}
@@ -128,32 +150,29 @@ const CreateAccount = () => {
             
 
           </div>
-          <div className="py-2">
-            <label className="text-lg font-medium">Usuario</label>
-            <input className="w-full border rounded-xl p-4 mt-1" 
-              type="text" name="username" 
-              { ...register("username") }  
-              placeholder="Ingresa tu usuario"
-              autoComplete='username'
-            />
-            {errors.username && <p className="text-xs text-red-500">{errors.username.message}</p>}
+          <div className="flex justify-around  items-center">
+            <div className="py-2 w-full ml-1">
+              <Input color='blue' size='lg' label="Teléfono" min={0}
+                type="number" name="phone" 
+                {...register("phone")}  
+                autoComplete='phone'
+              />
+              {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
+            </div>
+            <div className="py-2 w-full ml-1">
+              <Input color='blue' size='lg' label="Correo electrónico"
+                type="text" name="email" 
+                {...register("email")}  
+                autoComplete='email'
+              />
+              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+            </div>
           </div>
+
           <div className="py-2">
-            <label className="text-lg font-medium">Correo electrónico</label>
-            <input className="w-full border rounded-xl p-4 mt-1" 
-              type="text" name="email" 
-              {...register("email")}  
-              autoComplete='email'
-              placeholder="Ingresa tu Correo electrónico"
-            />
-            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
-          </div>
-          <div className="py-2">
-            <label className="text-lg font-medium">Contraseña</label>
-            <input type="password" className="w-full border rounded-xl p-4 mt-1" 
+            <Input color='blue' type="password" size='lg' label='Contraseña'
               name="password" 
               { ...register("password") } 
-              placeholder="Ingresa tu Contraseña" 
               autoComplete='current-password'
             />
             {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}

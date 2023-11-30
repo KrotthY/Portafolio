@@ -248,7 +248,7 @@ const ServiciosTransportes = () => {
                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                 .map((vehiculoItem) => (
                   <tr key={vehiculoItem.VEHICULO_ID} className="hover:bg-gray-100 italic  text-center  border-b-4 shadow-md">
-                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{vehiculoItem.DEPARTAMENTO_ID}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{vehiculoItem.NOMBRE}</td>
                     
                     <td className="px-4 py-4 text-sm text-gray-500 whitespace-nowrap ">{vehiculoItem.MARCA}</td>
                     <td className="px-4 py-4 ">{evaluateStatusDepto(vehiculoItem.ACTIVO)}</td>
