@@ -14,7 +14,7 @@ const Conductores = () => {
   const { user } = useSession();
   
   const cargarConductores = () => {
-    const URL_API_GET_CONDUCTORES = 'https://fastapi-gv342xsbja-tl.a.run.app/conductores';
+    const URL_API_GET_CONDUCTORES = 'https://fastapi-gv342xsbja-tl.a.run.app/all_conductores';
     const requestOptions = {
       method: 'GET',
       headers: {
