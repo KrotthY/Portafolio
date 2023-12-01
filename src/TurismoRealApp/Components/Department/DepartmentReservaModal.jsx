@@ -101,10 +101,8 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
       }
     ];
 
-      const vehiculoId = traslados.map(traslado => traslado.VEHICULO_ID);
-      const conductorId = traslados.map(traslado => traslado.CONDUCTOR_ID);
-
-      const datosDeReserva = {
+    
+    const datosDeReserva = {
         access_token: user.access_token,
         start_date,
         end_date,
@@ -116,6 +114,8 @@ const DepartamentoModal = ({ idDepartamento,parentTotalCost,NOMBRE_TOUR, NOMBRE_
 
       const idReserva  =   await reservaDepartamento(datosDeReserva);
       if(tipoTraslado !== ''){
+        const vehiculoId = traslados.map(traslado => traslado.VEHICULO_ID);
+        const conductorId = traslados.map(traslado => traslado.CONDUCTOR_ID);
 
         const trasladoForm = {
           access_token: user.access_token,
